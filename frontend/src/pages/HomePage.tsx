@@ -1,18 +1,34 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
-import { useGeolocation } from "../hooks/useGeolocation";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { locate, loading, error } = useGeolocation();
+  const [geoLoading, setGeoLoading] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
 
   function handleGeolocate() {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      setGeoError("Géolocalisation non supportée par votre navigateur");
+      return;
+    }
+
+    setGeoLoading(true);
+    setGeoError(null);
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        setGeoLoading(false);
         navigate(`/nearby?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
       },
-      () => locate(),
+      (err) => {
+        setGeoLoading(false);
+        setGeoError(
+          err.code === 1
+            ? "Permission de géolocalisation refusée"
+            : "Impossible d'obtenir votre position",
+        );
+      },
       { enableHighAccuracy: true, timeout: 10000 },
     );
   }
@@ -31,12 +47,12 @@ export default function HomePage() {
         <SearchBar />
         <button
           onClick={handleGeolocate}
-          disabled={loading}
+          disabled={geoLoading}
           className="mt-3 w-full bg-amber-500 text-white py-3 rounded-lg font-medium hover:bg-amber-600 transition disabled:opacity-50"
         >
-          {loading ? "Localisation..." : "Autour de moi"}
+          {geoLoading ? "Localisation..." : "Autour de moi"}
         </button>
-        {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+        {geoError && <p className="mt-2 text-sm text-red-500">{geoError}</p>}
       </div>
     </div>
   );

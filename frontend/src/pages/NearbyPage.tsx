@@ -8,13 +8,19 @@ import TimeSlider from "../components/TimeSlider";
 
 function currentTime(): string {
   const now = new Date();
-  const h = now.getHours().toString().padStart(2, "0");
-  const m = (Math.floor(now.getMinutes() / 15) * 15).toString().padStart(2, "0");
+  const minutes = now.getHours() * 60 + Math.floor(now.getMinutes() / 15) * 15;
+  const clamped = Math.max(7 * 60, Math.min(22 * 60, minutes));
+  const h = Math.floor(clamped / 60).toString().padStart(2, "0");
+  const m = (clamped % 60).toString().padStart(2, "0");
   return `${h}:${m}`;
 }
 
 function todayDate(): string {
-  return new Date().toISOString().split("T")[0];
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, "0");
+  const day = d.getDate().toString().padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 export default function NearbyPage() {

@@ -113,8 +113,8 @@ async def get_timeline(
 
 @router.get("/nearby", response_model=NearbyResponse)
 async def get_nearby(
-    lat: float = Query(..., ge=48.8, le=48.92, description="Latitude"),
-    lon: float = Query(..., ge=2.22, le=2.47, description="Longitude"),
+    lat: float = Query(..., ge=48.7, le=49.1, description="Latitude"),
+    lon: float = Query(..., ge=2.0, le=2.6, description="Longitude"),
     datetime_str: str = Query(None, alias="datetime", description="ISO datetime"),
     radius: int = Query(500, le=1000, description="Radius in meters"),
     db: AsyncSession = Depends(get_db),
