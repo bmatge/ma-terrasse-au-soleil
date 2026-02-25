@@ -30,6 +30,8 @@ services:
       DATABASE_URL: postgresql+asyncpg://terrasse:${DB_PASSWORD:-devpassword}@db:5432/terrasse_soleil
       DATABASE_URL_SYNC: postgresql://terrasse:${DB_PASSWORD:-devpassword}@db:5432/terrasse_soleil
       REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./data:/app/data
     depends_on:
       db:
         condition: service_healthy

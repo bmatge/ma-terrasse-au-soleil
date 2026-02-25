@@ -1,4 +1,4 @@
-.PHONY: dev prod stop logs import compute download clean
+.PHONY: dev prod stop logs download migrate import validate compute db-shell clean
 
 # Development
 dev:
@@ -7,7 +7,7 @@ dev:
 dev-detach:
 	docker compose up --build -d
 
-# Production (VPS OVH)
+# Production (VPS OVH — Traefik on ecosysteme-network)
 prod:
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
@@ -24,12 +24,18 @@ download:
 	cd data && bash download_bdtopo.sh
 	cd data && bash download_terrasses.sh
 
-import:
-	docker compose exec backend python -m data.import_batiments
-	docker compose exec backend python -m data.import_terrasses
+migrate:
+	docker compose exec backend alembic upgrade head
+
+import: migrate
+	docker compose exec backend python /app/data/import_batiments.py
+	docker compose exec backend python /app/data/import_terrasses.py
+
+validate:
+	docker compose exec backend python /app/data/validate_data.py
 
 compute:
-	docker compose exec backend python -m data.compute_horizon_profiles
+	docker compose exec backend python /app/data/compute_horizon_profiles.py
 
 # Database shell
 db-shell:
