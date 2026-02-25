@@ -13,7 +13,7 @@ services:
     restart: always
     networks:
       - default
-      - ecosysteme-network
+      - ecosystem-network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.terrasses.rule=Host(`terrasses.paris.matge.com`)"
@@ -36,5 +36,5 @@ services:
           memory: 128M
 
 networks:
-  ecosysteme-network:
+  ecosystem-network:
     external: true
