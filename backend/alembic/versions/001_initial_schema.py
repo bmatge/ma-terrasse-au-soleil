@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column("hauteur", sa.Float, nullable=False),
         sa.Column("altitude_sol", sa.Float, nullable=True),
     )
-    op.create_index("idx_batiments_geometry", "batiments", ["geometry"], postgresql_using="gist")
+    # GeoAlchemy2 auto-creates GIST index on geometry columns
 
     # Terrasses (Paris Open Data)
     op.create_table(
@@ -47,7 +47,6 @@ def upgrade() -> None:
         sa.Column("source", sa.String(30), server_default="paris_opendata"),
         sa.Column("created_at", sa.DateTime, server_default=sa.func.now()),
     )
-    op.create_index("idx_terrasses_geometry", "terrasses", ["geometry"], postgresql_using="gist")
     op.execute(
         "CREATE INDEX idx_terrasses_nom_trgm ON terrasses USING GIN (nom gin_trgm_ops)"
     )
