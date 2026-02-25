@@ -8,6 +8,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+from geoalchemy2 import Geometry
 from sqlalchemy.dialects.postgresql import JSONB
 
 revision: str = "001"
@@ -25,7 +26,7 @@ def upgrade() -> None:
     op.create_table(
         "batiments",
         sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("geometry", sa.text("geometry(Polygon, 4326)"), nullable=False),
+        sa.Column("geometry", Geometry("POLYGON", srid=4326), nullable=False),
         sa.Column("hauteur", sa.Float, nullable=False),
         sa.Column("altitude_sol", sa.Float, nullable=True),
     )
@@ -38,7 +39,7 @@ def upgrade() -> None:
         sa.Column("nom", sa.String, nullable=False),
         sa.Column("adresse", sa.String, nullable=True),
         sa.Column("arrondissement", sa.String(5), nullable=True),
-        sa.Column("geometry", sa.text("geometry(Point, 4326)"), nullable=False),
+        sa.Column("geometry", Geometry("POINT", srid=4326), nullable=False),
         sa.Column("typologie", sa.String(50), nullable=True),
         sa.Column("siret", sa.String(20), nullable=True),
         sa.Column("longueur", sa.Float, nullable=True),
