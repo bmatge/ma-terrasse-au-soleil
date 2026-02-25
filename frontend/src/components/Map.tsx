@@ -34,7 +34,7 @@ export default function Map({ center, terrasses, onTerrasseClick }: MapProps) {
       style: STYLE_URL,
       center: center,
       zoom: 15,
-      attributionControl: true,
+      attributionControl: {},
     });
 
     map.addControl(new maplibregl.NavigationControl(), "top-right");
