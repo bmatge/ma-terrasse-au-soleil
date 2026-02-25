@@ -1,5 +1,6 @@
 FROM python:3.12-slim AS base
 WORKDIR /app
+ENV PYTHONPATH=/app
 RUN pip install --no-cache-dir uv
 
 FROM base AS dev
