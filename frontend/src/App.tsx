@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TimelinePage from "./pages/TimelinePage";
 import NearbyPage from "./pages/NearbyPage";
@@ -7,7 +7,9 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-amber-500 text-white p-4 shadow">
-        <h1 className="text-xl font-bold">Terrasse au Soleil</h1>
+        <Link to="/" className="text-xl font-bold hover:opacity-90">
+          Terrasse au Soleil
+        </Link>
       </header>
       <main>
         <Routes>
