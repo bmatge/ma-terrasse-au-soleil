@@ -3,9 +3,10 @@ set -euo pipefail
 
 # Terrasse au Soleil — deployment script for OVH VPS
 # Usage:
-#   ./deploy.sh          → full deploy (pull + build + migrate + start)
-#   ./deploy.sh init     → first deploy (pull + build + migrate + download data + import + compute + start)
-#   ./deploy.sh update   → quick update (pull + build + migrate + restart)
+#   ./deploy.sh          → update code (pull + build + migrate + restart)
+#   ./deploy.sh init     → first deploy (build + migrate + download + import + compute + start)
+#   ./deploy.sh update   → same as default
+#   ./deploy.sh reimport → re-download data + re-import + recompute profiles
 #   ./deploy.sh stop     → stop all services
 #   ./deploy.sh logs     → follow logs
 #   ./deploy.sh status   → show service status
@@ -79,6 +80,27 @@ case "${1:-deploy}" in
     log "Done! Site live at https://terrasses.paris.matge.com"
     ;;
 
+  reimport)
+    log "Re-importing data (download + import + compute)..."
+
+    log "Downloading data (BD TOPO + terrasses)..."
+    cd data && bash download_bdtopo.sh && bash download_terrasses.sh && cd ..
+
+    log "Importing buildings..."
+    $BACKEND_EXEC python /app/data/import_batiments.py
+
+    log "Importing terrasses..."
+    $BACKEND_EXEC python /app/data/import_terrasses.py
+
+    log "Computing horizon profiles (this may take several minutes)..."
+    $BACKEND_EXEC python /app/data/compute_horizon_profiles.py
+
+    log "Validating data..."
+    $BACKEND_EXEC python /app/data/validate_data.py
+
+    log "Done!"
+    ;;
+
   stop)
     log "Stopping services..."
     $COMPOSE down
@@ -93,7 +115,7 @@ case "${1:-deploy}" in
     ;;
 
   *)
-    echo "Usage: ./deploy.sh [init|deploy|update|stop|logs|status]"
+    echo "Usage: ./deploy.sh [init|update|reimport|stop|logs|status]"
     exit 1
     ;;
 
