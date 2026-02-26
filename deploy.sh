@@ -39,7 +39,7 @@ case "${1:-deploy}" in
     $BACKEND_EXEC alembic upgrade head
 
     log "Downloading data (BD TOPO + terrasses)..."
-    cd data && bash download_bdtopo.sh && bash download_terrasses.sh && cd ..
+    (cd data && bash download_bdtopo.sh && bash download_terrasses.sh)
 
     log "Importing buildings..."
     $BACKEND_EXEC python /app/data/import_batiments.py
@@ -84,7 +84,7 @@ case "${1:-deploy}" in
     log "Re-importing data (download + import + compute)..."
 
     log "Downloading data (BD TOPO + terrasses)..."
-    cd data && bash download_bdtopo.sh && bash download_terrasses.sh && cd ..
+    (cd data && bash download_bdtopo.sh && bash download_terrasses.sh)
 
     log "Importing buildings..."
     $BACKEND_EXEC python /app/data/import_batiments.py
