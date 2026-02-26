@@ -91,11 +91,18 @@ def main():
     parser = argparse.ArgumentParser(description="Compute horizon profiles")
     parser.add_argument("--workers", type=int, default=None, help="Number of workers (default: CPU count - 1)")
     parser.add_argument("--batch-size", type=int, default=100, help="Save every N profiles")
+    parser.add_argument("--force", action="store_true", help="Recompute all profiles (delete existing first)")
     args = parser.parse_args()
 
     workers = args.workers or max(1, (os.cpu_count() or 2) - 1)
 
     engine = create_engine(DATABASE_URL)
+
+    if args.force:
+        print("Force mode: deleting all existing horizon profiles...")
+        with engine.begin() as conn:
+            deleted = conn.execute(text("DELETE FROM horizon_profiles")).rowcount
+            print(f"  Deleted {deleted} profiles.")
 
     # Fetch terrasses needing computation
     terrasses = fetch_terrasses(engine)
