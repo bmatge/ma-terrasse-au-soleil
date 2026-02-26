@@ -35,7 +35,7 @@ def import_terrasses(geojson_path: str) -> None:
     # Filter: keep only TERRASSE OUVERTE
     features = [
         f for f in features
-        if f.get("properties", {}).get("typologie", "").upper() == "TERRASSE OUVERTE"
+        if (f.get("properties", {}).get("typologie") or "").upper() == "TERRASSE OUVERTE"
     ]
     print(f"  After filter (TERRASSE OUVERTE): {len(features)}")
 
