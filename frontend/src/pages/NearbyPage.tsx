@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getNearby } from "../api/terrasses";
@@ -24,22 +24,43 @@ function todayDate(): string {
 }
 
 export default function NearbyPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const lat = Number(searchParams.get("lat") || "48.8566");
-  const lon = Number(searchParams.get("lon") || "2.3522");
+  const initialLat = Number(searchParams.get("lat") || "48.8566");
+  const initialLon = Number(searchParams.get("lon") || "2.3522");
 
+  // mapCenter tracks the current map center (updated on pan/zoom)
+  const [mapCenter, setMapCenter] = useState<[number, number]>([initialLon, initialLat]);
   const [time, setTime] = useState(currentTime);
+
+  const lat = mapCenter[1];
+  const lon = mapCenter[0];
+
+  // Round to 4 decimals (~11m) to avoid re-fetching on tiny floating-point drift
+  const queryLat = Math.round(lat * 10000) / 10000;
+  const queryLon = Math.round(lon * 10000) / 10000;
 
   const datetimeStr = useMemo(() => `${todayDate()}T${time}:00`, [time]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["nearby", lat, lon, datetimeStr],
+    queryKey: ["nearby", queryLat, queryLon, datetimeStr],
     queryFn: () => getNearby(lat, lon, datetimeStr),
   });
 
-  const center = useMemo((): [number, number] => [lon, lat], [lon, lat]);
+  const center = useMemo((): [number, number] => [initialLon, initialLat], [initialLon, initialLat]);
+
+  const handleMapMoveEnd = useCallback(
+    (newCenter: [number, number]) => {
+      setMapCenter(newCenter);
+      // Update URL for shareability (replace to avoid polluting history)
+      setSearchParams(
+        { lat: newCenter[1].toFixed(6), lon: newCenter[0].toFixed(6) },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
 
   function handleTerrasseClick(id: number) {
     navigate(`/terrasse/${id}`);
@@ -75,6 +96,7 @@ export default function NearbyPage() {
         center={center}
         terrasses={data?.terrasses || []}
         onTerrasseClick={handleTerrasseClick}
+        onMoveEnd={handleMapMoveEnd}
       />
 
       {/* Terrace list */}

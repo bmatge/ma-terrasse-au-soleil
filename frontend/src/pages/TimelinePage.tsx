@@ -1,12 +1,24 @@
+import { useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getTimeline } from "../api/terrasses";
 import Timeline from "../components/Timeline";
+import SunMap from "../components/SunMap";
+
+function currentTimeRounded(): string {
+  const now = new Date();
+  const minutes = now.getHours() * 60 + Math.floor(now.getMinutes() / 15) * 15;
+  const clamped = Math.max(7 * 60, Math.min(22 * 60, minutes));
+  const h = Math.floor(clamped / 60).toString().padStart(2, "0");
+  const m = (clamped % 60).toString().padStart(2, "0");
+  return `${h}:${m}`;
+}
 
 export default function TimelinePage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const dateParam = searchParams.get("date") || undefined;
+  const [selectedTime, setSelectedTime] = useState<string>(currentTimeRounded);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["timeline", id, dateParam],
@@ -77,12 +89,23 @@ export default function TimelinePage() {
         </button>
       </div>
 
+      {/* Sun direction map */}
+      <div className="mb-4">
+        <SunMap
+          lat={data.terrasse.lat}
+          lon={data.terrasse.lon}
+          date={data.date}
+          selectedTime={selectedTime}
+        />
+      </div>
+
       {/* Timeline */}
       <div className="bg-white rounded-xl shadow p-4">
         <Timeline
           slots={data.slots}
           bestWindow={data.meilleur_creneau}
           meteoResume={data.meteo_resume}
+          onSlotHover={setSelectedTime}
         />
       </div>
     </div>

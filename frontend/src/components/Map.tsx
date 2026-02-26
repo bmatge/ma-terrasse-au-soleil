@@ -23,12 +23,15 @@ interface MapProps {
   center: [number, number]; // [lon, lat]
   terrasses: NearbyTerrasse[];
   onTerrasseClick?: (id: number) => void;
+  onMoveEnd?: (center: [number, number]) => void;
 }
 
-export default function Map({ center, terrasses, onTerrasseClick }: MapProps) {
+export default function Map({ center, terrasses, onTerrasseClick, onMoveEnd }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
+  const onMoveEndRef = useRef(onMoveEnd);
+  onMoveEndRef.current = onMoveEnd;
 
   // Initialize map
   useEffect(() => {
@@ -50,6 +53,13 @@ export default function Map({ center, terrasses, onTerrasseClick }: MapProps) {
     });
 
     map.addControl(new maplibregl.NavigationControl(), "top-right");
+
+    // Emit center change on user interaction (drag/zoom)
+    map.on("moveend", () => {
+      const c = map.getCenter();
+      onMoveEndRef.current?.([c.lng, c.lat]);
+    });
+
     mapRef.current = map;
 
     return () => {
@@ -59,11 +69,6 @@ export default function Map({ center, terrasses, onTerrasseClick }: MapProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update center
-  useEffect(() => {
-    mapRef.current?.flyTo({ center, zoom: 15 });
-  }, [center]);
-
   const handleClick = useCallback(
     (id: number) => {
       onTerrasseClick?.(id);
@@ -71,20 +76,28 @@ export default function Map({ center, terrasses, onTerrasseClick }: MapProps) {
     [onTerrasseClick],
   );
 
-  // Update markers
+  // User position marker (stable, set once)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
-    // Clear old markers
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
-
-    // Add user position marker
-    new maplibregl.Marker({ color: "#3b82f6" })
+    const marker = new maplibregl.Marker({ color: "#3b82f6" })
       .setLngLat(center)
       .setPopup(new maplibregl.Popup().setText("Votre position"))
       .addTo(map);
+
+    return () => { marker.remove(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update terrace markers
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // Clear old terrace markers
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current = [];
 
     // Add terrace markers
     terrasses.forEach((t) => {
@@ -117,7 +130,7 @@ export default function Map({ center, terrasses, onTerrasseClick }: MapProps) {
       el.addEventListener("click", () => handleClick(t.id));
       markersRef.current.push(marker);
     });
-  }, [terrasses, center, handleClick]);
+  }, [terrasses, handleClick]);
 
   return (
     <div

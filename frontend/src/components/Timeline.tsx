@@ -20,9 +20,10 @@ interface TimelineProps {
   slots: TimelineSlot[];
   bestWindow: BestWindow | null;
   meteoResume: string;
+  onSlotHover?: (time: string) => void;
 }
 
-export default function Timeline({ slots, bestWindow, meteoResume }: TimelineProps) {
+export default function Timeline({ slots, bestWindow, meteoResume, onSlotHover }: TimelineProps) {
   // Group slots into hours for labels
   const hours = [...new Set(slots.map((s) => s.time.split(":")[0]))];
 
@@ -49,8 +50,9 @@ export default function Timeline({ slots, bestWindow, meteoResume }: TimelinePro
           {slots.map((slot, i) => (
             <div
               key={i}
-              className={`flex-1 ${STATUS_COLORS[slot.status] || "bg-gray-200"} relative group`}
+              className={`flex-1 ${STATUS_COLORS[slot.status] || "bg-gray-200"} relative group cursor-pointer`}
               title={`${slot.time} — ${STATUS_LABELS[slot.status] || slot.status}`}
+              onMouseEnter={() => onSlotHover?.(slot.time)}
             >
               {/* Tooltip on hover */}
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10">
