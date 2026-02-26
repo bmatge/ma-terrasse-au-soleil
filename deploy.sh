@@ -12,7 +12,7 @@ set -euo pipefail
 #   ./deploy.sh status   → show service status
 
 COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
-BACKEND_EXEC="$COMPOSE exec -T backend"
+BACKEND_EXEC="$COMPOSE exec -T -e PYTHONUNBUFFERED=1 backend"
 
 cd "$(dirname "$0")"
 
