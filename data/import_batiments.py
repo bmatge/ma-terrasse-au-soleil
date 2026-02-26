@@ -12,6 +12,7 @@ import sys
 import time
 
 import geopandas as gpd
+import shapely
 from sqlalchemy import create_engine, text
 
 DATABASE_URL = os.environ.get(
@@ -54,6 +55,10 @@ def import_batiments(gpkg_path: str) -> None:
     # Reproject from Lambert-93 to WGS84
     print("Reprojecting EPSG:2154 → EPSG:4326...")
     gdf = gdf.to_crs(epsg=4326)
+
+    # Drop Z dimension (BD TOPO has 3D geometries, table expects 2D)
+    print("Dropping Z dimension...")
+    gdf["geometry"] = shapely.force_2d(gdf["geometry"])
 
     # Convert MultiPolygon to Polygon (explode multi-part geometries)
     multi_count = (gdf.geometry.geom_type == "MultiPolygon").sum()
