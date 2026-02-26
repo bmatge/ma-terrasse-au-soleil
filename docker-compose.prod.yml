@@ -20,8 +20,6 @@ services:
       - "traefik.http.routers.terrasses.entrypoints=websecure"
       - "traefik.http.routers.terrasses.tls.certresolver=letsencrypt"
       - "traefik.http.services.terrasses.loadbalancer.server.port=80"
-      - "traefik.http.middlewares.terrasses-csp.headers.contentSecurityPolicy=default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:; connect-src 'self' https://tiles.openfreemap.org https://*.openfreemap.org https://data.geopf.fr https://api.open-meteo.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.openfreemap.org https://*.openstreetmap.org"
-      - "traefik.http.routers.terrasses.middlewares=terrasses-csp"
 
   db:
     restart: always

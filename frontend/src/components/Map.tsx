@@ -1,10 +1,15 @@
 import { useRef, useEffect, useCallback } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker?url";
 import type { NearbyTerrasse } from "../api/types";
 
-const STYLE_URL =
-  "https://tiles.openfreemap.org/styles/liberty";
+// Use CSP-compatible worker (avoids blob: in worker-src)
+maplibregl.workerUrl = maplibreWorkerUrl;
+
+// Use our nginx proxy to avoid CSP issues with external tile domains
+const STYLE_URL = "/tiles/styles/liberty";
+const TILE_ORIGIN = "https://tiles.openfreemap.org/";
 
 const STATUS_MARKER_COLORS: Record<string, string> = {
   soleil: "#f59e0b",
@@ -35,6 +40,13 @@ export default function Map({ center, terrasses, onTerrasseClick }: MapProps) {
       center: center,
       zoom: 15,
       attributionControl: {},
+      // Rewrite external tile URLs to go through our nginx proxy
+      transformRequest: (url: string) => {
+        if (url.startsWith(TILE_ORIGIN)) {
+          return { url: url.replace(TILE_ORIGIN, "/tiles/") };
+        }
+        return { url };
+      },
     });
 
     map.addControl(new maplibregl.NavigationControl(), "top-right");
