@@ -1,11 +1,11 @@
 import { useRef, useEffect, useCallback } from "react";
-import maplibregl from "maplibre-gl";
+import maplibregl, { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker?url";
+import cspWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
 import type { NearbyTerrasse } from "../api/types";
 
-// Use CSP-compatible worker (avoids blob: in worker-src)
-maplibregl.workerUrl = maplibreWorkerUrl;
+// Use CSP-compatible worker served as a static file (avoids blob: in worker-src)
+setWorkerUrl(cspWorkerUrl);
 
 // Use our nginx proxy to avoid CSP issues with external tile domains
 const STYLE_URL = "/tiles/styles/liberty";
