@@ -947,7 +947,6 @@ export default function App() {
   if (page === "home") {
     return (
       <div style={{ ...wrap, position: "relative", overflow: "hidden" }}>
-        <img src="/logo.png" alt="" aria-hidden="true" style={{ position: "absolute", top: -20, right: -50, width: 260, height: 260, opacity: 0.09, pointerEvents: "none", userSelect: "none" }} />
         <div style={{ padding: "56px 24px 24px", position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -963,29 +962,30 @@ export default function App() {
           </div>
 
           {/* KPI */}
-          <div style={{ position: "relative", marginBottom: 32 }}>
+          <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
             <img src="/logo.png" alt="" aria-hidden="true" style={{
-              position: "absolute", top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 160, height: 160, opacity: 0.22,
-              pointerEvents: "none", userSelect: "none",
+              position: "absolute", top: 0, left: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover", objectPosition: "center",
+              opacity: 0.28, pointerEvents: "none", userSelect: "none",
             }} />
-            <div style={{ display: "flex", gap: 12, position: "relative" }}>
-              <div style={{ flex: 1, padding: "16px", borderRadius: 14, background: "rgba(254, 243, 199, 0.80)", border: "1px solid #FDE68A", textAlign: "center", backdropFilter: "blur(2px)" }}>
+            <div style={{ display: "flex" }}>
+              <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(254, 243, 199, 0.65)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
                   <SunIcon size={18} color="#D97706" />
-                  <span style={{ fontSize: 24, fontWeight: 700, color: "#92400E" }}>{kpi.sunCount}</span>
+                  <span style={{ fontSize: 28, fontWeight: 700, color: "#92400E", fontFamily: F }}>{kpi.sunCount}</span>
                 </div>
-                <div style={{ fontSize: 12, color: "#92400E", fontWeight: 500 }}>au soleil</div>
-                <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
+                <div style={{ fontSize: 12, color: "#92400E", fontWeight: 600, fontFamily: F }}>au soleil</div>
+                <div style={{ fontSize: 10, color: "#B45309", marginTop: 2, fontFamily: F }}>à {kpi.station} ({kpi.hour})</div>
               </div>
-              <div style={{ flex: 1, padding: "16px", borderRadius: 14, background: "rgba(243, 244, 246, 0.80)", border: "1px solid #E5E7EB", textAlign: "center", backdropFilter: "blur(2px)" }}>
+              <div style={{ width: 1, background: "rgba(0,0,0,0.08)" }} />
+              <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(243, 244, 246, 0.65)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
                   <ShadeIcon size={18} color="#6B7280" />
-                  <span style={{ fontSize: 24, fontWeight: 700, color: "#374151" }}>{kpi.shadeCount}</span>
+                  <span style={{ fontSize: 28, fontWeight: 700, color: "#374151", fontFamily: F }}>{kpi.shadeCount}</span>
                 </div>
-                <div style={{ fontSize: 12, color: "#374151", fontWeight: 500 }}>à l'ombre</div>
-                <div style={{ fontSize: 10, color: "#6B7280", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
+                <div style={{ fontSize: 12, color: "#374151", fontWeight: 600, fontFamily: F }}>à l'ombre</div>
+                <div style={{ fontSize: 10, color: "#6B7280", marginTop: 2, fontFamily: F }}>à {kpi.station} ({kpi.hour})</div>
               </div>
             </div>
           </div>
