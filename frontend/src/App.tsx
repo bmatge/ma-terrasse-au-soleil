@@ -1516,30 +1516,40 @@ export default function App() {
             )}
           </div>
 
-          {/* Hourly summary grid */}
+          {/* Hourly slider */}
           <div style={{ marginBottom: 24 }}>
             <span style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10, display: "block" }}>
               Ensoleillement
             </span>
-            <div style={{ display: "flex", gap: 4 }}>
-              {HOURS.map((h) => {
-                const slot = hourlyFromTimeline[h];
-                const status = slot?.status;
-                const sunny = status ? isSunnyStatus(status) : false;
-                const isSelected = h === selectedHour;
-                return (
-                  <div key={h} onClick={() => setSearchHour(h)} style={{ flex: 1, textAlign: "center", cursor: "pointer" }}>
-                    <div style={{
-                      height: 28, borderRadius: 6, marginBottom: 4,
-                      background: isSelected ? (sunny ? t.accent : "#EF4444") : (sunny ? t.accentLight : t.border),
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      {sunny ? <SunIcon size={11} color={isSelected ? "#FFF" : t.accentDark} /> : <ShadeIcon size={11} color={isSelected ? "#FFF" : t.textMuted} />}
+            <div style={{ position: "relative" }}>
+              {/* Visual cells */}
+              <div style={{ display: "flex", gap: 4, pointerEvents: "none" }}>
+                {HOURS.map((h) => {
+                  const slot = hourlyFromTimeline[h];
+                  const sunny = slot ? isSunnyStatus(slot.status) : false;
+                  const isSelected = h === selectedHour;
+                  return (
+                    <div key={h} style={{ flex: 1, textAlign: "center" }}>
+                      <div style={{
+                        height: 32, borderRadius: 6, marginBottom: 4,
+                        background: isSelected ? (sunny ? t.accent : "#EF4444") : (sunny ? t.accentLight : t.border),
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        outline: isSelected ? `2px solid ${sunny ? t.accentDark : "#DC2626"}` : "none",
+                        outlineOffset: 1,
+                      }}>
+                        {sunny ? <SunIcon size={11} color={isSelected ? "#FFF" : t.accentDark} /> : <ShadeIcon size={11} color={isSelected ? "#FFF" : t.textMuted} />}
+                      </div>
+                      <span style={{ fontSize: 9, color: isSelected ? t.accent : t.textMuted, fontWeight: isSelected ? 700 : 400 }}>{h.split(":")[0]}h</span>
                     </div>
-                    <span style={{ fontSize: 9, color: isSelected ? t.accent : t.textMuted, fontWeight: isSelected ? 700 : 400 }}>{h.split(":")[0]}h</span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+              {/* Invisible range input for drag interaction */}
+              <input type="range" min={0} max={HOURS.length - 1}
+                value={Math.max(0, HOURS.indexOf(selectedHour))}
+                onChange={(e) => setSearchHour(HOURS[Number(e.target.value)])}
+                style={{ position: "absolute", inset: "0 0 18px 0", width: "100%", opacity: 0, cursor: "pointer", margin: 0 }}
+              />
             </div>
           </div>
 
