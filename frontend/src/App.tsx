@@ -854,7 +854,7 @@ export default function App() {
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", position: "sticky", top: 0, zIndex: 10, background: t.bg, borderBottom: `1px solid ${t.border}` }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {back && <button onClick={goBack} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: t.accent }}><BackIcon /></button>}
-        <img src="/logo.png" alt="" style={{ width: 22, height: 22, borderRadius: 5, objectFit: "cover" }} />
+        <span style={{ fontSize: 22, lineHeight: 1 }}>☀️</span>
         {title && <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: t.text }}>{title}</span>}
       </div>
       <ModeToggle />
@@ -1532,8 +1532,8 @@ export default function App() {
             <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginTop: 4 }}>Trouve une terrasse ensoleillée à Paris</div>
           </div>
 
-          {section("Développée avec amour", <>
-            Cette app est un projet imaginé par Vivi et réalisé par Beber, conçue pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
+          {section("Développée avec amour et IA", <>
+            Cette app est un projet imaginé par Virginie et réalisé par Claude et Bertrand, conçue pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
             <br /><br />
             Elle est entièrement open source et auto-hébergée.
           </>)}
