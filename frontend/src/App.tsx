@@ -951,7 +951,7 @@ export default function App() {
         <div style={{ padding: "56px 24px 24px", position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <img src="/logo.png" alt="Terrasse au Soleil" style={{ width: 56, height: 56 }} />
+              <span style={{ fontSize: 48, lineHeight: 1 }}>☀️</span>
               <div>
                 <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
                 <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
@@ -963,22 +963,30 @@ export default function App() {
           </div>
 
           {/* KPI */}
-          <div style={{ display: "flex", gap: 12, marginBottom: 32 }}>
-            <div style={{ flex: 1, padding: "16px", borderRadius: 14, background: "linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)", border: "1px solid #FDE68A", textAlign: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
-                <SunIcon size={18} color="#D97706" />
-                <span style={{ fontSize: 24, fontWeight: 700, color: "#92400E" }}>{kpi.sunCount}</span>
+          <div style={{ position: "relative", marginBottom: 32 }}>
+            <img src="/logo.png" alt="" aria-hidden="true" style={{
+              position: "absolute", top: "50%", left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 160, height: 160, opacity: 0.22,
+              pointerEvents: "none", userSelect: "none",
+            }} />
+            <div style={{ display: "flex", gap: 12, position: "relative" }}>
+              <div style={{ flex: 1, padding: "16px", borderRadius: 14, background: "rgba(254, 243, 199, 0.80)", border: "1px solid #FDE68A", textAlign: "center", backdropFilter: "blur(2px)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
+                  <SunIcon size={18} color="#D97706" />
+                  <span style={{ fontSize: 24, fontWeight: 700, color: "#92400E" }}>{kpi.sunCount}</span>
+                </div>
+                <div style={{ fontSize: 12, color: "#92400E", fontWeight: 500 }}>au soleil</div>
+                <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
               </div>
-              <div style={{ fontSize: 12, color: "#92400E", fontWeight: 500 }}>au soleil</div>
-              <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
-            </div>
-            <div style={{ flex: 1, padding: "16px", borderRadius: 14, background: "linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)", border: "1px solid #BFDBFE", textAlign: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
-                <ShadeIcon size={18} color="#2563EB" />
-                <span style={{ fontSize: 24, fontWeight: 700, color: "#1E40AF" }}>{kpi.shadeCount}</span>
+              <div style={{ flex: 1, padding: "16px", borderRadius: 14, background: "rgba(243, 244, 246, 0.80)", border: "1px solid #E5E7EB", textAlign: "center", backdropFilter: "blur(2px)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
+                  <ShadeIcon size={18} color="#6B7280" />
+                  <span style={{ fontSize: 24, fontWeight: 700, color: "#374151" }}>{kpi.shadeCount}</span>
+                </div>
+                <div style={{ fontSize: 12, color: "#374151", fontWeight: 500 }}>à l'ombre</div>
+                <div style={{ fontSize: 10, color: "#6B7280", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
               </div>
-              <div style={{ fontSize: 12, color: "#1E40AF", fontWeight: 500 }}>à l'ombre</div>
-              <div style={{ fontSize: 10, color: "#1D4ED8", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
             </div>
           </div>
 
