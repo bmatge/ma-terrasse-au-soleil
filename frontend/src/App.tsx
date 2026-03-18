@@ -263,7 +263,6 @@ function SunMap({ lat, lon, date, selectedTime, theme }: { lat: number; lon: num
       zoom: 17,
       pitch: 50,
       bearing: 0,
-      interactive: false,
       attributionControl: false,
       transformRequest: (url: string) => {
         if (url.startsWith(TILE_ORIGIN)) return { url: url.replace(TILE_ORIGIN, "/tiles/") };
@@ -271,6 +270,13 @@ function SunMap({ lat, lon, date, selectedTime, theme }: { lat: number; lon: num
       },
     });
     mapRef.current = map;
+    map.scrollZoom.disable();
+    map.boxZoom.disable();
+    map.dragRotate.disable();
+    map.dragPan.disable();
+    map.keyboard.disable();
+    map.doubleClickZoom.disable();
+    map.touchZoomRotate.disable();
     const el = document.createElement("div");
     el.style.cssText = `width:12px;height:12px;background:#f59e0b;border:2px solid white;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.3);`;
     new maplibregl.Marker({ element: el }).setLngLat([lon, lat]).addTo(map);
@@ -308,8 +314,12 @@ function SunMap({ lat, lon, date, selectedTime, theme }: { lat: number; lon: num
     if (!sunPos || sunPos.altitude <= 0) {
       src.setData({ type: "FeatureCollection", features: [] });
       iconSrc.setData({ type: "FeatureCollection", features: [] });
+      map.jumpTo({ bearing: 0, pitch: 50 });
       return;
     }
+    const bearing = (sunPos.azimuth + 180) % 360;
+    const pitch = Math.min(70, Math.max(15, 90 - sunPos.altitude));
+    map.jumpTo({ bearing, pitch });
     const endPoint = destinationPoint(lat, lon, sunPos.azimuth, 120);
     src.setData({ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: [[lon, lat], endPoint] } });
     iconSrc.setData({ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: endPoint } });
