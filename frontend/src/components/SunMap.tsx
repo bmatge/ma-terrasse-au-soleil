@@ -139,7 +139,7 @@ export default function SunMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update sun direction line
+  // Orient camera to sun's perspective + update direction indicator
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
@@ -148,33 +148,29 @@ export default function SunMap({
     const iconSrc = map.getSource("sun-icon") as maplibregl.GeoJSONSource | undefined;
 
     if (!sunPos || sunPos.altitude <= 0) {
-      // Sun below horizon — hide line
       src?.setData({ type: "FeatureCollection", features: [] });
       iconSrc?.setData({ type: "FeatureCollection", features: [] });
+      map.easeTo({ bearing: 0, pitch: 0, duration: 600 });
       return;
     }
 
-    const endPoint = destinationPoint(lat, lon, sunPos.azimuth, 120);
+    // Look from the sun toward the building
+    const bearing = (sunPos.azimuth + 180) % 360;
+    // More pitch when sun is low (grazing angle), less when high (overhead)
+    const pitch = Math.min(70, Math.max(15, 90 - sunPos.altitude));
+    map.easeTo({ bearing, pitch, duration: 600 });
 
+    // Sun icon shown in the direction the light comes from
+    const sunPoint = destinationPoint(lat, lon, sunPos.azimuth, 120);
     src?.setData({
       type: "Feature",
       properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: [
-          [lon, lat],
-          endPoint,
-        ],
-      },
+      geometry: { type: "LineString", coordinates: [[lon, lat], sunPoint] },
     });
-
     iconSrc?.setData({
       type: "Feature",
       properties: {},
-      geometry: {
-        type: "Point",
-        coordinates: endPoint,
-      },
+      geometry: { type: "Point", coordinates: sunPoint },
     });
   }, [sunPos, lat, lon]);
 
@@ -190,24 +186,22 @@ export default function SunMap({
       if (!sunPos || sunPos.altitude <= 0) {
         src.setData({ type: "FeatureCollection", features: [] });
         iconSrc.setData({ type: "FeatureCollection", features: [] });
+        map.jumpTo({ bearing: 0, pitch: 0 });
         return;
       }
-      const endPoint = destinationPoint(lat, lon, sunPos.azimuth, 120);
+      const bearing = (sunPos.azimuth + 180) % 360;
+      const pitch = Math.min(70, Math.max(15, 90 - sunPos.altitude));
+      map.jumpTo({ bearing, pitch });
+      const sunPoint = destinationPoint(lat, lon, sunPos.azimuth, 120);
       src.setData({
         type: "Feature",
         properties: {},
-        geometry: {
-          type: "LineString",
-          coordinates: [[lon, lat], endPoint],
-        },
+        geometry: { type: "LineString", coordinates: [[lon, lat], sunPoint] },
       });
       iconSrc.setData({
         type: "Feature",
         properties: {},
-        geometry: {
-          type: "Point",
-          coordinates: endPoint,
-        },
+        geometry: { type: "Point", coordinates: sunPoint },
       });
     };
     map.on("styledata", handler);
