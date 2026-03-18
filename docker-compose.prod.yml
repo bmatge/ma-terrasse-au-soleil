@@ -16,14 +16,58 @@ services:
       - ecosystem-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.terrasses.rule=Host(`terrasses.paris.matge.com`)"
+      # Domaine principal
+      - "traefik.http.routers.terrasses.rule=Host(`ausoleil.app`)"
       - "traefik.http.routers.terrasses.entrypoints=websecure"
       - "traefik.http.routers.terrasses.tls.certresolver=letsencrypt"
       - "traefik.http.services.terrasses.loadbalancer.server.port=80"
+      # Redirect ancien domaine → ausoleil.app
+      - "traefik.http.routers.terrasses-old.rule=Host(`terrasses.paris.matge.com`)"
+      - "traefik.http.routers.terrasses-old.entrypoints=websecure"
+      - "traefik.http.routers.terrasses-old.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.terrasses-old.middlewares=redirect-to-ausoleil"
+      - "traefik.http.routers.terrasses-old.service=terrasses"
+      - "traefik.http.middlewares.redirect-to-ausoleil.redirectregex.regex=^https://terrasses\\.paris\\.matge\\.com(.*)"
+      - "traefik.http.middlewares.redirect-to-ausoleil.redirectregex.replacement=https://ausoleil.app$${1}"
+      - "traefik.http.middlewares.redirect-to-ausoleil.redirectregex.permanent=true"
+      # matge.com (AdSense)
       - "traefik.http.routers.matge.rule=Host(`matge.com`)"
       - "traefik.http.routers.matge.entrypoints=websecure"
       - "traefik.http.routers.matge.tls.certresolver=letsencrypt"
       - "traefik.http.routers.matge.service=terrasses"
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: ${UMAMI_SECRET}
+    networks:
+      - default
+      - ecosystem-network
+    depends_on:
+      - umami-db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.umami.rule=Host(`stats.ausoleil.app`)"
+      - "traefik.http.routers.umami.entrypoints=websecure"
+      - "traefik.http.routers.umami.tls.certresolver=letsencrypt"
+      - "traefik.http.services.umami.loadbalancer.server.port=3000"
+
+  umami-db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   db:
     restart: always
@@ -42,3 +86,6 @@ services:
 networks:
   ecosystem-network:
     external: true
+
+volumes:
+  umami-db-data:
