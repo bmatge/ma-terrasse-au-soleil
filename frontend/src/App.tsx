@@ -914,6 +914,39 @@ export default function App() {
   );
 
   // ─── Bottom Nav ───
+  const NAV_ICONS: Record<string, (color: string) => React.ReactNode> = {
+    home: (c) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+        <path d="M9 21V12h6v9" />
+      </svg>
+    ),
+    search: (c) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="7" />
+        <line x1="16.5" y1="16.5" x2="21" y2="21" />
+      </svg>
+    ),
+    favorites: (c) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+      </svg>
+    ),
+    contact: (c) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <polyline points="2,4 12,13 22,4" />
+      </svg>
+    ),
+    about: (c) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <line x1="12" y1="8" x2="12" y2="8.5" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="12" y1="11" x2="12" y2="17" />
+      </svg>
+    ),
+  };
+
   const BottomNav = () => (
     <div style={{
       position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
@@ -923,24 +956,27 @@ export default function App() {
     }}>
       <div style={{ display: "flex", maxWidth: 860, width: "100%" }}>
         {([
-          { key: "home" as Page, label: "Accueil", emoji: "🏠" },
-          { key: "search" as Page, label: "Chercher", emoji: "🔍" },
-          { key: "favorites" as Page, label: "Favoris", emoji: "❤️" },
-          { key: "contact" as Page, label: "Contact", emoji: "✉️" },
-          { key: "about" as Page, label: "Infos", emoji: "ℹ️" },
-        ]).map(({ key, label, emoji }) => {
+          { key: "home" as Page, label: "Accueil" },
+          { key: "search" as Page, label: "Chercher" },
+          { key: "favorites" as Page, label: "Favoris" },
+          { key: "contact" as Page, label: "Contact" },
+          { key: "about" as Page, label: "Infos" },
+        ]).map(({ key, label }) => {
           const active = page === key;
+          const color = active ? t.accent : t.textMuted;
           return (
             <button
               key={key}
               onClick={() => navigate(key)}
               style={{
-                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
+                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
                 padding: "8px 0 10px", background: "none", border: "none", cursor: "pointer",
-                color: active ? t.accent : t.textMuted, fontFamily: F, fontSize: 10, fontWeight: active ? 600 : 400,
+                color, fontFamily: F, fontSize: 10, fontWeight: active ? 600 : 400,
+                opacity: active ? 1 : 0.65,
+                transition: "color 0.2s, opacity 0.2s",
               }}
             >
-              <span style={{ fontSize: 19, lineHeight: 1, opacity: active ? 1 : 0.5 }}>{emoji}</span>
+              {NAV_ICONS[key]?.(color)}
               {label}
             </button>
           );
