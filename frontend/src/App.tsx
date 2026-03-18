@@ -981,18 +981,20 @@ export default function App() {
             }} />
             <div style={{ display: "flex" }}>
               <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(254, 243, 199, 0.65)" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
                   <SunIcon size={18} color="#D97706" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#92400E", fontFamily: F }}>{kpi.sunCount}</span>
                 </div>
+                <div style={{ fontSize: 12, color: "#92400E", fontFamily: F }}>terrasse{kpi.sunCount !== "..." && Number(kpi.sunCount) > 1 ? "s" : ""}</div>
                 <div style={{ fontSize: 12, color: "#92400E", fontWeight: 600, fontFamily: F }}>au soleil</div>
               </div>
               <div style={{ width: 1, background: "rgba(0,0,0,0.08)" }} />
               <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(243, 244, 246, 0.65)" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
                   <ShadeIcon size={18} color="#6B7280" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#374151", fontFamily: F }}>{kpi.shadeCount}</span>
                 </div>
+                <div style={{ fontSize: 12, color: "#6B7280", fontFamily: F }}>terrasse{kpi.shadeCount !== "..." && Number(kpi.shadeCount) > 1 ? "s" : ""}</div>
                 <div style={{ fontSize: 12, color: "#374151", fontWeight: 600, fontFamily: F }}>à l'ombre</div>
               </div>
             </div>
