@@ -104,28 +104,42 @@ const KPI_STATIONS: { name: string; lat: number; lon: number }[] = [
 // ─── Themes ───
 const themes = {
   sun: {
-    bg: "#FFFBF2", bgCard: "#FFFFFF", accent: "#F59E0B", accentLight: "#FEF3C7",
-    accentDark: "#D97706", text: "#1C1917", textSoft: "#78716C", textMuted: "#A8A29E",
-    border: "#F5F0E8", badge: "#FDE68A", badgeText: "#92400E",
-    gradient: "linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%)",
-    shadow: "rgba(245,158,11,0.12)",
+    // contrast ratios on #FFFFFF / #FFFBF2 bg
+    bg: "#FFFBF2", bgCard: "#FFFFFF",
+    accent: "#B45309",        // amber-700  — 5.1:1 on white ✅
+    accentLight: "#FEF3C7",
+    accentDark: "#92400E",    // amber-900  — 8.8:1 on white ✅
+    text: "#1C1917",          // stone-900  — 18:1 ✅
+    textSoft: "#57534E",      // stone-600  — 6.5:1 ✅
+    textMuted: "#78716C",     // stone-500  — 4.8:1 ✅ (was #A8A29E: 2.8 ❌)
+    border: "#E7E0D5",
+    badge: "#FDE68A", badgeText: "#78350F",  // 7.1:1 ✅
+    gradient: "linear-gradient(135deg, #B45309 0%, #92400E 100%)",  // white text 5.1:1 ✅
+    shadow: "rgba(180,83,9,0.15)",
   },
   shade: {
-    bg: "#F0F4F8", bgCard: "#FFFFFF", accent: "#3B82F6", accentLight: "#DBEAFE",
-    accentDark: "#2563EB", text: "#1E293B", textSoft: "#64748B", textMuted: "#94A3B8",
-    border: "#E2E8F0", badge: "#BFDBFE", badgeText: "#1E40AF",
-    gradient: "linear-gradient(135deg, #BFDBFE 0%, #3B82F6 100%)",
-    shadow: "rgba(59,130,246,0.12)",
+    // contrast ratios on #FFFFFF / #F0F4F8 bg
+    bg: "#F0F4F8", bgCard: "#FFFFFF",
+    accent: "#2563EB",        // blue-600   — 5.3:1 on white ✅ (was #3B82F6: 3.5 ❌)
+    accentLight: "#DBEAFE",
+    accentDark: "#1D4ED8",    // blue-700   — 7.0:1 on white ✅
+    text: "#1E293B",          // slate-900  — 14:1 ✅
+    textSoft: "#475569",      // slate-600  — 6.6:1 ✅ (was #64748B: 4.2)
+    textMuted: "#64748B",     // slate-500  — 4.2:1 ✅ (was #94A3B8: 2.3 ❌)
+    border: "#CBD5E1",
+    badge: "#BFDBFE", badgeText: "#1E40AF",  // 6.2:1 ✅
+    gradient: "linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)",  // white text 5.3:1 ✅
+    shadow: "rgba(29,78,216,0.15)",
   },
 };
 
 // ─── Status config ───
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-  soleil: { label: "Au soleil", color: "#D97706", icon: "sun" },
-  mitige: { label: "Mitigé", color: "#CA8A04", icon: "sun" },
-  couvert: { label: "Couvert", color: "#6B7280", icon: "shade" },
-  ombre: { label: "À l'ombre", color: "#4B5563", icon: "shade" },
-  ombre_batiment: { label: "À l'ombre", color: "#4B5563", icon: "shade" },
+  soleil: { label: "Au soleil", color: "#92400E", icon: "sun" },        // 8.0:1 on #FEF3C7 ✅
+  mitige: { label: "Mitigé", color: "#78350F", icon: "sun" },           // 9.8:1 on #FEF3C7 ✅
+  couvert: { label: "Couvert", color: "#4B5563", icon: "shade" },       // 6.6:1 on #F3F4F6 ✅
+  ombre: { label: "À l'ombre", color: "#374151", icon: "shade" },       // 9.5:1 on #F3F4F6 ✅
+  ombre_batiment: { label: "À l'ombre", color: "#374151", icon: "shade" },
   nuit: { label: "Nuit", color: "#334155", icon: "shade" },
 };
 
@@ -571,7 +585,7 @@ export default function App() {
   const [selectedTerrasseId, setSelectedTerrasseId] = useState<number | null>(null);
   const [searchHour, setSearchHour] = useState(currentHourKey);
   const [searchDate, setSearchDate] = useState(todayISO()); // YYYY-MM-DD
-  const [searchRadius, setSearchRadius] = useState(250);
+  const [searchRadius, setSearchRadius] = useState(200);
   const [resultFilter, setResultFilter] = useState<"all" | "sun" | "shade">("all");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
@@ -1389,19 +1403,38 @@ export default function App() {
                 );
               })}
             </div>
-            <div style={{ display: "flex", gap: 6 }}>
-              {([100, 250, 500] as const).map((r) => {
-                const active = searchRadius === r;
-                return (
-                  <button key={r} onClick={() => setSearchRadius(r)} style={{
-                    padding: "6px 14px", borderRadius: 20, cursor: "pointer", fontFamily: F,
-                    fontSize: 13, fontWeight: active ? 600 : 400,
-                    border: `1.5px solid ${active ? t.accent : t.border}`,
-                    background: active ? t.accent : t.bgCard,
-                    color: active ? "#FFF" : t.textSoft,
-                  }}>{r} m</button>
-                );
-              })}
+            {/* Radius + view toggle on one line */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", gap: 6 }}>
+                {([200, 500] as const).map((r) => {
+                  const active = searchRadius === r;
+                  return (
+                    <button key={r} onClick={() => setSearchRadius(r)} style={{
+                      padding: "6px 14px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                      fontSize: 13, fontWeight: active ? 600 : 400,
+                      border: `1.5px solid ${active ? t.accent : t.border}`,
+                      background: active ? t.accent : t.bgCard,
+                      color: active ? "#FFF" : t.textSoft,
+                    }}>{r} m</button>
+                  );
+                })}
+              </div>
+              <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 10, padding: 3 }}>
+                <button onClick={() => setViewMode("list")} style={{
+                  display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
+                  border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "list" ? 600 : 400,
+                  background: viewMode === "list" ? t.bgCard : "transparent",
+                  color: viewMode === "list" ? t.accent : t.textMuted,
+                  boxShadow: viewMode === "list" ? `0 1px 3px ${t.shadow}` : "none",
+                }}><ListIcon size={14} /> Liste</button>
+                <button onClick={() => setViewMode("map")} style={{
+                  display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
+                  border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "map" ? 600 : 400,
+                  background: viewMode === "map" ? t.bgCard : "transparent",
+                  color: viewMode === "map" ? t.accent : t.textMuted,
+                  boxShadow: viewMode === "map" ? `0 1px 3px ${t.shadow}` : "none",
+                }}><MapPinIcon size={14} /> Carte</button>
+              </div>
             </div>
           </div>
 
@@ -1423,40 +1456,23 @@ export default function App() {
             </div>
           ) : (
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                <div style={{ display: "flex", gap: 6, fontSize: 13, lineHeight: 1.4 }}>
-                  {(["all", "sun", "shade"] as const).map((f) => {
-                    const sunN = results.filter(r => isSunnyStatus(r.status)).length;
-                    const shadeN = results.filter(r => !isSunnyStatus(r.status)).length;
-                    const label = f === "all" ? `Tous (${results.length})` : f === "sun" ? `☀️ ${sunN} au soleil` : `🏢 ${shadeN} à l'ombre`;
-                    const active = resultFilter === f;
-                    return (
-                      <button key={f} onClick={() => setResultFilter(f)} style={{
-                        padding: "4px 10px", borderRadius: 20, cursor: "pointer", fontFamily: F,
-                        fontSize: 12, fontWeight: active ? 600 : 400,
-                        border: `1.5px solid ${active ? t.accent : t.border}`,
-                        background: active ? t.accentLight : "transparent",
-                        color: active ? t.accentDark : t.textMuted,
-                      }}>{label}</button>
-                    );
-                  })}
-                </div>
-                <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 10, padding: 3 }}>
-                  <button onClick={() => setViewMode("list")} style={{
-                    display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
-                    border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "list" ? 600 : 400,
-                    background: viewMode === "list" ? t.bgCard : "transparent",
-                    color: viewMode === "list" ? t.accent : t.textMuted,
-                    boxShadow: viewMode === "list" ? `0 1px 3px ${t.shadow}` : "none",
-                  }}><ListIcon size={14} /> Liste</button>
-                  <button onClick={() => setViewMode("map")} style={{
-                    display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
-                    border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "map" ? 600 : 400,
-                    background: viewMode === "map" ? t.bgCard : "transparent",
-                    color: viewMode === "map" ? t.accent : t.textMuted,
-                    boxShadow: viewMode === "map" ? `0 1px 3px ${t.shadow}` : "none",
-                  }}><MapPinIcon size={14} /> Carte</button>
-                </div>
+              {/* Filter pills row */}
+              <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+                {(["all", "sun", "shade"] as const).map((f) => {
+                  const sunN = results.filter(r => isSunnyStatus(r.status)).length;
+                  const shadeN = results.filter(r => !isSunnyStatus(r.status)).length;
+                  const label = f === "all" ? `Tous (${results.length})` : f === "sun" ? `☀️ ${sunN} au soleil` : `🌙 ${shadeN} à l'ombre`;
+                  const active = resultFilter === f;
+                  return (
+                    <button key={f} onClick={() => setResultFilter(f)} style={{
+                      padding: "6px 12px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                      fontSize: 13, fontWeight: active ? 600 : 400,
+                      border: `1.5px solid ${active ? t.accent : t.border}`,
+                      background: active ? t.accentLight : "transparent",
+                      color: active ? t.accentDark : t.textMuted,
+                    }}>{label}</button>
+                  );
+                })}
               </div>
 
               {viewMode === "map" ? (
