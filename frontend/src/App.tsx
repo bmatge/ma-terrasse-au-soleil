@@ -947,11 +947,11 @@ export default function App() {
   if (page === "home") {
     return (
       <div style={{ ...wrap, position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: -120, right: -80, width: 300, height: 300, borderRadius: "50%", background: t.gradient, opacity: 0.12, filter: "blur(50px)" }} />
+        <img src="/logo.png" alt="" aria-hidden="true" style={{ position: "absolute", top: -20, right: -50, width: 260, height: 260, opacity: 0.09, pointerEvents: "none", userSelect: "none" }} />
         <div style={{ padding: "56px 24px 24px", position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <img src="/logo.png" alt="Terrasse au Soleil" style={{ width: 52, height: 52, borderRadius: 12, objectFit: "cover", boxShadow: `0 2px 8px ${t.shadow}` }} />
+              <img src="/logo.png" alt="Terrasse au Soleil" style={{ width: 56, height: 56 }} />
               <div>
                 <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
                 <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
