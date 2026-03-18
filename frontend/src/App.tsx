@@ -915,10 +915,10 @@ export default function App() {
       <div style={{ display: "flex", maxWidth: 860, width: "100%" }}>
         {([
           { key: "home" as Page, label: "Accueil", emoji: "🏠" },
-          { key: "search" as Page, label: "Recherche", emoji: "🔍" },
+          { key: "search" as Page, label: "Chercher", emoji: "🔍" },
           { key: "favorites" as Page, label: "Favoris", emoji: "❤️" },
           { key: "contact" as Page, label: "Contact", emoji: "✉️" },
-          { key: "about" as Page, label: "À propos", emoji: "ℹ️" },
+          { key: "about" as Page, label: "Infos", emoji: "ℹ️" },
         ]).map(({ key, label, emoji }) => {
           const active = page === key;
           return (
@@ -926,12 +926,12 @@ export default function App() {
               key={key}
               onClick={() => navigate(key)}
               style={{
-                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-                padding: "10px 0 12px", background: "none", border: "none", cursor: "pointer",
-                color: active ? t.accent : t.textMuted, fontFamily: F, fontSize: 11, fontWeight: active ? 600 : 400,
+                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
+                padding: "8px 0 10px", background: "none", border: "none", cursor: "pointer",
+                color: active ? t.accent : t.textMuted, fontFamily: F, fontSize: 10, fontWeight: active ? 600 : 400,
               }}
             >
-              <span style={{ fontSize: 22, lineHeight: 1, opacity: active ? 1 : 0.5 }}>{emoji}</span>
+              <span style={{ fontSize: 19, lineHeight: 1, opacity: active ? 1 : 0.5 }}>{emoji}</span>
               {label}
             </button>
           );
