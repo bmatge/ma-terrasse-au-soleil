@@ -99,7 +99,6 @@ const KPI_STATIONS: { name: string; lat: number; lon: number }[] = [
 ];
 
 // Pick a random station once per session
-const RANDOM_KPI_STATION = KPI_STATIONS[Math.floor(Math.random() * KPI_STATIONS.length)];
 
 // ─── Themes ───
 const themes = {
@@ -525,6 +524,7 @@ export default function App() {
   const [mode, setMode] = useState<Mode>("sun");
   const [page, setPage] = useState<Page>("home");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [kpiStationIndex, setKpiStationIndex] = useState(() => Math.floor(Math.random() * KPI_STATIONS.length));
 
   // Search state
   const [searchType, setSearchType] = useState<SearchType>("address");
@@ -582,10 +582,11 @@ export default function App() {
     enabled: !!selectedTerrasseId,
   });
 
-  // Home KPIs — random metro station per session
+  // Home KPIs — navigable metro station
+  const kpiStation = KPI_STATIONS[kpiStationIndex];
   const { data: homeData } = useQuery({
-    queryKey: ["home-nearby", RANDOM_KPI_STATION.name, todayISO(), currentHourKey()],
-    queryFn: () => getNearby(RANDOM_KPI_STATION.lat, RANDOM_KPI_STATION.lon, `${todayISO()}T${currentHourKey()}:00`, 500),
+    queryKey: ["home-nearby", kpiStation.name, todayISO(), currentHourKey()],
+    queryFn: () => getNearby(kpiStation.lat, kpiStation.lon, `${todayISO()}T${currentHourKey()}:00`, 500),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -603,7 +604,7 @@ export default function App() {
 
   const kpi = useMemo(() => {
     const hour = currentHourKey();
-    const station = RANDOM_KPI_STATION.name;
+    const station = kpiStation.name;
     if (!homeData) return { sunCount: "...", shadeCount: "...", hour, station };
     const sunCount = homeData.terrasses.filter((tr) => isSunnyStatus(tr.status)).length;
     const shadeCount = homeData.terrasses.length - sunCount;
@@ -949,11 +950,11 @@ export default function App() {
       <div style={{ ...wrap, position: "relative", overflow: "hidden" }}>
         <div style={{ padding: "56px 24px 24px", position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <span style={{ fontSize: 48, lineHeight: 1 }}>{mode === "sun" ? "☀️" : "☁️"}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 36, lineHeight: 1 }}>{mode === "sun" ? "☀️" : "☁️"}</span>
               <div>
-                <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
-                <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
+                <div style={{ fontSize: 22, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
                   {mode === "sun" ? "au soleil" : "à l'ombre"}
                 </div>
               </div>
@@ -962,6 +963,15 @@ export default function App() {
           </div>
 
           {/* KPI */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <button onClick={() => setKpiStationIndex((i) => (i - 1 + KPI_STATIONS.length) % KPI_STATIONS.length)}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: t.textMuted, padding: "4px 8px" }}>‹</button>
+            <span style={{ fontFamily: F, fontSize: 13, color: t.textSoft, fontWeight: 500 }}>
+              À {kpi.station} · {kpi.hour}
+            </span>
+            <button onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: t.textMuted, padding: "4px 8px" }}>›</button>
+          </div>
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
             <img src="/logo.png" alt="" aria-hidden="true" style={{
               position: "absolute", top: "50%", left: "50%",
@@ -976,7 +986,6 @@ export default function App() {
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#92400E", fontFamily: F }}>{kpi.sunCount}</span>
                 </div>
                 <div style={{ fontSize: 12, color: "#92400E", fontWeight: 600, fontFamily: F }}>au soleil</div>
-                <div style={{ fontSize: 10, color: "#B45309", marginTop: 2, fontFamily: F }}>à {kpi.station} ({kpi.hour})</div>
               </div>
               <div style={{ width: 1, background: "rgba(0,0,0,0.08)" }} />
               <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(243, 244, 246, 0.65)" }}>
@@ -985,7 +994,6 @@ export default function App() {
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#374151", fontFamily: F }}>{kpi.shadeCount}</span>
                 </div>
                 <div style={{ fontSize: 12, color: "#374151", fontWeight: 600, fontFamily: F }}>à l'ombre</div>
-                <div style={{ fontSize: 10, color: "#6B7280", marginTop: 2, fontFamily: F }}>à {kpi.station} ({kpi.hour})</div>
               </div>
             </div>
           </div>
