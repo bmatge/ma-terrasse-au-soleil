@@ -27,7 +27,7 @@ interface FavTerrasse {
   adresse: string | null;
 }
 
-type Page = "home" | "search" | "results" | "detail" | "favorites";
+type Page = "home" | "search" | "results" | "detail" | "favorites" | "about";
 type Mode = "sun" | "shade";
 type ViewMode = "list" | "map";
 type SearchType = "address" | "terrasse" | "metro";
@@ -193,6 +193,11 @@ const SearchIcon = ({ size = 22, color = "currentColor" }: { size?: number; colo
 const TrainIcon = ({ size = 16, color = "currentColor" }: { size?: number; color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="4" y="3" width="16" height="16" rx="2" /><path d="M4 11h16" /><path d="M12 3v8" /><circle cx="8" cy="15" r="1" fill={color} /><circle cx="16" cy="15" r="1" fill={color} /><path d="M8 19l-2 3" /><path d="M16 19l2 3" />
+  </svg>
+);
+const InfoIcon = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
   </svg>
 );
 const CoffeeIcon = ({ size = 16, color = "currentColor" }: { size?: number; color?: string; }) => (
@@ -646,6 +651,8 @@ export default function App() {
       url = "/search";
     } else if (dest === "favorites") {
       url = "/favorites";
+    } else if (dest === "about") {
+      url = "/about";
     } else if (dest === "results") {
       const sp = new URLSearchParams();
       if (lat != null) sp.set("lat", String(lat));
@@ -693,6 +700,8 @@ export default function App() {
       }
     } else if (path === "/favorites") {
       setPage("favorites");
+    } else if (path === "/about") {
+      setPage("about");
     }
     // else: home (default)
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -865,6 +874,7 @@ export default function App() {
           { key: "home" as Page, label: "Accueil" },
           { key: "search" as Page, label: "Recherche" },
           { key: "favorites" as Page, label: "Favoris" },
+          { key: "about" as Page, label: "À propos" },
         ]).map(({ key, label }) => {
           const active = page === key;
           const color = active ? t.accent : t.textMuted;
@@ -881,6 +891,7 @@ export default function App() {
               {key === "home" && <HomeIcon size={22} color={color} />}
               {key === "search" && <SearchIcon size={22} color={color} />}
               {key === "favorites" && <HeartIcon filled={active} size={22} />}
+              {key === "about" && <InfoIcon size={22} color={color} />}
               {label}
             </button>
           );
@@ -1281,20 +1292,26 @@ export default function App() {
           ) : (
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                <span style={{ fontSize: 13, color: t.textMuted }}>
-                  {results.length} terrasse{results.length > 1 ? "s" : ""} trouvée{results.length > 1 ? "s" : ""}
-                </span>
-                <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 8, padding: 2 }}>
+                <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.4 }}>
+                  <span>☀️ {results.filter(r => isSunnyStatus(r.status)).length} au soleil</span>
+                  <span style={{ margin: "0 6px", color: t.border }}>·</span>
+                  <span>🏢 {results.filter(r => !isSunnyStatus(r.status)).length} à l'ombre</span>
+                </div>
+                <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 10, padding: 3 }}>
                   <button onClick={() => setViewMode("list")} style={{
-                    display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 30, borderRadius: 6,
-                    border: "none", cursor: "pointer", background: viewMode === "list" ? t.bgCard : "transparent",
-                    color: viewMode === "list" ? t.accent : t.textMuted, boxShadow: viewMode === "list" ? `0 1px 3px ${t.shadow}` : "none",
-                  }} title="Vue liste"><ListIcon size={16} /></button>
+                    display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
+                    border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "list" ? 600 : 400,
+                    background: viewMode === "list" ? t.bgCard : "transparent",
+                    color: viewMode === "list" ? t.accent : t.textMuted,
+                    boxShadow: viewMode === "list" ? `0 1px 3px ${t.shadow}` : "none",
+                  }}><ListIcon size={14} /> Liste</button>
                   <button onClick={() => setViewMode("map")} style={{
-                    display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 30, borderRadius: 6,
-                    border: "none", cursor: "pointer", background: viewMode === "map" ? t.bgCard : "transparent",
-                    color: viewMode === "map" ? t.accent : t.textMuted, boxShadow: viewMode === "map" ? `0 1px 3px ${t.shadow}` : "none",
-                  }} title="Vue carte"><MapPinIcon size={16} /></button>
+                    display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
+                    border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "map" ? 600 : 400,
+                    background: viewMode === "map" ? t.bgCard : "transparent",
+                    color: viewMode === "map" ? t.accent : t.textMuted,
+                    boxShadow: viewMode === "map" ? `0 1px 3px ${t.shadow}` : "none",
+                  }}><MapPinIcon size={14} /> Carte</button>
                 </div>
               </div>
 
@@ -1491,6 +1508,63 @@ export default function App() {
               ))}
             </div>
           )}
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  // ─── ABOUT ───
+  if (page === "about") {
+    const section = (title: string, content: React.ReactNode) => (
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontFamily: F, fontWeight: 700, fontSize: 15, color: t.text, marginBottom: 8 }}>{title}</div>
+        <div style={{ fontFamily: F, fontSize: 14, color: t.textSoft, lineHeight: 1.6 }}>{content}</div>
+      </div>
+    );
+    return (
+      <div style={wrap}>
+        <Nav back title="À propos" />
+        <div style={{ padding: "20px 24px 100px" }}>
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <div style={{ fontSize: 48, marginBottom: 8 }}>☀️</div>
+            <div style={{ fontFamily: F, fontWeight: 700, fontSize: 20, color: t.text }}>Au Soleil</div>
+            <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginTop: 4 }}>Trouve une terrasse ensoleillée à Paris</div>
+          </div>
+
+          {section("Développée avec amour", <>
+            Cette app est un projet perso, conçue pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
+            <br /><br />
+            Elle est entièrement open source et auto-hébergée.
+          </>)}
+
+          {section("Comment ça marche ?", <>
+            Pour chaque terrasse, on calcule un <strong>profil d'horizon</strong> à partir des bâtiments environnants (jusqu'à 200m). On combine ensuite la position du soleil (calculée à la minute près) avec ce profil pour savoir si la terrasse est ensoleillée, à l'ombre ou mitoyenne.
+            <br /><br />
+            Les données de bâtiments viennent de la <strong>BD TOPO® IGN</strong> (bâtiments 3D sur Paris). La météo vient de <strong>Open-Meteo</strong> (gratuit, sans clé).
+          </>)}
+
+          {section("Pourquoi tous les bars n'y sont pas ?", <>
+            Les terrasses référencées proviennent des <strong>données ouvertes de la Ville de Paris</strong> (autorisations de terrasses). Seules les « terrasses ouvertes » y figurent — les établissements sans autorisation déclarée ou dont les données sont incomplètes n'apparaissent pas.
+          </>)}
+
+          {section("Pourquoi seulement Paris ?", <>
+            C'est un MVP ! Paris est couverte par la BD TOPO IGN avec une bonne précision 3D et par les données ouvertes de terrasses. D'autres villes pourraient suivre si le projet prend de l'ampleur.
+          </>)}
+
+          {section("Technologies", <>
+            <strong>Backend :</strong> Python · FastAPI · PostGIS<br />
+            <strong>Frontend :</strong> React · TypeScript · MapLibre GL<br />
+            <strong>Infra :</strong> Docker · Traefik · VPS OVH<br />
+            <strong>Données :</strong> BD TOPO IGN · Open Data Paris · Open-Meteo
+          </>)}
+
+          <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20, textAlign: "center" }}>
+            <a href="https://github.com/bmatge/ma-terrasse-au-soleil" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: F, fontSize: 13, color: t.accent, textDecoration: "none" }}>
+              Code source sur GitHub →
+            </a>
+          </div>
         </div>
         <BottomNav />
       </div>
