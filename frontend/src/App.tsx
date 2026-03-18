@@ -20,6 +20,10 @@ import { useDebounce } from "./hooks/useDebounce";
 
 setWorkerUrl(cspWorkerUrl);
 
+// ─── Easter egg audio (preloaded at module level to avoid GC abort) ───
+const easterEggAudio = new Audio("/ausoleil.mp3");
+easterEggAudio.preload = "auto";
+
 // ─── Types ───
 interface FavTerrasse {
   id: number;
@@ -1113,8 +1117,8 @@ export default function App() {
                     setSelectedTerrasseId(null);
                     setSearchCoords(null);
                     if (v.toLowerCase().replace(/\s/g, "") === "ausoleil") {
-                      const a = new Audio("/ausoleil.mp3");
-                      a.play().then(() => console.log("🎵 playing")).catch((err) => console.warn("audio blocked:", err));
+                      easterEggAudio.currentTime = 0;
+                      easterEggAudio.play().catch((err) => console.warn("audio blocked:", err));
                     }
                   }}
                   onFocus={() => setDropdownOpen(true)}
