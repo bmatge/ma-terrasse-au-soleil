@@ -22,7 +22,7 @@ async def streetview(
         resp = await client.get(STREETVIEW_URL, params={
             "size": "600x400",
             "location": f"{lat},{lon}",
-            "fov": 90,
+            "fov": 120,
             "key": settings.GOOGLE_STREETVIEW_KEY,
         })
 
