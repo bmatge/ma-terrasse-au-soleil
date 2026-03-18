@@ -384,16 +384,22 @@ function ResultsMap({
   terrasses,
   mode,
   onTerrasseClick,
+  onCenterChange,
 }: {
   terrasses: NearbyTerrasse[];
   mode: Mode;
   onTerrasseClick: (t: NearbyTerrasse) => void;
+  onCenterChange?: (lat: number, lon: number) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const onClickRef = useRef(onTerrasseClick);
   onClickRef.current = onTerrasseClick;
+  const onCenterChangeRef = useRef(onCenterChange);
+  onCenterChangeRef.current = onCenterChange;
+  const initialFitRef = useRef(false);
+  const moveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [is3D, setIs3D] = useState(false);
 
   useEffect(() => {
@@ -412,8 +418,17 @@ function ResultsMap({
       },
     });
     map.addControl(new maplibregl.NavigationControl(), "top-right");
+    // Update search center when user pans/zooms (ignore programmatic moves)
+    map.on("moveend", (e) => {
+      if (!e.originalEvent) return;
+      if (moveTimerRef.current) clearTimeout(moveTimerRef.current);
+      moveTimerRef.current = setTimeout(() => {
+        const c = map.getCenter();
+        onCenterChangeRef.current?.(c.lat, c.lng);
+      }, 400);
+    });
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
+    return () => { map.remove(); mapRef.current = null; initialFitRef.current = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -437,12 +452,16 @@ function ResultsMap({
       el.addEventListener("click", () => onClickRef.current(terrasse));
       markersRef.current.push(marker);
     });
-    if (terrasses.length > 1) {
-      const bounds = new maplibregl.LngLatBounds();
-      terrasses.forEach((t) => bounds.extend([t.lon, t.lat]));
-      map.fitBounds(bounds, { padding: 50, maxZoom: 15 });
-    } else if (terrasses.length === 1) {
-      map.flyTo({ center: [terrasses[0].lon, terrasses[0].lat], zoom: 15 });
+    // Only auto-fit on the first load; after user pans we keep their viewport
+    if (!initialFitRef.current && terrasses.length > 0) {
+      initialFitRef.current = true;
+      if (terrasses.length > 1) {
+        const bounds = new maplibregl.LngLatBounds();
+        terrasses.forEach((t) => bounds.extend([t.lon, t.lat]));
+        map.fitBounds(bounds, { padding: 50, maxZoom: 15 });
+      } else {
+        map.flyTo({ center: [terrasses[0].lon, terrasses[0].lat], zoom: 15 });
+      }
     }
   }, [terrasses, mode]);
 
@@ -1276,7 +1295,7 @@ export default function App() {
               </div>
 
               {viewMode === "map" ? (
-                <ResultsMap terrasses={results} mode={mode} onTerrasseClick={openDetail} />
+                <ResultsMap terrasses={results} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
               ) : (
                 <div className="terrasse-grid">
                   {results.map((tr) => <TerrasseCard key={tr.id} terrasse={tr} />)}
