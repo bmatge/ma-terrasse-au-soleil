@@ -20,8 +20,6 @@ import { useDebounce } from "./hooks/useDebounce";
 
 setWorkerUrl(cspWorkerUrl);
 
-// ─── Easter egg audio (module-level ref to prevent GC abort) ───
-const easterEggAudio = new Audio("/ausoleil.mp3");
 
 // ─── Types ───
 interface FavTerrasse {
@@ -540,6 +538,7 @@ export default function App() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
   const [shared, setShared] = useState(false);
+  const [playEasterEgg, setPlayEasterEgg] = useState(false);
 
   // Favorites
   const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
@@ -1116,8 +1115,7 @@ export default function App() {
                     setSelectedTerrasseId(null);
                     setSearchCoords(null);
                     if (v.toLowerCase().replace(/\s/g, "") === "ausoleil") {
-                      easterEggAudio.currentTime = 0;
-                      easterEggAudio.play().catch((err) => console.warn("audio blocked:", err));
+                      setPlayEasterEgg(true);
                     }
                   }}
                   onFocus={() => setDropdownOpen(true)}
@@ -1249,6 +1247,7 @@ export default function App() {
               : mode === "sun" ? "☀️  Trouver du soleil" : "🌤️  Trouver de l'ombre"}
           </button>
         </div>
+        {playEasterEgg && <audio src="/ausoleil.mp3" autoPlay onEnded={() => setPlayEasterEgg(false)} style={{ display: "none" }} />}
         <BottomNav />
       </div>
     );
