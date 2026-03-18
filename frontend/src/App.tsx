@@ -964,10 +964,10 @@ export default function App() {
           {/* KPI */}
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
             <img src="/logo.png" alt="" aria-hidden="true" style={{
-              position: "absolute", top: 0, left: 0,
-              width: "100%", height: "100%",
-              objectFit: "cover", objectPosition: "center",
-              opacity: 0.28, pointerEvents: "none", userSelect: "none",
+              position: "absolute", top: "50%", left: "50%",
+              transform: "translate(-50%, -50%)",
+              height: "200%", width: "auto",
+              opacity: 0.45, pointerEvents: "none", userSelect: "none",
             }} />
             <div style={{ display: "flex" }}>
               <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(254, 243, 199, 0.65)" }}>
