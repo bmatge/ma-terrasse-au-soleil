@@ -1534,8 +1534,17 @@ export default function App() {
             <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginTop: 4 }}>Trouve une terrasse ensoleillée à Paris</div>
           </div>
 
+          <div style={{ background: t.bgCard, borderRadius: 16, padding: "20px 18px", marginBottom: 28, border: `1px solid ${t.border}` }}>
+            <p style={{ fontFamily: F, fontSize: 15, color: t.text, lineHeight: 1.8, margin: 0 }}>
+              🫶 Fait avec amour par des gens qui en avaient marre de se poser à l'ombre par accident.<br />
+              📍 Paris uniquement <span style={{ color: t.textMuted }}>(pour l'instant)</span>.<br />
+              🍺 L'idée : tu sors du boulot, tu veux un verre au soleil, tu ouvres l'app, boom, t'as ta terrasse.<br />
+              ⛱️ Ou alors t'en peux plus de la chaleur et tu veux de l'ombre. On gère aussi.
+            </p>
+          </div>
+
           {section("Développée avec amour et IA", <>
-            Cette app est un projet imaginé par Virginie et réalisé par Claude et Bertrand, conçue pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
+            Un projet imaginé par Virginie, réalisé par Claude et Bertrand — pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
             <br /><br />
             Elle est entièrement open source et auto-hébergée.
           </>)}
