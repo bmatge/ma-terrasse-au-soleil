@@ -1534,40 +1534,30 @@ export default function App() {
             <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginTop: 4 }}>Trouve une terrasse ensoleillée à Paris</div>
           </div>
 
-          <div style={{ background: t.bgCard, borderRadius: 16, padding: "20px 18px", marginBottom: 28, border: `1px solid ${t.border}` }}>
-            <p style={{ fontFamily: F, fontSize: 15, color: t.text, lineHeight: 1.8, margin: 0 }}>
-              🫶 Fait avec amour par des gens qui en avaient marre de se poser à l'ombre par accident.<br />
-              📍 Paris uniquement <span style={{ color: t.textMuted }}>(pour l'instant)</span>.<br />
-              🍺 L'idée : tu sors du boulot, tu veux un verre au soleil, tu ouvres l'app, boom, t'as ta terrasse.<br />
-              ⛱️ Ou alors t'en peux plus de la chaleur et tu veux de l'ombre. On gère aussi.
-            </p>
-          </div>
-
-          {section("Développée avec amour et IA", <>
-            Un projet imaginé par Virginie, réalisé par Claude et Bertrand — pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
-            <br /><br />
-            Elle est entièrement open source et auto-hébergée.
+          {section("🍺 Le concept", <>
+            Tu sors du boulot, tu veux un verre au soleil — mais tu sais jamais si ta terrasse préférée est à l'ombre à cette heure-là. On a tous vécu la déception.<br /><br />
+            <em>Au Soleil</em> répond à cette question : <strong>est-ce que ma terrasse est au soleil en ce moment ?</strong> Et pour les jours de canicule, on gère aussi le mode ombre. ⛱️
           </>)}
 
-          {section("Comment ça marche ?", <>
-            Pour chaque terrasse, on calcule un <strong>profil d'horizon</strong> à partir des bâtiments environnants (jusqu'à 200m). On combine ensuite la position du soleil (calculée à la minute près) avec ce profil pour savoir si la terrasse est ensoleillée, à l'ombre ou mitoyenne.
-            <br /><br />
-            Les données de bâtiments viennent de la <strong>BD TOPO® IGN</strong> (bâtiments 3D sur Paris). La météo vient de <strong>Open-Meteo</strong> (gratuit, sans clé).
+          {section("🔭 Comment ça marche ?", <>
+            Pour chaque terrasse, on calcule un <strong>profil d'horizon</strong> à partir des bâtiments environnants (jusqu'à 200m de rayon). On combine ensuite la position du soleil — calculée à la minute près — avec ce profil pour déterminer si la terrasse est ensoleillée, à l'ombre ou entre les deux.<br /><br />
+            Les données de bâtiments viennent de la <strong>BD TOPO® IGN</strong> (bâtiments 3D sur Paris). La météo vient d'<strong>Open-Meteo</strong> (gratuit, sans clé).
           </>)}
 
-          {section("Pourquoi tous les bars n'y sont pas ?", <>
-            Les terrasses référencées proviennent des <strong>données ouvertes de la Ville de Paris</strong> (autorisations de terrasses). Seules les « terrasses ouvertes » y figurent — les établissements sans autorisation déclarée ou dont les données sont incomplètes n'apparaissent pas.
+          {section("🗺️ Pourquoi seulement Paris ?", <>
+            Paris est couverte par la BD TOPO IGN avec une bonne précision 3D et par les données ouvertes de terrasses — c'est le combo parfait pour démarrer. D'autres villes pourraient suivre si le projet prend de l'ampleur. 📍
           </>)}
 
-          {section("Pourquoi seulement Paris ?", <>
-            C'est un MVP ! Paris est couverte par la BD TOPO IGN avec une bonne précision 3D et par les données ouvertes de terrasses. D'autres villes pourraient suivre si le projet prend de l'ampleur.
+          {section("🤔 Pourquoi mon bar préféré n'y est pas ?", <>
+            Les terrasses référencées viennent des <strong>données ouvertes de la Ville de Paris</strong> (autorisations de terrasses). Seules les « terrasses ouvertes » officiellement déclarées y figurent. Si ton bar n'est pas là, c'est probablement qu'il n'a pas d'autorisation enregistrée — pas qu'il est nul.
           </>)}
 
-          {section("Technologies", <>
+          {section("🛠️ Technologies", <>
             <strong>Backend :</strong> Python · FastAPI · PostGIS<br />
             <strong>Frontend :</strong> React · TypeScript · MapLibre GL<br />
             <strong>Infra :</strong> Docker · Traefik · VPS OVH<br />
-            <strong>Données :</strong> BD TOPO IGN · Open Data Paris · Open-Meteo
+            <strong>Données :</strong> BD TOPO IGN · Open Data Paris · Open-Meteo<br /><br />
+            Fait avec amour 🫶 par Virginie, Bertrand et Claude.
           </>)}
 
           <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20, textAlign: "center" }}>
