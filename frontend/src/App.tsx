@@ -845,6 +845,7 @@ export default function App() {
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", position: "sticky", top: 0, zIndex: 10, background: t.bg, borderBottom: `1px solid ${t.border}` }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {back && <button onClick={goBack} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: t.accent }}><BackIcon /></button>}
+        <img src="/logo.png" alt="" style={{ width: 22, height: 22, borderRadius: 5, objectFit: "cover" }} />
         {title && <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: t.text }}>{title}</span>}
       </div>
       <ModeToggle />
@@ -938,10 +939,13 @@ export default function App() {
         <div style={{ position: "absolute", top: -120, right: -80, width: 300, height: 300, borderRadius: "50%", background: t.gradient, opacity: 0.12, filter: "blur(50px)" }} />
         <div style={{ padding: "56px 24px 24px", position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }}>
-            <div>
-              <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
-              <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
-                {mode === "sun" ? "au soleil" : "à l'ombre"}
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <img src="/logo.png" alt="Terrasse au Soleil" style={{ width: 52, height: 52, borderRadius: 12, objectFit: "cover", boxShadow: `0 2px 8px ${t.shadow}` }} />
+              <div>
+                <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
+                <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
+                  {mode === "sun" ? "au soleil" : "à l'ombre"}
+                </div>
               </div>
             </div>
             <ModeToggle />
