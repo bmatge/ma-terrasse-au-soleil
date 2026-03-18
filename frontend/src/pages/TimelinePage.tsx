@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getTimeline } from "../api/terrasses";
 import Timeline from "../components/Timeline";
 import SunMap from "../components/SunMap";
+import { track } from "../analytics";
 
 function currentTimeRounded(): string {
   const now = new Date();
@@ -29,7 +30,9 @@ export default function TimelinePage() {
   function changeDate(offset: number) {
     const current = dateParam ? new Date(dateParam) : new Date();
     current.setDate(current.getDate() + offset);
-    setSearchParams({ date: current.toISOString().split("T")[0] });
+    const newDate = current.toISOString().split("T")[0];
+    track("date_changee", { offset, date: newDate });
+    setSearchParams({ date: newDate });
   }
 
   if (isLoading) {

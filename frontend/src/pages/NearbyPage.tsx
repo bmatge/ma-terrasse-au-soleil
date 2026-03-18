@@ -5,6 +5,7 @@ import { getNearby } from "../api/terrasses";
 import Map from "../components/Map";
 import TerrasseCard from "../components/TerrasseCard";
 import TimeSlider from "../components/TimeSlider";
+import { track } from "../analytics";
 
 function currentTime(): string {
   const now = new Date();
@@ -63,6 +64,7 @@ export default function NearbyPage() {
   );
 
   function handleTerrasseClick(id: number) {
+    track("terrasse_vue", { id, source: "carte" });
     navigate(`/terrasse/${id}`);
   }
 

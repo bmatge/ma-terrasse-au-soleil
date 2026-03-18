@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../hooks/useDebounce";
 import { searchTerrasses, geocode } from "../api/terrasses";
 import type { TerrasseSearchResult, GeocodeResult } from "../api/types";
+import { track } from "../analytics";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
@@ -42,12 +43,14 @@ export default function SearchBar() {
   const showDropdown = open && debouncedQuery.length >= 2;
 
   function selectTerrasse(t: TerrasseSearchResult) {
+    track("terrasse_selectionnee", { nom: t.nom, source: "recherche" });
     setOpen(false);
     setQuery(t.nom);
     navigate(`/terrasse/${t.id}`);
   }
 
   function selectAddress(a: GeocodeResult) {
+    track("adresse_selectionnee", { label: a.label });
     setOpen(false);
     setQuery(a.label);
     navigate(`/nearby?lat=${a.lat}&lon=${a.lon}`);

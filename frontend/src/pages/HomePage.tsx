@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
+import { track } from "../analytics";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -15,13 +16,16 @@ export default function HomePage() {
 
     setGeoLoading(true);
     setGeoError(null);
+    track("geolocalisation_demandee");
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        track("geolocalisation_accordee");
         setGeoLoading(false);
         navigate(`/nearby?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
       },
       (err) => {
+        track("geolocalisation_refusee", { code: err.code });
         setGeoLoading(false);
         setGeoError(
           err.code === 1
