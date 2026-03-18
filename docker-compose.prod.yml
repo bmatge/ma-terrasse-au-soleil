@@ -37,7 +37,7 @@ services:
       - "traefik.http.routers.matge.service=terrasses"
 
   umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
+    image: umamisoftware/umami:postgresql-latest
     restart: always
     environment:
       DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
