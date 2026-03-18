@@ -153,11 +153,7 @@ const BackIcon = () => (
     <polyline points="15 18 9 12 15 6" />
   </svg>
 );
-const ShareIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" />
-  </svg>
-);
+
 const CrosshairIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <circle cx="12" cy="12" r="8" /><line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" />
@@ -178,26 +174,6 @@ const ListIcon = ({ size = 18 }: { size?: number }) => (
 const MapPinIcon = ({ size = 18, color = "currentColor" }: { size?: number; color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-  </svg>
-);
-const HomeIcon = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
-  </svg>
-);
-const SearchIcon = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
-    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-const TrainIcon = ({ size = 16, color = "currentColor" }: { size?: number; color?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="4" y="3" width="16" height="16" rx="2" /><path d="M4 11h16" /><path d="M12 3v8" /><circle cx="8" cy="15" r="1" fill={color} /><circle cx="16" cy="15" r="1" fill={color} /><path d="M8 19l-2 3" /><path d="M16 19l2 3" />
-  </svg>
-);
-const InfoIcon = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
   </svg>
 );
 const CoffeeIcon = ({ size = 16, color = "currentColor" }: { size?: number; color?: string; }) => (
@@ -874,13 +850,12 @@ export default function App() {
     }}>
       <div style={{ display: "flex", maxWidth: 860, width: "100%" }}>
         {([
-          { key: "home" as Page, label: "Accueil" },
-          { key: "search" as Page, label: "Recherche" },
-          { key: "favorites" as Page, label: "Favoris" },
-          { key: "about" as Page, label: "À propos" },
-        ]).map(({ key, label }) => {
+          { key: "home" as Page, label: "Accueil", emoji: "🏠" },
+          { key: "search" as Page, label: "Recherche", emoji: "🔍" },
+          { key: "favorites" as Page, label: "Favoris", emoji: "❤️" },
+          { key: "about" as Page, label: "À propos", emoji: "ℹ️" },
+        ]).map(({ key, label, emoji }) => {
           const active = page === key;
-          const color = active ? t.accent : t.textMuted;
           return (
             <button
               key={key}
@@ -888,13 +863,10 @@ export default function App() {
               style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
                 padding: "10px 0 12px", background: "none", border: "none", cursor: "pointer",
-                color, fontFamily: F, fontSize: 11, fontWeight: active ? 600 : 400,
+                color: active ? t.accent : t.textMuted, fontFamily: F, fontSize: 11, fontWeight: active ? 600 : 400,
               }}
             >
-              {key === "home" && <HomeIcon size={22} color={color} />}
-              {key === "search" && <SearchIcon size={22} color={color} />}
-              {key === "favorites" && <HeartIcon filled={active} size={22} />}
-              {key === "about" && <InfoIcon size={22} color={color} />}
+              <span style={{ fontSize: 22, lineHeight: 1, opacity: active ? 1 : 0.5 }}>{emoji}</span>
               {label}
             </button>
           );
@@ -1002,8 +974,8 @@ export default function App() {
             </div>
           </div>
 
-          <p style={{ fontSize: 17, color: t.textSoft, fontWeight: 300, lineHeight: 1.6, marginBottom: 36, maxWidth: 300 }}>
-            {mode === "sun" ? "Trouve la terrasse parfaite pour profiter du soleil parisien." : "Trouve un coin d'ombre frais pour souffler un peu."}
+          <p style={{ fontSize: 17, color: t.textSoft, fontWeight: 300, fontStyle: "italic", lineHeight: 1.6, marginBottom: 36, maxWidth: 300 }}>
+            {mode === "sun" ? "Trouve la terrasse parfaite pour profiter du soleil parisien ☀️" : "Trouve un coin d'ombre frais pour souffler un peu 🌥️"}
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 36 }}>
@@ -1014,7 +986,7 @@ export default function App() {
               color: "#FFF", fontSize: 16, fontWeight: 600, fontFamily: F,
               boxShadow: `0 4px 20px ${t.shadow}`, opacity: geoLocating ? 0.7 : 1,
             }}>
-              {geoLocating ? <div style={{ width: 18, height: 18, border: "2px solid #FFF", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} /> : <CrosshairIcon size={20} />}
+              {geoLocating ? <div style={{ width: 18, height: 18, border: "2px solid #FFF", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} /> : <span>📍</span>}
               {geoLocating ? "Localisation..." : "Autour de moi"}
             </button>
             <button onClick={() => navigate("search")} style={{
@@ -1023,7 +995,7 @@ export default function App() {
               cursor: "pointer", background: "transparent", color: t.accent,
               fontSize: 16, fontWeight: 600, fontFamily: F,
             }}>
-              Choisir un lieu
+              🔍 Choisir un lieu
             </button>
           </div>
 
@@ -1062,10 +1034,10 @@ export default function App() {
       (searchType === "metro" && filteredMetro.length > 0);
     const canSearch = !!(selectedTerrasseId || searchCoords);
 
-    const searchTypeTabs: { key: SearchType; label: string; icon: typeof MapPinIcon }[] = [
-      { key: "address", label: "Adresse", icon: MapPinIcon },
-      { key: "terrasse", label: "Terrasse", icon: CoffeeIcon },
-      { key: "metro", label: "Métro", icon: TrainIcon },
+    const searchTypeTabs: { key: SearchType; label: string; emoji: string }[] = [
+      { key: "address", label: "Adresse", emoji: "📍" },
+      { key: "terrasse", label: "Terrasse", emoji: "🍺" },
+      { key: "metro", label: "Métro", emoji: "🚇" },
     ];
 
     const placeholders: Record<SearchType, string> = {
@@ -1081,7 +1053,7 @@ export default function App() {
 
           {/* Search type tabs */}
           <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
-            {searchTypeTabs.map(({ key, label, icon: Icon }) => {
+            {searchTypeTabs.map(({ key, label, emoji }) => {
               const active = searchType === key;
               return (
                 <button key={key} onClick={() => { setSearchType(key); setSearchQuery(""); setDropdownOpen(false); setSelectedTerrasseId(null); setSearchCoords(null); }}
@@ -1092,7 +1064,7 @@ export default function App() {
                     fontFamily: F, fontSize: 13, fontWeight: active ? 600 : 400,
                     color: active ? t.accentDark : t.textSoft, transition: "all 0.2s",
                   }}>
-                  <Icon size={14} color={active ? t.accentDark : t.textMuted} />
+                  <span>{emoji}</span>
                   {label}
                 </button>
               );
@@ -1462,7 +1434,7 @@ export default function App() {
                 background: isFav(terrasse.id) ? "#FEF2F2" : t.bgCard, cursor: "pointer",
                 color: isFav(terrasse.id) ? "#EF4444" : t.text, fontFamily: F, fontSize: 14, fontWeight: 500,
               }}>
-              <HeartIcon filled={isFav(terrasse.id)} size={18} /> {isFav(terrasse.id) ? "Favori" : "Ajouter"}
+              {isFav(terrasse.id) ? "❤️" : "🤍"} {isFav(terrasse.id) ? "Favori" : "Sauver"}
             </button>
             <button onClick={() => handleShare(terrasse.nom, terrasse.adresse)}
               style={{
@@ -1470,7 +1442,7 @@ export default function App() {
                 padding: "14px", borderRadius: 12, border: `1.5px solid ${t.border}`,
                 background: t.bgCard, cursor: "pointer", color: t.text, fontFamily: F, fontSize: 14, fontWeight: 500,
               }}>
-              <ShareIcon size={16} /> {shared ? "Copié !" : "Partager"}
+              📤 {shared ? "Copié !" : "Envoyer aux potes"}
             </button>
           </div>
 
