@@ -1108,11 +1108,17 @@ export default function App() {
               position: "absolute", top: "50%", left: "50%",
               transform: "translate(-50%, -50%)",
               height: "200%", width: "auto",
-              opacity: 0.45, pointerEvents: "none", userSelect: "none",
+              opacity: 0.5, pointerEvents: "none", userSelect: "none",
+            }} />
+            {/* Theme tint overlay on the logo */}
+            <div style={{
+              position: "absolute", inset: 0, pointerEvents: "none",
+              background: mode === "sun" ? "rgba(180,83,9,0.18)" : "rgba(29,78,216,0.18)",
+              mixBlendMode: "multiply",
             }} />
             <div style={{ display: "flex" }}>
-              <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(254, 243, 199, 0.65)" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
+              <div style={{ flex: 1, padding: "20px 12px 20px 16px", textAlign: "right", background: "rgba(254, 243, 199, 0.65)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6, marginBottom: 4 }}>
                   <SunIcon size={18} color="#D97706" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#92400E", fontFamily: F }}>{kpi.sunCount}</span>
                 </div>
@@ -1120,8 +1126,8 @@ export default function App() {
                 <div style={{ fontSize: 12, color: "#92400E", fontWeight: 600, fontFamily: F }}>au soleil</div>
               </div>
               <div style={{ width: 1, background: "rgba(0,0,0,0.08)" }} />
-              <div style={{ flex: 1, padding: "20px 16px", textAlign: "center", background: "rgba(243, 244, 246, 0.65)" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
+              <div style={{ flex: 1, padding: "20px 16px 20px 12px", textAlign: "left", background: "rgba(243, 244, 246, 0.65)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: 6, marginBottom: 4 }}>
                   <ShadeIcon size={18} color="#6B7280" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#374151", fontFamily: F }}>{kpi.shadeCount}</span>
                 </div>
