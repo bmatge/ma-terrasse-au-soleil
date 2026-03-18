@@ -543,7 +543,7 @@ function ContactForm({ theme: t, fontFamily: F }: { theme: typeof themes.sun; fo
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "10px 12px", borderRadius: 10,
     border: `1.5px solid ${t.border}`, background: t.bg,
-    fontFamily: F, fontSize: 14, color: t.text,
+    fontFamily: F, fontSize: 16, color: t.text,
     outline: "none", boxSizing: "border-box",
   };
 
@@ -1226,7 +1226,7 @@ export default function App() {
                   placeholder={placeholders[searchType]}
                   style={{
                     width: "100%", padding: "14px 16px", borderRadius: 12,
-                    border: `1.5px solid ${t.border}`, fontFamily: F, fontSize: 15,
+                    border: `1.5px solid ${t.border}`, fontFamily: F, fontSize: 16,
                     color: t.text, background: t.bgCard, outline: "none", boxSizing: "border-box",
                   }}
                 />
