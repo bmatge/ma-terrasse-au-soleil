@@ -4,7 +4,7 @@ from email.message import EmailMessage
 
 import aiosmtplib
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from app.config import settings
 
@@ -18,7 +18,7 @@ _RATE_WINDOW = 3600
 
 class ContactRequest(BaseModel):
     name: str
-    email: EmailStr
+    email: str
     message: str
 
 
