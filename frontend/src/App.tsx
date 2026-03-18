@@ -20,9 +20,8 @@ import { useDebounce } from "./hooks/useDebounce";
 
 setWorkerUrl(cspWorkerUrl);
 
-// ─── Easter egg audio (preloaded at module level to avoid GC abort) ───
+// ─── Easter egg audio (module-level ref to prevent GC abort) ───
 const easterEggAudio = new Audio("/ausoleil.mp3");
-easterEggAudio.preload = "auto";
 
 // ─── Types ───
 interface FavTerrasse {
