@@ -1533,7 +1533,7 @@ export default function App() {
           </div>
 
           {section("Développée avec amour", <>
-            Cette app est un projet perso, conçue pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
+            Cette app est un projet imaginé par Vivi et réalisé par Beber, conçue pour répondre à une vraie question : <em>est-ce que ma terrasse préférée est au soleil en ce moment ?</em>
             <br /><br />
             Elle est entièrement open source et auto-hébergée.
           </>)}
