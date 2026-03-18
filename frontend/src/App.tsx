@@ -1113,7 +1113,8 @@ export default function App() {
                     setSelectedTerrasseId(null);
                     setSearchCoords(null);
                     if (v.toLowerCase().replace(/\s/g, "") === "ausoleil") {
-                      new Audio("/ausoleil.mp3").play().catch(() => {});
+                      const a = new Audio("/ausoleil.mp3");
+                      a.play().then(() => console.log("🎵 playing")).catch((err) => console.warn("audio blocked:", err));
                     }
                   }}
                   onFocus={() => setDropdownOpen(true)}
