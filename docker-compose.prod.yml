@@ -20,6 +20,10 @@ services:
       - "traefik.http.routers.terrasses.entrypoints=websecure"
       - "traefik.http.routers.terrasses.tls.certresolver=letsencrypt"
       - "traefik.http.services.terrasses.loadbalancer.server.port=80"
+      - "traefik.http.routers.matge.rule=Host(`matge.com`)"
+      - "traefik.http.routers.matge.entrypoints=websecure"
+      - "traefik.http.routers.matge.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.matge.service=terrasses"
 
   db:
     restart: always

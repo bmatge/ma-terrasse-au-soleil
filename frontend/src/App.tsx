@@ -416,6 +416,7 @@ export default function App() {
   const [selectedTerrasseId, setSelectedTerrasseId] = useState<number | null>(null);
   const [searchHour, setSearchHour] = useState("");
   const [searchDate, setSearchDate] = useState(todayISO()); // YYYY-MM-DD
+  const [searchRadius, setSearchRadius] = useState(500);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
   const [shared, setShared] = useState(false);
@@ -453,8 +454,8 @@ export default function App() {
   }, [searchHour, searchDate]);
 
   const { data: nearbyData, isLoading: nearbyLoading } = useQuery({
-    queryKey: ["nearby", searchCoords?.lat, searchCoords?.lon, datetime],
-    queryFn: () => getNearby(searchCoords!.lat, searchCoords!.lon, datetime),
+    queryKey: ["nearby", searchCoords?.lat, searchCoords?.lon, datetime, searchRadius],
+    queryFn: () => getNearby(searchCoords!.lat, searchCoords!.lon, datetime, searchRadius),
     enabled: !!searchCoords,
   });
 
@@ -992,7 +993,8 @@ export default function App() {
       <div style={wrap}>
         <Nav back title={mode === "sun" ? "Terrasses au soleil" : "Terrasses à l'ombre"} />
         <div style={{ padding: "12px 24px 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: t.accentLight, borderRadius: 10, marginBottom: 16 }}>
+            {/* Context info */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: t.accentLight, borderRadius: 10, marginBottom: 12 }}>
             <ClockIcon size={14} />
             <span style={{ fontSize: 13, color: t.accentDark, fontWeight: 500 }}>
               {searchDate !== todayISO() && `${new Date(searchDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · `}
@@ -1000,6 +1002,39 @@ export default function App() {
               {searchQuery ? ` · ${searchQuery}` : ""}
               {nearbyData ? ` · ${nearbyData.meteo.status === "degage" ? "Ciel dégagé" : nearbyData.meteo.status === "mitige" ? "Éclaircies" : "Couvert"}` : ""}
             </span>
+          </div>
+
+          {/* Hour filter */}
+          <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, marginBottom: 10, scrollbarWidth: "none" }}>
+            {HOURS.map((h) => {
+              const active = (searchHour || currentHourKey()) === h;
+              return (
+                <button key={h} onClick={() => setSearchHour(h)} style={{
+                  flexShrink: 0, padding: "5px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontFamily: F,
+                  fontSize: 13, fontWeight: active ? 600 : 400,
+                  background: active ? t.accent : t.bgCard,
+                  color: active ? "#FFF" : t.textSoft,
+                  boxShadow: active ? `0 1px 4px ${t.shadow}` : `0 1px 2px ${t.shadow}`,
+                }}>{h}</button>
+              );
+            })}
+          </div>
+
+          {/* Radius filter */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+            {([250, 500, 1000, 2000] as const).map((r) => {
+              const label = r < 1000 ? `${r} m` : `${r / 1000} km`;
+              const active = searchRadius === r;
+              return (
+                <button key={r} onClick={() => setSearchRadius(r)} style={{
+                  padding: "5px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontFamily: F,
+                  fontSize: 13, fontWeight: active ? 600 : 400,
+                  background: active ? t.accent : t.bgCard,
+                  color: active ? "#FFF" : t.textSoft,
+                  boxShadow: active ? `0 1px 4px ${t.shadow}` : `0 1px 2px ${t.shadow}`,
+                }}>{label}</button>
+              );
+            })}
           </div>
 
           {nearbyLoading ? (
