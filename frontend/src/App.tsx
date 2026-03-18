@@ -1,132 +1,185 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import maplibregl, { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import cspWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
+import {
+  getNearby,
+  getTimeline,
+  searchTerrasses as searchTerrassesApi,
+  geocode as geocodeApi,
+} from "./api/terrasses";
+import type {
+  NearbyTerrasse,
+  TerrasseSearchResult,
+  GeocodeResult,
+  TimelineSlot,
+} from "./api/types";
+import { useDebounce } from "./hooks/useDebounce";
 
 setWorkerUrl(cspWorkerUrl);
 
 // ─── Types ───
-interface CafeSun {
-  [hour: string]: boolean;
-}
-
-interface Cafe {
+interface FavTerrasse {
   id: number;
-  name: string;
-  address: string;
-  metro: string;
-  zone: string;
-  rating: number;
-  sun: CafeSun;
-  vibe: string;
-  price: string;
-  lat: number;
-  lon: number;
+  nom: string;
+  adresse: string | null;
 }
 
 type Page = "home" | "search" | "results" | "detail" | "favorites";
 type Mode = "sun" | "shade";
 type ViewMode = "list" | "map";
 
-// ─── Mock Data ───
-const CAFES: Cafe[] = [
-  { id:1, name:"Le Baron Rouge", address:"1 rue Théophile Roussel, 75012", metro:"Ledru-Rollin", zone:"aligre", rating:4.7, sun:{"09:00":true,"10:00":true,"11:00":true,"12:00":true,"13:00":false,"14:00":false,"15:00":false,"16:00":true,"17:00":true,"18:00":true,"19:00":true}, vibe:"Bistrot", price:"€", lat:48.8499, lon:2.3783 },
-  { id:2, name:"L'Ébauchoir", address:"43 rue de Cîteaux, 75012", metro:"Faidherbe-Chaligny", zone:"aligre", rating:4.4, sun:{"09:00":false,"10:00":true,"11:00":true,"12:00":true,"13:00":true,"14:00":true,"15:00":true,"16:00":false,"17:00":false,"18:00":false,"19:00":false}, vibe:"Néo-bistrot", price:"€€", lat:48.8490, lon:2.3826 },
-  { id:3, name:"Café Aligre", address:"Place d'Aligre, 75012", metro:"Ledru-Rollin", zone:"aligre", rating:4.2, sun:{"09:00":true,"10:00":true,"11:00":true,"12:00":true,"13:00":true,"14:00":false,"15:00":false,"16:00":false,"17:00":true,"18:00":true,"19:00":true}, vibe:"Marché", price:"€", lat:48.8488, lon:2.3793 },
-  { id:4, name:"Le Square Trousseau", address:"1 rue Antoine Vollon, 75012", metro:"Ledru-Rollin", zone:"aligre", rating:4.3, sun:{"09:00":true,"10:00":true,"11:00":false,"12:00":false,"13:00":true,"14:00":true,"15:00":true,"16:00":true,"17:00":true,"18:00":false,"19:00":false}, vibe:"Brasserie", price:"€€", lat:48.8497, lon:2.3787 },
-  { id:5, name:"La Félicité", address:"14 rue de Charonne, 75011", metro:"Bastille", zone:"bastille", rating:4.0, sun:{"09:00":true,"10:00":true,"11:00":false,"12:00":false,"13:00":false,"14:00":true,"15:00":true,"16:00":true,"17:00":true,"18:00":false,"19:00":false}, vibe:"Café calme", price:"€€", lat:48.8529, lon:2.3734 },
-  { id:6, name:"Le Pause Café", address:"41 rue de Charonne, 75011", metro:"Bastille", zone:"bastille", rating:4.1, sun:{"09:00":false,"10:00":false,"11:00":true,"12:00":true,"13:00":true,"14:00":true,"15:00":true,"16:00":true,"17:00":false,"18:00":false,"19:00":false}, vibe:"Grande terrasse", price:"€€", lat:48.8527, lon:2.3760 },
-  { id:7, name:"Aux Deux Amis", address:"45 rue Oberkampf, 75011", metro:"Oberkampf", zone:"oberkampf", rating:4.6, sun:{"09:00":false,"10:00":false,"11:00":false,"12:00":true,"13:00":true,"14:00":true,"15:00":true,"16:00":true,"17:00":true,"18:00":true,"19:00":false}, vibe:"Bar à vins", price:"€€", lat:48.8651, lon:2.3758 },
-  { id:8, name:"Café Oberkampf", address:"3 rue Neuve Popincourt, 75011", metro:"Parmentier", zone:"oberkampf", rating:4.1, sun:{"09:00":false,"10:00":false,"11:00":true,"12:00":true,"13:00":true,"14:00":false,"15:00":false,"16:00":false,"17:00":true,"18:00":true,"19:00":true}, vibe:"Hipster", price:"€€", lat:48.8645, lon:2.3735 },
-  { id:9, name:"Café de Flore", address:"172 bd Saint-Germain, 75006", metro:"Saint-Germain-des-Prés", zone:"stgermain", rating:4.1, sun:{"09:00":true,"10:00":true,"11:00":true,"12:00":false,"13:00":false,"14:00":false,"15:00":true,"16:00":true,"17:00":true,"18:00":true,"19:00":false}, vibe:"Littéraire", price:"€€€", lat:48.8541, lon:2.3326 },
-  { id:10, name:"Le Sélect", address:"99 bd du Montparnasse, 75006", metro:"Vavin", zone:"montparnasse", rating:4.3, sun:{"09:00":true,"10:00":true,"11:00":true,"12:00":true,"13:00":true,"14:00":false,"15:00":false,"16:00":false,"17:00":false,"18:00":true,"19:00":true}, vibe:"Classique", price:"€€", lat:48.8433, lon:2.3286 },
-  { id:11, name:"Le Perchoir Marais", address:"33 rue de la Verrerie, 75004", metro:"Hôtel de Ville", zone:"marais", rating:4.5, sun:{"09:00":true,"10:00":true,"11:00":true,"12:00":true,"13:00":true,"14:00":true,"15:00":true,"16:00":true,"17:00":true,"18:00":true,"19:00":true}, vibe:"Rooftop", price:"€€€", lat:48.8570, lon:2.3530 },
-  { id:12, name:"Le Pavillon Puebla", address:"Parc des Buttes-Chaumont, 75019", metro:"Buttes Chaumont", zone:"butteschaumont", rating:4.3, sun:{"09:00":true,"10:00":true,"11:00":true,"12:00":true,"13:00":true,"14:00":true,"15:00":true,"16:00":true,"17:00":true,"18:00":true,"19:00":true}, vibe:"Parc", price:"€€", lat:48.8808, lon:2.3828 },
-  { id:13, name:"Le Bouillon Chartier", address:"7 rue du Fg Montmartre, 75009", metro:"Grands Boulevards", zone:"boulevards", rating:4.4, sun:{"09:00":false,"10:00":true,"11:00":true,"12:00":true,"13:00":true,"14:00":true,"15:00":false,"16:00":false,"17:00":false,"18:00":false,"19:00":false}, vibe:"Populaire", price:"€", lat:48.8713, lon:2.3441 },
-  { id:14, name:"Chez Prune", address:"36 rue Beaurepaire, 75010", metro:"République", zone:"republique", rating:4.2, sun:{"09:00":true,"10:00":true,"11:00":true,"12:00":true,"13:00":false,"14:00":false,"15:00":true,"16:00":true,"17:00":true,"18:00":true,"19:00":false}, vibe:"Canal", price:"€", lat:48.8713, lon:2.3620 },
-  { id:15, name:"Le Dalou", address:"Place de la Nation, 75012", metro:"Nation", zone:"nation", rating:3.9, sun:{"09:00":false,"10:00":false,"11:00":true,"12:00":true,"13:00":true,"14:00":true,"15:00":true,"16:00":true,"17:00":true,"18:00":true,"19:00":false}, vibe:"Grande terrasse", price:"€", lat:48.8488, lon:2.3960 },
+// ─── Constants ───
+const HOURS = [
+  "09:00","10:00","11:00","12:00","13:00","14:00",
+  "15:00","16:00","17:00","18:00","19:00",
 ];
-
-const METRO_STATIONS = [
-  "Bastille","République","Nation","Opéra","Châtelet","Saint-Lazare",
-  "Montparnasse","Gare de Lyon","Gare du Nord","Belleville",
-  "Oberkampf","Parmentier","Ménilmontant","Père Lachaise",
-  "Ledru-Rollin","Faidherbe-Chaligny","Reuilly-Diderot","Gare de l'Est",
-  "Grands Boulevards","Bonne Nouvelle","Strasbourg-Saint-Denis",
-  "Arts et Métiers","Hôtel de Ville","Saint-Paul","Pont Marie",
-  "Sully-Morland","Quai de la Rapée","Bercy","Vavin",
-  "Saint-Germain-des-Prés","Odéon","Cluny-La Sorbonne",
-  "Maubert-Mutualité","Cardinal Lemoine","Jussieu","Place Monge",
-  "Buttes Chaumont","Botzaris","Laumière","Jaurès","Place d'Aligre"
-].sort();
-
-const HOURS = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
-
 const F = "'Helvetica Neue', Helvetica, Arial, sans-serif";
-
-// ─── Icons ───
-const SunIcon = ({size=24,color="currentColor"}: {size?: number; color?: string}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
-const ShadeIcon = ({size=24,color="currentColor"}: {size?: number; color?: string}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
-const HeartIcon = ({filled,size=20}: {filled: boolean; size?: number}) => <svg width={size} height={size} viewBox="0 0 24 24" fill={filled?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
-const BackIcon = () => <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>;
-const StarIcon = ({size=14}: {size?: number}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
-const ShareIcon = ({size=16}: {size?: number}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>;
-const CrosshairIcon = ({size=20}: {size?: number}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>;
-const ClockIcon = ({size=16}: {size?: number}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-const ListIcon = ({size=18}: {size?: number}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>;
-const MapPinIcon = ({size=18}: {size?: number}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>;
-
-// ─── Themes ───
-const themes = {
-  sun: { bg:"#FFFBF2",bgCard:"#FFFFFF",accent:"#F59E0B",accentLight:"#FEF3C7",accentDark:"#D97706",text:"#1C1917",textSoft:"#78716C",textMuted:"#A8A29E",border:"#F5F0E8",badge:"#FDE68A",badgeText:"#92400E",gradient:"linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%)",shadow:"rgba(245,158,11,0.12)" },
-  shade: { bg:"#F0F4F8",bgCard:"#FFFFFF",accent:"#3B82F6",accentLight:"#DBEAFE",accentDark:"#2563EB",text:"#1E293B",textSoft:"#64748B",textMuted:"#94A3B8",border:"#E2E8F0",badge:"#BFDBFE",badgeText:"#1E40AF",gradient:"linear-gradient(135deg, #BFDBFE 0%, #3B82F6 100%)",shadow:"rgba(59,130,246,0.12)" },
-};
-
-// ─── Zone aliases ───
-const ZONE_ALIASES: Record<string, string[]> = {
-  aligre:["aligre","ledru-rollin","faidherbe","12e","75012"],
-  bastille:["bastille","charonne","ledru-rollin"],
-  oberkampf:["oberkampf","parmentier","menilmontant","11e","75011"],
-  stgermain:["saint-germain","germain","6e","75006","odeon"],
-  montparnasse:["montparnasse","vavin"],
-  marais:["marais","hotel de ville","saint-paul","4e","75004"],
-  butteschaumont:["buttes","chaumont","19e","75019"],
-  boulevards:["boulevards","grands boulevards","9e","75009"],
-  republique:["republique","canal","10e","75010"],
-  nation:["nation"],
-};
-
-const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-
-// ─── Map tile config ───
 const STYLE_URL = "/tiles/styles/liberty";
 const TILE_ORIGIN = "https://tiles.openfreemap.org/";
 
+// ─── Themes ───
+const themes = {
+  sun: {
+    bg: "#FFFBF2", bgCard: "#FFFFFF", accent: "#F59E0B", accentLight: "#FEF3C7",
+    accentDark: "#D97706", text: "#1C1917", textSoft: "#78716C", textMuted: "#A8A29E",
+    border: "#F5F0E8", badge: "#FDE68A", badgeText: "#92400E",
+    gradient: "linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%)",
+    shadow: "rgba(245,158,11,0.12)",
+  },
+  shade: {
+    bg: "#F0F4F8", bgCard: "#FFFFFF", accent: "#3B82F6", accentLight: "#DBEAFE",
+    accentDark: "#2563EB", text: "#1E293B", textSoft: "#64748B", textMuted: "#94A3B8",
+    border: "#E2E8F0", badge: "#BFDBFE", badgeText: "#1E40AF",
+    gradient: "linear-gradient(135deg, #BFDBFE 0%, #3B82F6 100%)",
+    shadow: "rgba(59,130,246,0.12)",
+  },
+};
+
+// ─── Status config ───
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
+  soleil: { label: "Au soleil", color: "#D97706", icon: "sun" },
+  mitige: { label: "Mitigé", color: "#CA8A04", icon: "sun" },
+  couvert: { label: "Couvert", color: "#6B7280", icon: "shade" },
+  ombre: { label: "À l'ombre", color: "#4B5563", icon: "shade" },
+  ombre_batiment: { label: "À l'ombre", color: "#4B5563", icon: "shade" },
+  nuit: { label: "Nuit", color: "#334155", icon: "shade" },
+};
+
+const TIMELINE_STATUS_COLORS: Record<string, string> = {
+  soleil: "#F59E0B",
+  mitige: "#EAB308",
+  couvert: "#9CA3AF",
+  ombre_batiment: "#6B7280",
+  nuit: "#1E293B",
+};
+
+// ─── Icons ───
+const SunIcon = ({ size = 24, color = "currentColor" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+    <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+    <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+  </svg>
+);
+const ShadeIcon = ({ size = 24, color = "currentColor" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+  </svg>
+);
+const HeartIcon = ({ filled, size = 20 }: { filled: boolean; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  </svg>
+);
+const BackIcon = () => (
+  <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+);
+const ShareIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" />
+  </svg>
+);
+const CrosshairIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <circle cx="12" cy="12" r="8" /><line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" />
+    <line x1="2" y1="12" x2="6" y2="12" /><line x1="18" y1="12" x2="22" y2="12" />
+  </svg>
+);
+const ClockIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+const ListIcon = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+    <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+  </svg>
+);
+const MapPinIcon = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+  </svg>
+);
+
+// ─── Helpers ───
+function currentHourKey(): string {
+  const h = Math.max(9, Math.min(19, new Date().getHours()));
+  return `${h.toString().padStart(2, "0")}:00`;
+}
+
+function todayISO(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
+}
+
+function loadFavorites(): FavTerrasse[] {
+  try {
+    return JSON.parse(localStorage.getItem("fav-terrasses") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function isSunnyStatus(status: string): boolean {
+  return status === "soleil" || status === "mitige";
+}
+
 // ─── Results Map Component ───
-function ResultsMap({ cafes, mode, onCafeClick }: { cafes: Cafe[]; mode: Mode; onCafeClick: (cafe: Cafe) => void }) {
+function ResultsMap({
+  terrasses,
+  mode,
+  onTerrasseClick,
+}: {
+  terrasses: NearbyTerrasse[];
+  mode: Mode;
+  onTerrasseClick: (t: NearbyTerrasse) => void;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
-  const onCafeClickRef = useRef(onCafeClick);
-  onCafeClickRef.current = onCafeClick;
+  const onClickRef = useRef(onTerrasseClick);
+  onClickRef.current = onTerrasseClick;
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    // Compute center from cafes
-    const avgLat = cafes.reduce((s, c) => s + c.lat, 0) / (cafes.length || 1);
-    const avgLon = cafes.reduce((s, c) => s + c.lon, 0) / (cafes.length || 1);
+    const avgLat = terrasses.reduce((s, c) => s + c.lat, 0) / (terrasses.length || 1);
+    const avgLon = terrasses.reduce((s, c) => s + c.lon, 0) / (terrasses.length || 1);
 
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: STYLE_URL,
       center: [avgLon || 2.3522, avgLat || 48.8566],
-      zoom: 13,
+      zoom: 14,
       attributionControl: {},
       transformRequest: (url: string) => {
-        if (url.startsWith(TILE_ORIGIN)) {
-          return { url: url.replace(TILE_ORIGIN, "/tiles/") };
-        }
+        if (url.startsWith(TILE_ORIGIN)) return { url: url.replace(TILE_ORIGIN, "/tiles/") };
         return { url };
       },
     });
@@ -141,7 +194,6 @@ function ResultsMap({ cafes, mode, onCafeClick }: { cafes: Cafe[]; mode: Mode; o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update markers when cafes change
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -149,13 +201,12 @@ function ResultsMap({ cafes, mode, onCafeClick }: { cafes: Cafe[]; mode: Mode; o
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
 
-    const color = mode === "sun" ? "#F59E0B" : "#3B82F6";
-
-    cafes.forEach((cafe) => {
+    terrasses.forEach((terrasse) => {
+      const cfg = STATUS_CONFIG[terrasse.status] || STATUS_CONFIG.ombre;
       const el = document.createElement("div");
       el.style.cssText = `
         width: 14px; height: 14px;
-        background: ${color};
+        background: ${cfg.color};
         border: 2px solid white;
         border-radius: 50%;
         cursor: pointer;
@@ -164,301 +215,555 @@ function ResultsMap({ cafes, mode, onCafeClick }: { cafes: Cafe[]; mode: Mode; o
 
       const popup = new maplibregl.Popup({ offset: 10 }).setHTML(`
         <div style="font-size:13px;font-family:${F}">
-          <strong>${cafe.name}</strong><br/>
-          <span style="color:#78716C">${cafe.metro}</span><br/>
-          <span>${cafe.price} · ${cafe.vibe}</span>
+          <strong>${terrasse.nom}</strong><br/>
+          <span style="color:#78716C">${terrasse.distance_m}m</span>
+          ${terrasse.soleil_jusqua ? `<br/><span style="color:#D97706">Soleil jusqu'a ${terrasse.soleil_jusqua}</span>` : ""}
         </div>
       `);
 
       const marker = new maplibregl.Marker({ element: el })
-        .setLngLat([cafe.lon, cafe.lat])
+        .setLngLat([terrasse.lon, terrasse.lat])
         .setPopup(popup)
         .addTo(map);
 
-      el.addEventListener("click", () => onCafeClickRef.current(cafe));
+      el.addEventListener("click", () => onClickRef.current(terrasse));
       markersRef.current.push(marker);
     });
 
-    // Fit bounds if multiple cafes
-    if (cafes.length > 1) {
+    if (terrasses.length > 1) {
       const bounds = new maplibregl.LngLatBounds();
-      cafes.forEach((c) => bounds.extend([c.lon, c.lat]));
+      terrasses.forEach((t) => bounds.extend([t.lon, t.lat]));
       map.fitBounds(bounds, { padding: 50, maxZoom: 15 });
-    } else if (cafes.length === 1) {
-      map.flyTo({ center: [cafes[0].lon, cafes[0].lat], zoom: 15 });
+    } else if (terrasses.length === 1) {
+      map.flyTo({ center: [terrasses[0].lon, terrasses[0].lat], zoom: 15 });
     }
-  }, [cafes, mode]);
+  }, [terrasses, mode]);
 
   return (
     <div
       ref={containerRef}
-      style={{ width: "100%", height: 360, borderRadius: 14, overflow: "hidden", border: `1px solid ${themes[mode].border}` }}
+      style={{
+        width: "100%",
+        height: 360,
+        borderRadius: 14,
+        overflow: "hidden",
+        border: `1px solid ${themes[mode].border}`,
+      }}
     />
   );
-}
-
-// ─── KPI helpers ───
-function getCurrentHourKey(): string {
-  const now = new Date();
-  const h = now.getHours();
-  const clamped = Math.max(9, Math.min(19, h));
-  return `${clamped.toString().padStart(2, "0")}:00`;
-}
-
-function getKpi() {
-  const hour = getCurrentHourKey();
-  let sunCount = 0;
-  let shadeCount = 0;
-  for (const c of CAFES) {
-    if (c.sun[hour]) sunCount++;
-    else shadeCount++;
-  }
-  return { hour, sunCount, shadeCount };
 }
 
 // ─── Main App ───
 export default function App() {
   const [mode, setMode] = useState<Mode>("sun");
   const [page, setPage] = useState<Page>("home");
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [searchLocation, setSearchLocation] = useState("");
-  const [searchHour, setSearchHour] = useState("");
-  const [searchDuration, setSearchDuration] = useState(60);
-  const [selectedCafe, setSelectedCafe] = useState<Cafe | null>(null);
-  const [geoLocating, setGeoLocating] = useState(false);
-  const [shared, setShared] = useState(false);
-  const [metroOpen, setMetroOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchCoords, setSearchCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [selectedTerrasseId, setSelectedTerrasseId] = useState<number | null>(null);
+  const [searchHour, setSearchHour] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [geoLocating, setGeoLocating] = useState(false);
+  const [shared, setShared] = useState(false);
+
+  // Favorites
+  const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
+  useEffect(() => localStorage.setItem("fav-terrasses", JSON.stringify(favorites)), [favorites]);
+
   const t = themes[mode];
+  const debouncedQuery = useDebounce(searchQuery, 300);
 
-  const toggleFav = (id: number) => setFavorites(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
-  const isFav = (id: number) => favorites.includes(id);
+  // ─── API queries ───
+  const { data: terrasseResults } = useQuery({
+    queryKey: ["search-terrasses", debouncedQuery],
+    queryFn: () => searchTerrassesApi(debouncedQuery),
+    enabled: debouncedQuery.length >= 2,
+  });
 
-  const filteredMetro = METRO_STATIONS.filter(s => normalize(s).includes(normalize(searchLocation || "")));
+  const { data: addressResults } = useQuery({
+    queryKey: ["geocode", debouncedQuery],
+    queryFn: () => geocodeApi(debouncedQuery),
+    enabled: debouncedQuery.length >= 3,
+  });
 
-  const matchesLocation = useCallback((cafe: Cafe, query: string) => {
-    if (!query) return true;
-    const q = normalize(query);
-    if (normalize(cafe.name).includes(q)||normalize(cafe.metro).includes(q)||normalize(cafe.address).includes(q)) return true;
-    for (const [zone, kws] of Object.entries(ZONE_ALIASES)) {
-      if (kws.some(kw => q.includes(normalize(kw)) || normalize(kw).includes(q))) {
-        if (cafe.zone === zone) return true;
+  const datetime = useMemo(() => {
+    const hour = searchHour || currentHourKey();
+    return `${todayISO()}T${hour}:00`;
+  }, [searchHour]);
+
+  const { data: nearbyData, isLoading: nearbyLoading } = useQuery({
+    queryKey: ["nearby", searchCoords?.lat, searchCoords?.lon, datetime],
+    queryFn: () => getNearby(searchCoords!.lat, searchCoords!.lon, datetime),
+    enabled: !!searchCoords,
+  });
+
+  const { data: timelineData, isLoading: timelineLoading } = useQuery({
+    queryKey: ["timeline", selectedTerrasseId, todayISO()],
+    queryFn: () => getTimeline(selectedTerrasseId!),
+    enabled: !!selectedTerrasseId,
+  });
+
+  // Home KPIs — nearby at Paris center
+  const { data: homeData } = useQuery({
+    queryKey: ["home-nearby", todayISO(), currentHourKey()],
+    queryFn: () => getNearby(48.8566, 2.3522, `${todayISO()}T${currentHourKey()}:00`, 1000),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // ─── Derived data ───
+  const results = useMemo(() => {
+    if (!nearbyData) return [];
+    const all = nearbyData.terrasses;
+    // Sort: matching mode first, then by distance
+    return [...all].sort((a, b) => {
+      const aMatch = mode === "sun" ? isSunnyStatus(a.status) : !isSunnyStatus(a.status);
+      const bMatch = mode === "sun" ? isSunnyStatus(b.status) : !isSunnyStatus(b.status);
+      if (aMatch && !bMatch) return -1;
+      if (!aMatch && bMatch) return 1;
+      return a.distance_m - b.distance_m;
+    });
+  }, [nearbyData, mode]);
+
+  const kpi = useMemo(() => {
+    const hour = currentHourKey();
+    if (!homeData) return { sunCount: "...", shadeCount: "...", hour };
+    const sunCount = homeData.terrasses.filter((tr) => isSunnyStatus(tr.status)).length;
+    const shadeCount = homeData.terrasses.length - sunCount;
+    return { sunCount, shadeCount, hour };
+  }, [homeData]);
+
+  // Get hourly status summary from timeline slots
+  const hourlyFromTimeline = useMemo(() => {
+    if (!timelineData) return {};
+    const map: Record<string, TimelineSlot> = {};
+    for (const slot of timelineData.slots) {
+      const hourKey = slot.time.split(":")[0] + ":00";
+      // Take the first slot of each hour (on-the-hour or closest)
+      if (!map[hourKey] || slot.time.endsWith(":00")) {
+        map[hourKey] = slot;
       }
     }
-    return false;
+    return map;
+  }, [timelineData]);
+
+  // ─── Actions ───
+  const toggleFav = useCallback(
+    (terrasse: { id: number; nom: string; adresse: string | null }) => {
+      setFavorites((prev) => {
+        const exists = prev.some((f) => f.id === terrasse.id);
+        if (exists) return prev.filter((f) => f.id !== terrasse.id);
+        return [...prev, { id: terrasse.id, nom: terrasse.nom, adresse: terrasse.adresse }];
+      });
+    },
+    [],
+  );
+
+  const isFav = useCallback((id: number) => favorites.some((f) => f.id === id), [favorites]);
+
+  const handleGeoAndSearch = useCallback(() => {
+    if (!navigator.geolocation) return;
+    setGeoLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setSearchCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setSearchQuery("Ma position");
+        setGeoLocating(false);
+        const h = Math.max(9, Math.min(19, new Date().getHours()));
+        setSearchHour(`${h.toString().padStart(2, "0")}:00`);
+        setPage("results");
+      },
+      () => setGeoLocating(false),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
   }, []);
 
-  const getResults = useCallback(() => {
-    const hour = searchHour || "14:00";
-    const wantSun = mode === "sun";
-    const sunFiltered = CAFES.filter(c => {
-      const ok = wantSun ? c.sun[hour] : !c.sun[hour];
-      if (!ok) return false;
-      if (searchDuration >= 120) {
-        const idx = HOURS.indexOf(hour);
-        if (idx >= 0 && idx < HOURS.length - 1) {
-          const next = wantSun ? c.sun[HOURS[idx+1]] : !c.sun[HOURS[idx+1]];
-          if (!next) return false;
-        }
-      }
-      return true;
-    });
-    if (searchLocation) {
-      const locRes = sunFiltered.filter(c => matchesLocation(c, searchLocation));
-      if (locRes.length > 0) return locRes;
-    }
-    return sunFiltered;
-  }, [searchHour, mode, searchDuration, searchLocation, matchesLocation]);
-
-  const handleGeo = () => {
+  const handleGeo = useCallback(() => {
+    if (!navigator.geolocation) return;
     setGeoLocating(true);
-    setTimeout(() => {
-      setSearchLocation("Place d'Aligre");
-      setGeoLocating(false);
-    }, 1000);
-  };
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setSearchCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setSearchQuery("Ma position");
+        setGeoLocating(false);
+      },
+      () => setGeoLocating(false),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  }, []);
 
-  const handleShare = (cafe: Cafe) => {
-    const txt = `${mode==="sun"?"☀️":"🌤️"} ${cafe.name} — ${cafe.address}\nTerrasse ${mode==="sun"?"au soleil":"à l'ombre"} à ${searchHour||"14:00"} !`;
-    if (navigator.share) {
-      navigator.share({title:"Terrasse au soleil",text:txt});
-    } else {
-      navigator.clipboard?.writeText(txt);
-      setShared(true);
-      setTimeout(()=>setShared(false),2000);
+  const selectTerrasse = useCallback((tr: TerrasseSearchResult) => {
+    setSelectedTerrasseId(tr.id);
+    setSearchCoords(null);
+    setSearchQuery(tr.nom);
+    setDropdownOpen(false);
+  }, []);
+
+  const selectAddress = useCallback((a: GeocodeResult) => {
+    setSearchCoords({ lat: a.lat, lon: a.lon });
+    setSelectedTerrasseId(null);
+    setSearchQuery(a.label);
+    setDropdownOpen(false);
+  }, []);
+
+  const handleSearch = useCallback(() => {
+    setDropdownOpen(false);
+    if (selectedTerrasseId) {
+      setPage("detail");
+    } else if (searchCoords) {
+      setPage("results");
     }
-  };
+  }, [selectedTerrasseId, searchCoords]);
 
-  const goBack = () => {
-    if (page==="detail") setPage("results");
+  const handleShare = useCallback(
+    (nom: string, adresse: string | null) => {
+      const txt = `${mode === "sun" ? "\u2600\ufe0f" : "\ud83c\udf24\ufe0f"} ${nom} \u2014 ${adresse || ""}\nTerrasse ${mode === "sun" ? "au soleil" : "\u00e0 l'ombre"} !`;
+      if (navigator.share) {
+        navigator.share({ title: "Terrasse au soleil", text: txt });
+      } else {
+        navigator.clipboard?.writeText(txt);
+        setShared(true);
+        setTimeout(() => setShared(false), 2000);
+      }
+    },
+    [mode],
+  );
+
+  const goBack = useCallback(() => {
+    if (page === "detail" && searchCoords) setPage("results");
+    else if (page === "detail" || page === "results") setPage("search");
     else setPage("home");
-  };
+  }, [page, searchCoords]);
 
+  const openDetail = useCallback((terrasse: NearbyTerrasse) => {
+    setSelectedTerrasseId(terrasse.id);
+    setPage("detail");
+  }, []);
+
+  // ─── Shared UI components ───
   const pillStyle = (active: boolean): React.CSSProperties => ({
-    padding:"8px 18px",borderRadius:100,border:"none",fontSize:13,
-    fontWeight:active?600:400,fontFamily:F,cursor:"pointer",
-    background:active?t.accent:t.border,color:active?"#FFF":t.textSoft,
-    transition:"all 0.2s",whiteSpace:"nowrap",
+    padding: "8px 18px",
+    borderRadius: 100,
+    border: "none",
+    fontSize: 13,
+    fontWeight: active ? 600 : 400,
+    fontFamily: F,
+    cursor: "pointer",
+    background: active ? t.accent : t.border,
+    color: active ? "#FFF" : t.textSoft,
+    transition: "all 0.2s",
+    whiteSpace: "nowrap",
   });
 
   const ModeToggle = () => (
-    <div style={{display:"flex",gap:3,background:t.border,borderRadius:100,padding:3}}>
-      <button onClick={()=>setMode("sun")} style={{...pillStyle(mode==="sun"),display:"flex",alignItems:"center",gap:6,background:mode==="sun"?themes.sun.gradient:"transparent"}}>
-        <SunIcon size={14} color={mode==="sun"?"#FFF":themes.sun.textMuted}/> Soleil
+    <div style={{ display: "flex", gap: 3, background: t.border, borderRadius: 100, padding: 3 }}>
+      <button
+        onClick={() => setMode("sun")}
+        style={{
+          ...pillStyle(mode === "sun"),
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          background: mode === "sun" ? themes.sun.gradient : "transparent",
+        }}
+      >
+        <SunIcon size={14} color={mode === "sun" ? "#FFF" : themes.sun.textMuted} /> Soleil
       </button>
-      <button onClick={()=>setMode("shade")} style={{...pillStyle(mode==="shade"),display:"flex",alignItems:"center",gap:6,background:mode==="shade"?themes.shade.gradient:"transparent"}}>
-        <ShadeIcon size={14} color={mode==="shade"?"#FFF":themes.shade.textMuted}/> Ombre
+      <button
+        onClick={() => setMode("shade")}
+        style={{
+          ...pillStyle(mode === "shade"),
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          background: mode === "shade" ? themes.shade.gradient : "transparent",
+        }}
+      >
+        <ShadeIcon size={14} color={mode === "shade" ? "#FFF" : themes.shade.textMuted} /> Ombre
       </button>
     </div>
   );
 
-  const Nav = ({back,title}: {back?: boolean; title: string}) => (
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 20px",position:"sticky",top:0,zIndex:10,background:t.bg,borderBottom:`1px solid ${t.border}`}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        {back && <button onClick={goBack} style={{background:"none",border:"none",cursor:"pointer",padding:4,color:t.accent}}><BackIcon/></button>}
-        {title && <span style={{fontFamily:F,fontWeight:600,fontSize:16,color:t.text}}>{title}</span>}
-      </div>
-      <button onClick={()=>setPage("favorites")} style={{background:"none",border:"none",cursor:"pointer",padding:4,color:page==="favorites"?t.accent:t.textMuted}}>
-        <HeartIcon filled={page==="favorites"} size={22}/>
-      </button>
-    </div>
-  );
-
-  const CafeCard = ({cafe,compact}: {cafe: Cafe; compact?: boolean}) => {
-    const hour = searchHour || "14:00";
-    return (
-      <div onClick={()=>{setSelectedCafe(cafe);setPage("detail");}} style={{background:t.bgCard,borderRadius:16,padding:compact?14:18,cursor:"pointer",border:`1px solid ${t.border}`,boxShadow:`0 2px 12px ${t.shadow}`}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-          <div style={{flex:1}}>
-            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
-              <span style={{fontFamily:F,fontWeight:600,fontSize:compact?15:17,color:t.text}}>{cafe.name}</span>
-              <span style={{background:t.badge,color:t.badgeText,fontSize:11,fontWeight:600,padding:"2px 8px",borderRadius:100,fontFamily:F}}>{cafe.price}</span>
-            </div>
-            <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:5}}>
-              <span style={{fontFamily:F,fontSize:13,fontWeight:700,color:t.textSoft,background:t.border,borderRadius:4,padding:"1px 5px",lineHeight:"18px"}}>M</span>
-              <span style={{fontFamily:F,fontSize:13,color:t.textSoft}}>{cafe.metro}</span>
-            </div>
-            <div style={{fontFamily:F,fontSize:12,color:t.textMuted}}>{cafe.address}</div>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-            <button onClick={e=>{e.stopPropagation();toggleFav(cafe.id);}} style={{background:"none",border:"none",cursor:"pointer",padding:4,color:isFav(cafe.id)?"#EF4444":t.textMuted}}>
-              <HeartIcon filled={isFav(cafe.id)} size={18}/>
-            </button>
-            <div style={{display:"flex",alignItems:"center",gap:2}}>
-              <StarIcon size={12}/><span style={{fontFamily:F,fontSize:12,fontWeight:600,color:t.text}}>{cafe.rating}</span>
-            </div>
-          </div>
-        </div>
-        {!compact && (
-          <div style={{display:"flex",gap:3,marginTop:12,flexWrap:"wrap"}}>
-            {HOURS.map(h => {
-              const isSun = cafe.sun[h];
-              const sel = h === hour;
-              const good = mode==="sun" ? isSun : !isSun;
-              return (
-                <div key={h} style={{
-                  width:28,height:24,borderRadius:6,fontSize:9,fontFamily:F,
-                  display:"flex",alignItems:"center",justifyContent:"center",fontWeight:500,
-                  background:sel?(good?t.accent:"#EF4444"):(good?t.accentLight:t.border),
-                  color:sel?"#FFF":(good?t.accentDark:t.textMuted),
-                }}>{h.split(":")[0]}h</div>
-              );
-            })}
-          </div>
+  const Nav = ({ back, title }: { back?: boolean; title: string }) => (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "12px 20px",
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        background: t.bg,
+        borderBottom: `1px solid ${t.border}`,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {back && (
+          <button onClick={goBack} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: t.accent }}>
+            <BackIcon />
+          </button>
         )}
+        {title && <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: t.text }}>{title}</span>}
+      </div>
+      <button
+        onClick={() => setPage("favorites")}
+        style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: page === "favorites" ? t.accent : t.textMuted }}
+      >
+        <HeartIcon filled={page === "favorites"} size={22} />
+      </button>
+    </div>
+  );
+
+  const StatusBadge = ({ status }: { status: string }) => {
+    const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.ombre;
+    return (
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          padding: "3px 10px",
+          borderRadius: 100,
+          fontFamily: F,
+          color: cfg.color,
+          background: cfg.icon === "sun" ? "#FEF3C7" : "#F3F4F6",
+        }}
+      >
+        {cfg.label}
+      </span>
+    );
+  };
+
+  const TerrasseCard = ({ terrasse }: { terrasse: NearbyTerrasse }) => {
+    const modeMatch = mode === "sun" ? isSunnyStatus(terrasse.status) : !isSunnyStatus(terrasse.status);
+    return (
+      <div
+        onClick={() => openDetail(terrasse)}
+        style={{
+          background: t.bgCard,
+          borderRadius: 16,
+          padding: 18,
+          cursor: "pointer",
+          border: `1px solid ${modeMatch ? t.accent + "40" : t.border}`,
+          boxShadow: `0 2px 12px ${t.shadow}`,
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <span style={{ fontFamily: F, fontWeight: 600, fontSize: 17, color: t.text }}>{terrasse.nom}</span>
+              <StatusBadge status={terrasse.status} />
+            </div>
+            {terrasse.adresse && (
+              <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>
+            )}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12, fontFamily: F, color: t.textSoft }}>
+              <span>{terrasse.distance_m}m</span>
+              {terrasse.soleil_jusqua && (
+                <span style={{ color: themes.sun.accentDark }}>
+                  Soleil jusqu'a {terrasse.soleil_jusqua}
+                </span>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFav({ id: terrasse.id, nom: terrasse.nom, adresse: terrasse.adresse });
+            }}
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: isFav(terrasse.id) ? "#EF4444" : t.textMuted }}
+          >
+            <HeartIcon filled={isFav(terrasse.id)} size={18} />
+          </button>
+        </div>
       </div>
     );
   };
 
-  const wrap: React.CSSProperties = {minHeight:"100vh",background:t.bg,fontFamily:F,maxWidth:430,margin:"0 auto"};
+  const wrap: React.CSSProperties = { minHeight: "100vh", background: t.bg, fontFamily: F, maxWidth: 430, margin: "0 auto" };
 
   // ─── HOME ───
   if (page === "home") {
-    const kpi = getKpi();
     return (
-      <div style={{...wrap,position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-120,right:-80,width:300,height:300,borderRadius:"50%",background:t.gradient,opacity:0.12,filter:"blur(50px)"}}/>
-        <div style={{padding:"56px 24px 24px",position:"relative"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:44}}>
+      <div style={{ ...wrap, position: "relative", overflow: "hidden" }}>
+        <div
+          style={{
+            position: "absolute",
+            top: -120,
+            right: -80,
+            width: 300,
+            height: 300,
+            borderRadius: "50%",
+            background: t.gradient,
+            opacity: 0.12,
+            filter: "blur(50px)",
+          }}
+        />
+        <div style={{ padding: "56px 24px 24px", position: "relative" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }}>
             <div>
-              <div style={{fontSize:28,fontWeight:300,color:t.text,letterSpacing:-0.5,lineHeight:1.1}}>Terrasse</div>
-              <div style={{fontSize:28,fontWeight:700,color:t.accent,letterSpacing:-0.5}}>{mode==="sun"?"au soleil":"à l'ombre"}</div>
+              <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
+              <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
+                {mode === "sun" ? "au soleil" : "\u00e0 l'ombre"}
+              </div>
             </div>
-            <ModeToggle/>
+            <ModeToggle />
           </div>
 
-          {/* KPI – en ce moment */}
-          <div style={{display:"flex",gap:12,marginBottom:32}}>
-            <div style={{
-              flex:1,padding:"16px",borderRadius:14,
-              background:"linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)",
-              border:"1px solid #FDE68A",
-              textAlign:"center",
-            }}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:6}}>
-                <SunIcon size={18} color="#D97706"/>
-                <span style={{fontSize:24,fontWeight:700,color:"#92400E"}}>{kpi.sunCount}</span>
+          {/* KPI */}
+          <div style={{ display: "flex", gap: 12, marginBottom: 32 }}>
+            <div
+              style={{
+                flex: 1,
+                padding: "16px",
+                borderRadius: 14,
+                background: "linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)",
+                border: "1px solid #FDE68A",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
+                <SunIcon size={18} color="#D97706" />
+                <span style={{ fontSize: 24, fontWeight: 700, color: "#92400E" }}>{kpi.sunCount}</span>
               </div>
-              <div style={{fontSize:12,color:"#92400E",fontWeight:500}}>au soleil</div>
-              <div style={{fontSize:10,color:"#B45309",marginTop:2}}>en ce moment ({kpi.hour})</div>
+              <div style={{ fontSize: 12, color: "#92400E", fontWeight: 500 }}>au soleil</div>
+              <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>en ce moment ({kpi.hour})</div>
             </div>
-            <div style={{
-              flex:1,padding:"16px",borderRadius:14,
-              background:"linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)",
-              border:"1px solid #BFDBFE",
-              textAlign:"center",
-            }}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:6}}>
-                <ShadeIcon size={18} color="#2563EB"/>
-                <span style={{fontSize:24,fontWeight:700,color:"#1E40AF"}}>{kpi.shadeCount}</span>
+            <div
+              style={{
+                flex: 1,
+                padding: "16px",
+                borderRadius: 14,
+                background: "linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)",
+                border: "1px solid #BFDBFE",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
+                <ShadeIcon size={18} color="#2563EB" />
+                <span style={{ fontSize: 24, fontWeight: 700, color: "#1E40AF" }}>{kpi.shadeCount}</span>
               </div>
-              <div style={{fontSize:12,color:"#1E40AF",fontWeight:500}}>à l'ombre</div>
-              <div style={{fontSize:10,color:"#1D4ED8",marginTop:2}}>en ce moment ({kpi.hour})</div>
+              <div style={{ fontSize: 12, color: "#1E40AF", fontWeight: 500 }}>a l'ombre</div>
+              <div style={{ fontSize: 10, color: "#1D4ED8", marginTop: 2 }}>en ce moment ({kpi.hour})</div>
             </div>
           </div>
 
-          <p style={{fontSize:17,color:t.textSoft,fontWeight:300,lineHeight:1.6,marginBottom:36,maxWidth:300}}>
-            {mode==="sun"?"Trouve la terrasse parfaite pour profiter du soleil parisien.":"Trouve un coin d'ombre frais pour souffler un peu."}
+          <p style={{ fontSize: 17, color: t.textSoft, fontWeight: 300, lineHeight: 1.6, marginBottom: 36, maxWidth: 300 }}>
+            {mode === "sun"
+              ? "Trouve la terrasse parfaite pour profiter du soleil parisien."
+              : "Trouve un coin d'ombre frais pour souffler un peu."}
           </p>
-          <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:36}}>
-            <button onClick={()=>{handleGeo();setPage("search");}} style={{
-              display:"flex",alignItems:"center",justifyContent:"center",gap:10,
-              padding:"16px 24px",borderRadius:14,border:"none",cursor:"pointer",
-              background:t.gradient,color:"#FFF",fontSize:16,fontWeight:600,fontFamily:F,
-              boxShadow:`0 4px 20px ${t.shadow}`,
-            }}><CrosshairIcon size={20}/> Autour de moi</button>
-            <button onClick={()=>setPage("search")} style={{
-              display:"flex",alignItems:"center",justifyContent:"center",gap:10,
-              padding:"16px 24px",borderRadius:14,border:`2px solid ${t.accent}`,cursor:"pointer",
-              background:"transparent",color:t.accent,fontSize:16,fontWeight:600,fontFamily:F,
-            }}>Choisir un lieu</button>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 36 }}>
+            <button
+              onClick={handleGeoAndSearch}
+              disabled={geoLocating}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                padding: "16px 24px",
+                borderRadius: 14,
+                border: "none",
+                cursor: geoLocating ? "wait" : "pointer",
+                background: t.gradient,
+                color: "#FFF",
+                fontSize: 16,
+                fontWeight: 600,
+                fontFamily: F,
+                boxShadow: `0 4px 20px ${t.shadow}`,
+                opacity: geoLocating ? 0.7 : 1,
+              }}
+            >
+              {geoLocating ? (
+                <div
+                  style={{
+                    width: 18,
+                    height: 18,
+                    border: "2px solid #FFF",
+                    borderTopColor: "transparent",
+                    borderRadius: "50%",
+                    animation: "spin 0.8s linear infinite",
+                  }}
+                />
+              ) : (
+                <CrosshairIcon size={20} />
+              )}
+              {geoLocating ? "Localisation..." : "Autour de moi"}
+            </button>
+            <button
+              onClick={() => setPage("search")}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                padding: "16px 24px",
+                borderRadius: 14,
+                border: `2px solid ${t.accent}`,
+                cursor: "pointer",
+                background: "transparent",
+                color: t.accent,
+                fontSize: 16,
+                fontWeight: 600,
+                fontFamily: F,
+              }}
+            >
+              Choisir un lieu
+            </button>
           </div>
+
           {favorites.length > 0 && (
             <div>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-                <span style={{fontSize:13,fontWeight:600,color:t.text,letterSpacing:0.5,textTransform:"uppercase"}}>Mes favoris</span>
-                <button onClick={()=>setPage("favorites")} style={{background:"none",border:"none",cursor:"pointer",fontFamily:F,fontSize:13,color:t.accent,fontWeight:500}}>Voir tout →</button>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: t.text, letterSpacing: 0.5, textTransform: "uppercase" }}>
+                  Mes favoris
+                </span>
+                <button
+                  onClick={() => setPage("favorites")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontFamily: F,
+                    fontSize: 13,
+                    color: t.accent,
+                    fontWeight: 500,
+                  }}
+                >
+                  Voir tout &rarr;
+                </button>
               </div>
-              <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:8}}>
-                {favorites.slice(0,3).map(fId => {
-                  const c = CAFES.find(x => x.id === fId);
-                  if (!c) return null;
-                  return (
-                    <div key={fId} onClick={()=>{setSelectedCafe(c);setPage("detail");}} style={{
-                      minWidth:155,background:t.bgCard,borderRadius:12,padding:14,
-                      border:`1px solid ${t.border}`,cursor:"pointer",boxShadow:`0 2px 8px ${t.shadow}`,
-                    }}>
-                      <div style={{fontFamily:F,fontWeight:600,fontSize:14,color:t.text,marginBottom:4}}>{c.name}</div>
-                      <div style={{fontFamily:F,fontSize:12,color:t.textMuted}}>{c.metro}</div>
-                    </div>
-                  );
-                })}
+              <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8 }}>
+                {favorites.slice(0, 3).map((fav) => (
+                  <div
+                    key={fav.id}
+                    onClick={() => {
+                      setSelectedTerrasseId(fav.id);
+                      setPage("detail");
+                    }}
+                    style={{
+                      minWidth: 155,
+                      background: t.bgCard,
+                      borderRadius: 12,
+                      padding: 14,
+                      border: `1px solid ${t.border}`,
+                      cursor: "pointer",
+                      boxShadow: `0 2px 8px ${t.shadow}`,
+                    }}
+                  >
+                    <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: t.text, marginBottom: 4 }}>{fav.nom}</div>
+                    <div style={{ fontFamily: F, fontSize: 12, color: t.textMuted }}>{fav.adresse || ""}</div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
-          <div style={{marginTop:48,textAlign:"center"}}>
-            <span style={{fontSize:12,color:t.textMuted}}>Paris uniquement · Données d'ensoleillement simulées</span>
+
+          <div style={{ marginTop: 48, textAlign: "center" }}>
+            <span style={{ fontSize: 12, color: t.textMuted }}>Paris intra-muros &middot; Ensoleillement calcul&eacute; en temps r&eacute;el</span>
           </div>
         </div>
       </div>
@@ -466,121 +771,330 @@ export default function App() {
   }
 
   // ─── SEARCH ───
-  if (page === "search") return (
-    <div style={wrap}>
-      <Nav back title="Recherche"/>
-      <div style={{padding:"20px 24px"}}>
-        <ModeToggle/>
-        <div style={{marginTop:28}}>
-          <label style={{fontSize:12,fontWeight:600,color:t.textSoft,letterSpacing:0.5,textTransform:"uppercase",marginBottom:8,display:"block"}}>Lieu</label>
-          <div style={{display:"flex",gap:8}}>
-            <div style={{flex:1,position:"relative"}}>
-              <input value={searchLocation} onChange={e=>{setSearchLocation(e.target.value);setMetroOpen(true);}}
-                onFocus={()=>setMetroOpen(true)} placeholder="Adresse, station de métro..."
-                style={{width:"100%",padding:"14px 16px",borderRadius:12,border:`1.5px solid ${t.border}`,fontFamily:F,fontSize:15,color:t.text,background:t.bgCard,outline:"none",boxSizing:"border-box"}}/>
-              {metroOpen && filteredMetro.length > 0 && (
-                <div style={{position:"absolute",top:"100%",left:0,right:0,zIndex:20,background:t.bgCard,borderRadius:12,marginTop:4,border:`1px solid ${t.border}`,boxShadow:`0 8px 24px ${t.shadow}`,maxHeight:200,overflowY:"auto"}}>
-                  {filteredMetro.slice(0,8).map(s => (
-                    <div key={s} onClick={()=>{setSearchLocation(s);setMetroOpen(false);}} style={{display:"flex",alignItems:"center",gap:8,padding:"11px 14px",cursor:"pointer",borderBottom:`1px solid ${t.border}`}}>
-                      <span style={{fontFamily:F,fontSize:13,fontWeight:700,color:t.textSoft,background:t.border,borderRadius:4,padding:"1px 5px"}}>M</span>
-                      <span style={{fontSize:14,color:t.text,fontFamily:F}}>{s}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+  if (page === "search") {
+    const hasDropdownResults =
+      (terrasseResults && terrasseResults.length > 0) || (addressResults && addressResults.length > 0);
+    const canSearch = (selectedTerrasseId || searchCoords) && searchHour;
+
+    return (
+      <div style={wrap}>
+        <Nav back title="Recherche" />
+        <div style={{ padding: "20px 24px" }}>
+          <ModeToggle />
+
+          {/* Location input */}
+          <div style={{ marginTop: 28 }}>
+            <label
+              style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}
+            >
+              Lieu
+            </label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ flex: 1, position: "relative" }}>
+                <input
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setDropdownOpen(true);
+                    setSelectedTerrasseId(null);
+                    setSearchCoords(null);
+                  }}
+                  onFocus={() => setDropdownOpen(true)}
+                  placeholder="Nom d'un bar, adresse..."
+                  style={{
+                    width: "100%",
+                    padding: "14px 16px",
+                    borderRadius: 12,
+                    border: `1.5px solid ${t.border}`,
+                    fontFamily: F,
+                    fontSize: 15,
+                    color: t.text,
+                    background: t.bgCard,
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                />
+                {dropdownOpen && hasDropdownResults && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      zIndex: 20,
+                      background: t.bgCard,
+                      borderRadius: 12,
+                      marginTop: 4,
+                      border: `1px solid ${t.border}`,
+                      boxShadow: `0 8px 24px ${t.shadow}`,
+                      maxHeight: 300,
+                      overflowY: "auto",
+                    }}
+                  >
+                    {/* Terrasse results */}
+                    {terrasseResults && terrasseResults.length > 0 && (
+                      <>
+                        <div
+                          style={{
+                            padding: "8px 14px",
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: t.textMuted,
+                            textTransform: "uppercase",
+                            letterSpacing: 0.5,
+                            background: t.border + "80",
+                          }}
+                        >
+                          Terrasses
+                        </div>
+                        {terrasseResults.slice(0, 5).map((tr) => (
+                          <div
+                            key={tr.id}
+                            onClick={() => selectTerrasse(tr)}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              padding: "11px 14px",
+                              cursor: "pointer",
+                              borderBottom: `1px solid ${t.border}`,
+                            }}
+                          >
+                            <span style={{ fontSize: 14, fontWeight: 500, color: t.text, fontFamily: F }}>{tr.nom}</span>
+                            <span style={{ fontSize: 12, color: t.textMuted, fontFamily: F }}>{tr.adresse}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                    {/* Address results */}
+                    {addressResults && addressResults.length > 0 && (
+                      <>
+                        <div
+                          style={{
+                            padding: "8px 14px",
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: t.textMuted,
+                            textTransform: "uppercase",
+                            letterSpacing: 0.5,
+                            background: t.border + "80",
+                          }}
+                        >
+                          Adresses
+                        </div>
+                        {addressResults.slice(0, 5).map((a, i) => (
+                          <div
+                            key={i}
+                            onClick={() => selectAddress(a)}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                              padding: "11px 14px",
+                              cursor: "pointer",
+                              borderBottom: `1px solid ${t.border}`,
+                            }}
+                          >
+                            <MapPinIcon size={14} />
+                            <span style={{ fontSize: 14, color: t.text, fontFamily: F }}>{a.label}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={handleGeo}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 12,
+                  border: `1.5px solid ${t.border}`,
+                  background: t.bgCard,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: geoLocating ? t.accent : t.textSoft,
+                  flexShrink: 0,
+                }}
+              >
+                {geoLocating ? (
+                  <div
+                    style={{
+                      width: 18,
+                      height: 18,
+                      border: `2px solid ${t.accent}`,
+                      borderTopColor: "transparent",
+                      borderRadius: "50%",
+                      animation: "spin 0.8s linear infinite",
+                    }}
+                  />
+                ) : (
+                  <CrosshairIcon size={20} />
+                )}
+              </button>
             </div>
-            <button onClick={handleGeo} style={{width:48,height:48,borderRadius:12,border:`1.5px solid ${t.border}`,background:t.bgCard,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",color:geoLocating?t.accent:t.textSoft,flexShrink:0}}>
-              {geoLocating ? <div style={{width:18,height:18,border:`2px solid ${t.accent}`,borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/> : <CrosshairIcon size={20}/>}
-            </button>
           </div>
-        </div>
-        <div style={{marginTop:24}}>
-          <label style={{fontSize:12,fontWeight:600,color:t.textSoft,letterSpacing:0.5,textTransform:"uppercase",marginBottom:8,display:"block"}}>Heure d'arrivée</label>
-          <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-            {HOURS.map(h => <button key={h} onClick={()=>setSearchHour(h)} style={pillStyle(searchHour===h)}>{h}</button>)}
+
+          {/* Hour */}
+          <div style={{ marginTop: 24 }}>
+            <label
+              style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}
+            >
+              Heure
+            </label>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {HOURS.map((h) => (
+                <button key={h} onClick={() => setSearchHour(h)} style={pillStyle(searchHour === h)}>
+                  {h}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Search button */}
+          <button
+            onClick={handleSearch}
+            disabled={!canSearch}
+            style={{
+              width: "100%",
+              marginTop: 36,
+              padding: "16px",
+              borderRadius: 14,
+              border: "none",
+              background: canSearch ? t.gradient : t.border,
+              color: canSearch ? "#FFF" : t.textMuted,
+              fontSize: 16,
+              fontWeight: 600,
+              fontFamily: F,
+              cursor: canSearch ? "pointer" : "default",
+              boxShadow: canSearch ? `0 4px 20px ${t.shadow}` : "none",
+            }}
+          >
+            {selectedTerrasseId
+              ? "Voir la timeline"
+              : mode === "sun"
+                ? "\u2600\ufe0f  Trouver du soleil"
+                : "\ud83c\udf24\ufe0f  Trouver de l'ombre"}
+          </button>
         </div>
-        <div style={{marginTop:24}}>
-          <label style={{fontSize:12,fontWeight:600,color:t.textSoft,letterSpacing:0.5,textTransform:"uppercase",marginBottom:8,display:"block"}}>Durée souhaitée</label>
-          <div style={{display:"flex",gap:6}}>
-            {[30,60,120,180].map(d => <button key={d} onClick={()=>setSearchDuration(d)} style={pillStyle(searchDuration===d)}>{d<60?`${d} min`:`${d/60}h`}{d>=120?"+":""}</button>)}
-          </div>
-        </div>
-        <button onClick={()=>{setMetroOpen(false);setPage("results");}} disabled={!searchHour} style={{
-          width:"100%",marginTop:36,padding:"16px",borderRadius:14,border:"none",
-          background:searchHour?t.gradient:t.border,color:searchHour?"#FFF":t.textMuted,
-          fontSize:16,fontWeight:600,fontFamily:F,cursor:searchHour?"pointer":"default",
-          boxShadow:searchHour?`0 4px 20px ${t.shadow}`:"none",
-        }}>{mode==="sun"?"☀️  Trouver du soleil":"🌤️  Trouver de l'ombre"}</button>
       </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </div>
-  );
+    );
+  }
 
   // ─── RESULTS ───
   if (page === "results") {
-    const results = getResults();
     return (
       <div style={wrap}>
-        <Nav back title={mode==="sun"?"Terrasses au soleil":"Terrasses à l'ombre"}/>
-        <div style={{padding:"12px 24px 24px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",background:t.accentLight,borderRadius:10,marginBottom:16}}>
-            <ClockIcon size={14}/>
-            <span style={{fontSize:13,color:t.accentDark,fontWeight:500}}>
-              {searchHour||"14:00"} · {searchDuration<60?`${searchDuration} min`:`${searchDuration/60}h`}{searchLocation?` · ${searchLocation}`:""}
+        <Nav back title={mode === "sun" ? "Terrasses au soleil" : "Terrasses \u00e0 l'ombre"} />
+        <div style={{ padding: "12px 24px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: t.accentLight, borderRadius: 10, marginBottom: 16 }}>
+            <ClockIcon size={14} />
+            <span style={{ fontSize: 13, color: t.accentDark, fontWeight: 500 }}>
+              {searchHour || currentHourKey()}
+              {searchQuery ? ` \u00b7 ${searchQuery}` : ""}
+              {nearbyData ? ` \u00b7 ${nearbyData.meteo.status === "degage" ? "Ciel d\u00e9gag\u00e9" : nearbyData.meteo.status === "mitige" ? "\u00c9claircies" : "Couvert"}` : ""}
             </span>
           </div>
-          {results.length === 0 ? (
-            <div style={{textAlign:"center",padding:"60px 20px"}}>
-              <div style={{fontSize:48,marginBottom:16}}>{mode==="sun"?"🌧️":"☀️"}</div>
-              <div style={{fontSize:16,color:t.textSoft,fontWeight:500}}>Aucune terrasse {mode==="sun"?"ensoleillée":"ombragée"} trouvée</div>
-              <div style={{fontSize:14,color:t.textMuted,marginTop:8}}>Essaye un autre créneau ou un autre lieu.</div>
-              <button onClick={()=>setPage("search")} style={{marginTop:20,padding:"12px 24px",borderRadius:10,border:"none",background:t.accent,color:"#FFF",fontSize:14,fontWeight:600,fontFamily:F,cursor:"pointer"}}>Modifier la recherche</button>
+
+          {nearbyLoading ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    height: 80,
+                    background: t.border,
+                    borderRadius: 16,
+                    animation: "pulse 1.5s ease-in-out infinite",
+                  }}
+                />
+              ))}
+              <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }`}</style>
+            </div>
+          ) : results.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "60px 20px" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>{mode === "sun" ? "\ud83c\udf27\ufe0f" : "\u2600\ufe0f"}</div>
+              <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>
+                Aucune terrasse {mode === "sun" ? "ensoleill\u00e9e" : "ombrag\u00e9e"} trouv\u00e9e
+              </div>
+              <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>
+                Essaye un autre cr\u00e9neau ou un autre lieu.
+              </div>
+              <button
+                onClick={() => setPage("search")}
+                style={{
+                  marginTop: 20,
+                  padding: "12px 24px",
+                  borderRadius: 10,
+                  border: "none",
+                  background: t.accent,
+                  color: "#FFF",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  fontFamily: F,
+                  cursor: "pointer",
+                }}
+              >
+                Modifier la recherche
+              </button>
             </div>
           ) : (
             <div>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-                <span style={{fontSize:13,color:t.textMuted}}>{results.length} terrasse{results.length>1?"s":""} trouvée{results.length>1?"s":""}</span>
-                {/* View mode toggle */}
-                <div style={{display:"flex",gap:2,background:t.border,borderRadius:8,padding:2}}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                <span style={{ fontSize: 13, color: t.textMuted }}>
+                  {results.length} terrasse{results.length > 1 ? "s" : ""} trouv\u00e9e{results.length > 1 ? "s" : ""}
+                </span>
+                <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 8, padding: 2 }}>
                   <button
-                    onClick={()=>setViewMode("list")}
+                    onClick={() => setViewMode("list")}
                     style={{
-                      display:"flex",alignItems:"center",justifyContent:"center",
-                      width:34,height:30,borderRadius:6,border:"none",cursor:"pointer",
-                      background:viewMode==="list"?t.bgCard:"transparent",
-                      color:viewMode==="list"?t.accent:t.textMuted,
-                      boxShadow:viewMode==="list"?`0 1px 3px ${t.shadow}`:"none",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 34,
+                      height: 30,
+                      borderRadius: 6,
+                      border: "none",
+                      cursor: "pointer",
+                      background: viewMode === "list" ? t.bgCard : "transparent",
+                      color: viewMode === "list" ? t.accent : t.textMuted,
+                      boxShadow: viewMode === "list" ? `0 1px 3px ${t.shadow}` : "none",
                     }}
                     title="Vue liste"
                   >
-                    <ListIcon size={16}/>
+                    <ListIcon size={16} />
                   </button>
                   <button
-                    onClick={()=>setViewMode("map")}
+                    onClick={() => setViewMode("map")}
                     style={{
-                      display:"flex",alignItems:"center",justifyContent:"center",
-                      width:34,height:30,borderRadius:6,border:"none",cursor:"pointer",
-                      background:viewMode==="map"?t.bgCard:"transparent",
-                      color:viewMode==="map"?t.accent:t.textMuted,
-                      boxShadow:viewMode==="map"?`0 1px 3px ${t.shadow}`:"none",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 34,
+                      height: 30,
+                      borderRadius: 6,
+                      border: "none",
+                      cursor: "pointer",
+                      background: viewMode === "map" ? t.bgCard : "transparent",
+                      color: viewMode === "map" ? t.accent : t.textMuted,
+                      boxShadow: viewMode === "map" ? `0 1px 3px ${t.shadow}` : "none",
                     }}
                     title="Vue carte"
                   >
-                    <MapPinIcon size={16}/>
+                    <MapPinIcon size={16} />
                   </button>
                 </div>
               </div>
 
               {viewMode === "map" ? (
-                <ResultsMap
-                  cafes={results}
-                  mode={mode}
-                  onCafeClick={(cafe) => { setSelectedCafe(cafe); setPage("detail"); }}
-                />
+                <ResultsMap terrasses={results} mode={mode} onTerrasseClick={openDetail} />
               ) : (
-                <div style={{display:"flex",flexDirection:"column",gap:12}}>
-                  {results.map(c => <CafeCard key={c.id} cafe={c}/>)}
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {results.map((tr) => (
+                    <TerrasseCard key={tr.id} terrasse={tr} />
+                  ))}
                 </div>
               )}
             </div>
@@ -591,74 +1105,324 @@ export default function App() {
   }
 
   // ─── DETAIL ───
-  if (page === "detail" && selectedCafe) {
-    const c = selectedCafe;
-    const hour = searchHour || "14:00";
-    const hasSun = c.sun[hour];
-    const good = mode==="sun" ? hasSun : !hasSun;
-    const slots = HOURS.filter(h => mode==="sun" ? c.sun[h] : !c.sun[h]);
-    return (
-      <div style={wrap}>
-        <Nav back title=""/>
-        <div style={{margin:"0 20px 20px",padding:"28px 24px",borderRadius:20,background:t.gradient,position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",top:-40,right:-40,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.15)"}}/>
-          <div style={{position:"relative"}}>
-            <div style={{fontSize:24,fontWeight:700,color:"#FFF",marginBottom:6}}>{c.name}</div>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
-              <span style={{fontFamily:F,fontSize:13,fontWeight:700,color:"rgba(255,255,255,0.9)",background:"rgba(255,255,255,0.2)",borderRadius:4,padding:"1px 5px"}}>M</span>
-              <span style={{fontSize:14,color:"rgba(255,255,255,0.9)"}}>{c.metro}</span>
-            </div>
-            <div style={{fontSize:13,color:"rgba(255,255,255,0.7)"}}>{c.address}</div>
-            <div style={{display:"flex",alignItems:"center",gap:10,marginTop:14}}>
-              <span style={{background:"rgba(255,255,255,0.25)",padding:"4px 12px",borderRadius:100,fontSize:13,color:"#FFF",fontWeight:600}}>{c.price}</span>
-              <span style={{background:"rgba(255,255,255,0.25)",padding:"4px 12px",borderRadius:100,fontSize:13,color:"#FFF",fontWeight:500}}>{c.vibe}</span>
-              <span style={{display:"flex",alignItems:"center",gap:3}}><StarIcon size={13}/><span style={{fontSize:14,fontWeight:700,color:"#FFF"}}>{c.rating}</span></span>
-            </div>
+  if (page === "detail") {
+    if (timelineLoading || !timelineData) {
+      return (
+        <div style={wrap}>
+          <Nav back title="" />
+          <div style={{ padding: "40px 24px", textAlign: "center" }}>
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                border: `3px solid ${t.accent}`,
+                borderTopColor: "transparent",
+                borderRadius: "50%",
+                animation: "spin 0.8s linear infinite",
+                margin: "0 auto 16px",
+              }}
+            />
+            <span style={{ fontSize: 14, color: t.textMuted }}>Chargement de la timeline...</span>
           </div>
         </div>
-        <div style={{padding:"0 24px 24px"}}>
-          <div style={{padding:"14px 18px",borderRadius:14,marginBottom:20,background:good?t.accentLight:"#FEE2E2",border:`1px solid ${good?t.accentLight:"#FECACA"}`}}>
-            <div style={{display:"flex",alignItems:"center",gap:8}}>
-              {mode==="sun"?<SunIcon size={20} color={good?t.accentDark:"#EF4444"}/>:<ShadeIcon size={20} color={good?t.accentDark:"#EF4444"}/>}
-              <span style={{fontSize:15,fontWeight:600,color:good?t.accentDark:"#DC2626"}}>
-                {good?`${mode==="sun"?"Ensoleillée":"Ombragée"} à ${hour}`:`Pas ${mode==="sun"?"de soleil":"d'ombre"} à ${hour}`}
+      );
+    }
+
+    const terrasse = timelineData.terrasse;
+    const bestWindow = timelineData.meilleur_creneau;
+    const selectedHour = searchHour || currentHourKey();
+
+    // Find the slot closest to the selected hour
+    const currentSlot = timelineData.slots.find((s) => s.time === selectedHour) ||
+      timelineData.slots.find((s) => s.time.startsWith(selectedHour.split(":")[0]));
+    const currentStatus = currentSlot?.status || "nuit";
+    const good = mode === "sun" ? isSunnyStatus(currentStatus) : !isSunnyStatus(currentStatus);
+
+    return (
+      <div style={wrap}>
+        <Nav back title="" />
+
+        {/* Hero card */}
+        <div
+          style={{
+            margin: "0 20px 20px",
+            padding: "28px 24px",
+            borderRadius: 20,
+            background: t.gradient,
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: -40,
+              right: -40,
+              width: 120,
+              height: 120,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.15)",
+            }}
+          />
+          <div style={{ position: "relative" }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "#FFF", marginBottom: 6 }}>{terrasse.nom}</div>
+            {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{terrasse.adresse}</div>}
+            {terrasse.arrondissement && (
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>
+                {terrasse.arrondissement}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div style={{ padding: "0 24px 24px" }}>
+          {/* Current status */}
+          <div
+            style={{
+              padding: "14px 18px",
+              borderRadius: 14,
+              marginBottom: 20,
+              background: good ? t.accentLight : "#FEE2E2",
+              border: `1px solid ${good ? t.accentLight : "#FECACA"}`,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {mode === "sun" ? (
+                <SunIcon size={20} color={good ? t.accentDark : "#EF4444"} />
+              ) : (
+                <ShadeIcon size={20} color={good ? t.accentDark : "#EF4444"} />
+              )}
+              <span style={{ fontSize: 15, fontWeight: 600, color: good ? t.accentDark : "#DC2626" }}>
+                {good
+                  ? `${mode === "sun" ? "Ensoleill\u00e9e" : "Ombrag\u00e9e"} \u00e0 ${selectedHour}`
+                  : `Pas ${mode === "sun" ? "de soleil" : "d'ombre"} \u00e0 ${selectedHour}`}
               </span>
             </div>
           </div>
-          <div style={{marginBottom:24}}>
-            <span style={{fontSize:12,fontWeight:600,color:t.textSoft,letterSpacing:0.5,textTransform:"uppercase",marginBottom:10,display:"block"}}>Ensoleillement</span>
-            <div style={{display:"flex",gap:4}}>
-              {HOURS.map(h => {
-                const isSun = c.sun[h];
-                const now = h === hour;
+
+          {/* Best window */}
+          {bestWindow && (
+            <div
+              style={{
+                padding: "14px 18px",
+                borderRadius: 14,
+                marginBottom: 20,
+                background: "#FEF3C7",
+                border: "1px solid #FDE68A",
+              }}
+            >
+              <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: "#92400E", marginBottom: 4 }}>
+                Meilleur cr\u00e9neau : {bestWindow.debut} \u2013 {bestWindow.fin}
+              </div>
+              <div style={{ fontFamily: F, fontSize: 13, color: "#B45309" }}>
+                {bestWindow.duree_minutes} min de soleil + ciel d\u00e9gag\u00e9
+              </div>
+            </div>
+          )}
+
+          {/* Weather summary */}
+          <div style={{ fontSize: 13, color: t.textSoft, marginBottom: 16 }}>{timelineData.meteo_resume}</div>
+
+          {/* Timeline bar */}
+          <div style={{ marginBottom: 24 }}>
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: t.textSoft,
+                letterSpacing: 0.5,
+                textTransform: "uppercase",
+                marginBottom: 10,
+                display: "block",
+              }}
+            >
+              Ensoleillement
+            </span>
+
+            {/* Full timeline with 15-min slots */}
+            <div style={{ display: "flex", height: 36, borderRadius: 8, overflow: "hidden", border: `1px solid ${t.border}`, marginBottom: 6 }}>
+              {timelineData.slots.map((slot, i) => (
+                <div
+                  key={i}
+                  title={`${slot.time} \u2014 ${STATUS_CONFIG[slot.status]?.label || slot.status}`}
+                  style={{
+                    flex: 1,
+                    background: TIMELINE_STATUS_COLORS[slot.status] || "#E5E7EB",
+                    cursor: "pointer",
+                    position: "relative",
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Hour labels */}
+            <div style={{ display: "flex", position: "relative", height: 16 }}>
+              {(() => {
+                const hours = [...new Set(timelineData.slots.map((s) => s.time.split(":")[0]))];
+                return hours.map((h) => {
+                  const idx = timelineData.slots.findIndex((s) => s.time.startsWith(h + ":"));
+                  const pct = (idx / timelineData.slots.length) * 100;
+                  return (
+                    <span
+                      key={h}
+                      style={{ position: "absolute", left: `${pct}%`, fontSize: 9, color: t.textMuted, fontFamily: F }}
+                    >
+                      {h}h
+                    </span>
+                  );
+                });
+              })()}
+            </div>
+
+            {/* Hourly summary grid */}
+            <div style={{ display: "flex", gap: 4, marginTop: 12 }}>
+              {HOURS.map((h) => {
+                const slot = hourlyFromTimeline[h];
+                const status = slot?.status;
+                const sunny = status ? isSunnyStatus(status) : false;
+                const isSelected = h === selectedHour;
                 return (
-                  <div key={h} style={{flex:1,textAlign:"center"}}>
-                    <div style={{height:32,borderRadius:6,marginBottom:4,background:isSun?(now?t.accent:t.accentLight):(now?t.textMuted:t.border),display:"flex",alignItems:"center",justifyContent:"center"}}>
-                      {isSun?<SunIcon size={11} color={now?"#FFF":t.accentDark}/>:<ShadeIcon size={11} color={now?"#FFF":t.textMuted}/>}
+                  <div key={h} style={{ flex: 1, textAlign: "center" }}>
+                    <div
+                      style={{
+                        height: 28,
+                        borderRadius: 6,
+                        marginBottom: 4,
+                        background: isSelected
+                          ? sunny
+                            ? t.accent
+                            : "#EF4444"
+                          : sunny
+                            ? t.accentLight
+                            : t.border,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {sunny ? (
+                        <SunIcon size={11} color={isSelected ? "#FFF" : t.accentDark} />
+                      ) : (
+                        <ShadeIcon size={11} color={isSelected ? "#FFF" : t.textMuted} />
+                      )}
                     </div>
-                    <span style={{fontSize:9,color:now?t.accent:t.textMuted,fontWeight:now?700:400}}>{h.split(":")[0]}h</span>
+                    <span style={{ fontSize: 9, color: isSelected ? t.accent : t.textMuted, fontWeight: isSelected ? 700 : 400 }}>
+                      {h.split(":")[0]}h
+                    </span>
                   </div>
                 );
               })}
             </div>
           </div>
-          <div style={{display:"flex",gap:10}}>
-            <button onClick={()=>toggleFav(c.id)} style={{
-              flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:8,
-              padding:"14px",borderRadius:12,border:`1.5px solid ${isFav(c.id)?"#EF4444":t.border}`,
-              background:isFav(c.id)?"#FEF2F2":t.bgCard,cursor:"pointer",
-              color:isFav(c.id)?"#EF4444":t.text,fontFamily:F,fontSize:14,fontWeight:500,
-            }}><HeartIcon filled={isFav(c.id)} size={18}/> {isFav(c.id)?"Favori":"Ajouter"}</button>
-            <button onClick={()=>handleShare(c)} style={{
-              flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:8,
-              padding:"14px",borderRadius:12,border:`1.5px solid ${t.border}`,
-              background:t.bgCard,cursor:"pointer",color:t.text,fontFamily:F,fontSize:14,fontWeight:500,
-            }}><ShareIcon size={16}/> {shared?"Copié !":"Partager"}</button>
+
+          {/* Legend */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 24, fontSize: 11, color: t.textSoft }}>
+            {Object.entries(TIMELINE_STATUS_COLORS).map(([status, color]) => (
+              <div key={status} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ width: 10, height: 10, borderRadius: 3, background: color }} />
+                <span>{STATUS_CONFIG[status]?.label || status}</span>
+              </div>
+            ))}
           </div>
-          <div style={{marginTop:24,padding:"16px 18px",background:t.bgCard,borderRadius:14,border:`1px solid ${t.border}`}}>
-            <div style={{fontSize:12,fontWeight:600,color:t.textSoft,letterSpacing:0.5,textTransform:"uppercase",marginBottom:10}}>Créneaux {mode==="sun"?"ensoleillés":"ombragés"}</div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-              {slots.length>0 ? slots.map(h => <span key={h} style={{padding:"6px 14px",borderRadius:100,fontSize:13,fontWeight:500,background:t.accentLight,color:t.accentDark,fontFamily:F}}>{h}</span>) : <span style={{fontSize:13,color:t.textMuted}}>Aucun créneau disponible</span>}
+
+          {/* Action buttons */}
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              onClick={() =>
+                toggleFav({ id: terrasse.id, nom: terrasse.nom, adresse: terrasse.adresse })
+              }
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                padding: "14px",
+                borderRadius: 12,
+                border: `1.5px solid ${isFav(terrasse.id) ? "#EF4444" : t.border}`,
+                background: isFav(terrasse.id) ? "#FEF2F2" : t.bgCard,
+                cursor: "pointer",
+                color: isFav(terrasse.id) ? "#EF4444" : t.text,
+                fontFamily: F,
+                fontSize: 14,
+                fontWeight: 500,
+              }}
+            >
+              <HeartIcon filled={isFav(terrasse.id)} size={18} /> {isFav(terrasse.id) ? "Favori" : "Ajouter"}
+            </button>
+            <button
+              onClick={() => handleShare(terrasse.nom, terrasse.adresse)}
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                padding: "14px",
+                borderRadius: 12,
+                border: `1.5px solid ${t.border}`,
+                background: t.bgCard,
+                cursor: "pointer",
+                color: t.text,
+                fontFamily: F,
+                fontSize: 14,
+                fontWeight: 500,
+              }}
+            >
+              <ShareIcon size={16} /> {shared ? "Copi\u00e9 !" : "Partager"}
+            </button>
+          </div>
+
+          {/* Sunny hours summary */}
+          <div
+            style={{
+              marginTop: 24,
+              padding: "16px 18px",
+              background: t.bgCard,
+              borderRadius: 14,
+              border: `1px solid ${t.border}`,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: t.textSoft,
+                letterSpacing: 0.5,
+                textTransform: "uppercase",
+                marginBottom: 10,
+              }}
+            >
+              Cr\u00e9neaux {mode === "sun" ? "ensoleill\u00e9s" : "ombrag\u00e9s"}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {(() => {
+                const matchingHours = HOURS.filter((h) => {
+                  const slot = hourlyFromTimeline[h];
+                  if (!slot) return false;
+                  return mode === "sun" ? isSunnyStatus(slot.status) : !isSunnyStatus(slot.status);
+                });
+                return matchingHours.length > 0 ? (
+                  matchingHours.map((h) => (
+                    <span
+                      key={h}
+                      style={{
+                        padding: "6px 14px",
+                        borderRadius: 100,
+                        fontSize: 13,
+                        fontWeight: 500,
+                        background: t.accentLight,
+                        color: t.accentDark,
+                        fontFamily: F,
+                      }}
+                    >
+                      {h}
+                    </span>
+                  ))
+                ) : (
+                  <span style={{ fontSize: 13, color: t.textMuted }}>Aucun cr\u00e9neau disponible</span>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -668,21 +1432,69 @@ export default function App() {
 
   // ─── FAVORITES ───
   if (page === "favorites") {
-    const favCafes = CAFES.filter(c => favorites.includes(c.id));
     return (
       <div style={wrap}>
-        <Nav back title="Mes favoris"/>
-        <div style={{padding:"12px 24px 24px"}}>
-          {favCafes.length === 0 ? (
-            <div style={{textAlign:"center",padding:"60px 20px"}}>
-              <div style={{fontSize:48,marginBottom:16}}>💛</div>
-              <div style={{fontSize:16,color:t.textSoft,fontWeight:500}}>Aucun favori pour le moment</div>
-              <div style={{fontSize:14,color:t.textMuted,marginTop:8}}>Ajoute tes terrasses préférées ici.</div>
-              <button onClick={()=>setPage("home")} style={{marginTop:20,padding:"12px 24px",borderRadius:10,border:"none",background:t.accent,color:"#FFF",fontSize:14,fontWeight:600,fontFamily:F,cursor:"pointer"}}>Explorer</button>
+        <Nav back title="Mes favoris" />
+        <div style={{ padding: "12px 24px 24px" }}>
+          {favorites.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "60px 20px" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>{"\ud83d\udc9b"}</div>
+              <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>Aucun favori pour le moment</div>
+              <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>Ajoute tes terrasses pr\u00e9f\u00e9r\u00e9es ici.</div>
+              <button
+                onClick={() => setPage("home")}
+                style={{
+                  marginTop: 20,
+                  padding: "12px 24px",
+                  borderRadius: 10,
+                  border: "none",
+                  background: t.accent,
+                  color: "#FFF",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  fontFamily: F,
+                  cursor: "pointer",
+                }}
+              >
+                Explorer
+              </button>
             </div>
           ) : (
-            <div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {favCafes.map(c => <CafeCard key={c.id} cafe={c} compact/>)}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {favorites.map((fav) => (
+                <div
+                  key={fav.id}
+                  onClick={() => {
+                    setSelectedTerrasseId(fav.id);
+                    setPage("detail");
+                  }}
+                  style={{
+                    background: t.bgCard,
+                    borderRadius: 16,
+                    padding: 18,
+                    cursor: "pointer",
+                    border: `1px solid ${t.border}`,
+                    boxShadow: `0 2px 12px ${t.shadow}`,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div>
+                    <div style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: t.text, marginBottom: 4 }}>{fav.nom}</div>
+                    <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted }}>{fav.adresse || ""}</div>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFav(fav);
+                    }}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#EF4444" }}
+                  >
+                    <HeartIcon filled size={18} />
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </div>
