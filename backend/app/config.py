@@ -7,6 +7,11 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://redis:6379/0"
     LOG_LEVEL: str = "info"
 
+    SMTP_HOST: str = "localhost"
+    SMTP_PORT: int = 25
+    SMTP_FROM: str = "noreply@ausoleil.app"
+    CONTACT_TO: str = "bertrand+ausoleil@matge.com,virginie.bellot@ymail.com"
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 

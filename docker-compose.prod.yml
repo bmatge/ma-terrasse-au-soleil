@@ -4,6 +4,12 @@ services:
     restart: always
     environment:
       LOG_LEVEL: warning
+      SMTP_HOST: mailserver
+      SMTP_PORT: 25
+      SMTP_FROM: noreply@ausoleil.app
+    networks:
+      - default
+      - ecosystem-network
     deploy:
       resources:
         limits:

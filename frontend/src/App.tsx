@@ -496,6 +496,61 @@ function ResultsMap({
   );
 }
 
+// ─── Contact Form ───
+function ContactForm({ theme: t, fontFamily: F }: { theme: typeof themes.sun; fontFamily: string }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("sent");
+      setName(""); setEmail(""); setMessage("");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "10px 12px", borderRadius: 10,
+    border: `1.5px solid ${t.border}`, background: t.bg,
+    fontFamily: F, fontSize: 14, color: t.text,
+    outline: "none", boxSizing: "border-box",
+  };
+
+  if (status === "sent") return (
+    <div style={{ textAlign: "center", padding: "16px 0", color: t.accentDark, fontFamily: F }}>
+      ✅ Message envoyé, merci !
+    </div>
+  );
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <input required placeholder="Ton prénom" value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
+      <input required type="email" placeholder="Ton email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
+      <textarea required placeholder="Ton message..." value={message} onChange={e => setMessage(e.target.value)}
+        rows={4} style={{ ...inputStyle, resize: "vertical" }} />
+      {status === "error" && <p style={{ fontFamily: F, fontSize: 13, color: "#EF4444", margin: 0 }}>Oups, une erreur s'est produite. Réessaie !</p>}
+      <button type="submit" disabled={status === "sending"} style={{
+        padding: "12px", borderRadius: 12, border: "none", cursor: status === "sending" ? "wait" : "pointer",
+        background: t.gradient, color: "#FFF", fontSize: 15, fontWeight: 600, fontFamily: F,
+        opacity: status === "sending" ? 0.7 : 1,
+      }}>
+        {status === "sending" ? "Envoi..." : "Envoyer 📨"}
+      </button>
+    </form>
+  );
+}
+
 // ─── Main App ───
 export default function App() {
   const [mode, setMode] = useState<Mode>("sun");
@@ -1559,6 +1614,8 @@ export default function App() {
             <strong>Données :</strong> BD TOPO IGN · Open Data Paris · Open-Meteo<br /><br />
             Fait avec amour 🫶 par Virginie, Bertrand et Claude.
           </>)}
+
+          {section("✉️ Nous contacter", <ContactForm theme={t} fontFamily={F} />)}
 
           <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20, textAlign: "center" }}>
             <a href="https://github.com/bmatge/ma-terrasse-au-soleil" target="_blank" rel="noopener noreferrer"
