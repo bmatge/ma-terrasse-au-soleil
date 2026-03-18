@@ -226,6 +226,12 @@ function isSunnyStatus(status: string): boolean {
 
 const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+function parseCurrentUrl() {
+  const path = window.location.pathname;
+  const p = new URLSearchParams(window.location.search);
+  return { path, p };
+}
+
 // ─── SunMap helpers ───
 function destinationPoint(lat: number, lon: number, bearing: number, distanceM: number): [number, number] {
   const R = 6371000;
@@ -603,22 +609,139 @@ export default function App() {
 
   const isFav = useCallback((id: number) => favorites.some((f) => f.id === id), [favorites]);
 
+  const navigate = useCallback((
+    dest: Page,
+    opts?: { lat?: number; lon?: number; q?: string; hour?: string; terrasseId?: number }
+  ) => {
+    const lat = opts?.lat ?? searchCoords?.lat;
+    const lon = opts?.lon ?? searchCoords?.lon;
+    const q = opts?.q ?? searchQuery;
+    const hour = opts?.hour ?? searchHour;
+
+    setPage(dest);
+
+    let url: string;
+    if (dest === "home") {
+      url = "/";
+    } else if (dest === "search") {
+      url = "/search";
+    } else if (dest === "favorites") {
+      url = "/favorites";
+    } else if (dest === "results") {
+      const sp = new URLSearchParams();
+      if (lat != null) sp.set("lat", String(lat));
+      if (lon != null) sp.set("lon", String(lon));
+      if (q) sp.set("q", q);
+      sp.set("date", searchDate);
+      sp.set("hour", hour);
+      sp.set("radius", String(searchRadius));
+      sp.set("mode", mode);
+      url = `/results?${sp}`;
+    } else {
+      // detail
+      const id = opts?.terrasseId ?? selectedTerrasseId;
+      if (opts?.terrasseId != null) setSelectedTerrasseId(opts.terrasseId);
+      const sp = new URLSearchParams({ date: searchDate, hour, mode });
+      url = `/terrasse/${id}?${sp}`;
+    }
+
+    window.history.pushState({}, "", url);
+  }, [searchCoords, searchQuery, searchHour, searchDate, searchRadius, mode, selectedTerrasseId]);
+
+  useEffect(() => {
+    const { path, p } = parseCurrentUrl();
+    const m = p.get("mode");
+    if (m === "sun" || m === "shade") setMode(m as Mode);
+
+    if (path === "/search") {
+      setPage("search");
+    } else if (path === "/results") {
+      const lat = parseFloat(p.get("lat") || "");
+      const lon = parseFloat(p.get("lon") || "");
+      if (!isNaN(lat) && !isNaN(lon)) setSearchCoords({ lat, lon });
+      const q = p.get("q"); if (q) setSearchQuery(q);
+      const date = p.get("date"); if (date) setSearchDate(date);
+      const hour = p.get("hour"); if (hour) setSearchHour(hour);
+      const radius = p.get("radius"); if (radius) setSearchRadius(parseInt(radius));
+      setPage("results");
+    } else if (path.startsWith("/terrasse/")) {
+      const id = parseInt(path.split("/")[2]);
+      if (!isNaN(id)) {
+        setSelectedTerrasseId(id);
+        const date = p.get("date"); if (date) setSearchDate(date);
+        const hour = p.get("hour"); if (hour) setSearchHour(hour);
+        setPage("detail");
+      }
+    } else if (path === "/favorites") {
+      setPage("favorites");
+    }
+    // else: home (default)
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const handler = () => {
+      const { path, p } = parseCurrentUrl();
+      const m = p.get("mode");
+      if (m === "sun" || m === "shade") setMode(m as Mode);
+
+      if (path === "/search") {
+        setPage("search");
+      } else if (path === "/results") {
+        const lat = parseFloat(p.get("lat") || "");
+        const lon = parseFloat(p.get("lon") || "");
+        if (!isNaN(lat) && !isNaN(lon)) setSearchCoords({ lat, lon });
+        const q = p.get("q"); if (q) setSearchQuery(q);
+        const date = p.get("date"); if (date) setSearchDate(date);
+        const hour = p.get("hour"); if (hour) setSearchHour(hour);
+        const radius = p.get("radius"); if (radius) setSearchRadius(parseInt(radius));
+        setPage("results");
+      } else if (path.startsWith("/terrasse/")) {
+        const id = parseInt(path.split("/")[2]);
+        if (!isNaN(id)) {
+          setSelectedTerrasseId(id);
+          const date = p.get("date"); if (date) setSearchDate(date);
+          const hour = p.get("hour"); if (hour) setSearchHour(hour);
+          setPage("detail");
+        }
+      } else if (path === "/favorites") {
+        setPage("favorites");
+      } else {
+        setPage("home");
+      }
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const goBack = useCallback(() => {
+    if (page === "detail" && searchCoords) navigate("results");
+    else if (page === "detail" || page === "results") navigate("search");
+    else navigate("home");
+  }, [page, searchCoords, navigate]);
+
+  const openDetail = useCallback((terrasse: NearbyTerrasse) => {
+    navigate("detail", { terrasseId: terrasse.id });
+  }, [navigate]);
+
   const handleGeoAndSearch = useCallback(() => {
     if (!navigator.geolocation) return;
     setGeoLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setSearchCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const h = Math.max(9, Math.min(19, new Date().getHours()));
+        const hour = `${h.toString().padStart(2, "0")}:00`;
+        setSearchCoords({ lat, lon });
         setSearchQuery("Ma position");
         setGeoLocating(false);
-        const h = Math.max(9, Math.min(19, new Date().getHours()));
-        setSearchHour(`${h.toString().padStart(2, "0")}:00`);
-        setPage("results");
+        setSearchHour(hour);
+        navigate("results", { lat, lon, q: "Ma position", hour });
       },
       () => setGeoLocating(false),
       { enableHighAccuracy: true, timeout: 10000 },
     );
-  }, []);
+  }, [navigate]);
 
   const handleGeo = useCallback(() => {
     if (!navigator.geolocation) return;
@@ -663,11 +786,11 @@ export default function App() {
   const handleSearch = useCallback(() => {
     setDropdownOpen(false);
     if (selectedTerrasseId) {
-      setPage("detail");
+      navigate("detail", { terrasseId: selectedTerrasseId });
     } else if (searchCoords) {
-      setPage("results");
+      navigate("results");
     }
-  }, [selectedTerrasseId, searchCoords]);
+  }, [selectedTerrasseId, searchCoords, navigate]);
 
   const handleShare = useCallback((nom: string, adresse: string | null) => {
     const txt = `${mode === "sun" ? "☀️" : "🌤️"} ${nom} — ${adresse || ""}\nTerrasse ${mode === "sun" ? "au soleil" : "à l'ombre"} !`;
@@ -679,17 +802,6 @@ export default function App() {
       setTimeout(() => setShared(false), 2000);
     }
   }, [mode]);
-
-  const goBack = useCallback(() => {
-    if (page === "detail" && searchCoords) setPage("results");
-    else if (page === "detail" || page === "results") setPage("search");
-    else setPage("home");
-  }, [page, searchCoords]);
-
-  const openDetail = useCallback((terrasse: NearbyTerrasse) => {
-    setSelectedTerrasseId(terrasse.id);
-    setPage("detail");
-  }, []);
 
   // ─── Shared UI ───
   const pillStyle = (active: boolean): React.CSSProperties => ({
@@ -739,7 +851,7 @@ export default function App() {
           return (
             <button
               key={key}
-              onClick={() => setPage(key)}
+              onClick={() => navigate(key)}
               style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
                 padding: "10px 0 12px", background: "none", border: "none", cursor: "pointer",
@@ -851,7 +963,7 @@ export default function App() {
               {geoLocating ? <div style={{ width: 18, height: 18, border: "2px solid #FFF", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} /> : <CrosshairIcon size={20} />}
               {geoLocating ? "Localisation..." : "Autour de moi"}
             </button>
-            <button onClick={() => setPage("search")} style={{
+            <button onClick={() => navigate("search")} style={{
               display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
               padding: "16px 24px", borderRadius: 14, border: `2px solid ${t.accent}`,
               cursor: "pointer", background: "transparent", color: t.accent,
@@ -865,11 +977,11 @@ export default function App() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <span style={{ fontSize: 13, fontWeight: 600, color: t.text, letterSpacing: 0.5, textTransform: "uppercase" }}>Mes favoris</span>
-                <button onClick={() => setPage("favorites")} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.accent, fontWeight: 500 }}>Voir tout →</button>
+                <button onClick={() => navigate("favorites")} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.accent, fontWeight: 500 }}>Voir tout →</button>
               </div>
               <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8 }}>
                 {favorites.slice(0, 3).map((fav) => (
-                  <div key={fav.id} onClick={() => { setSelectedTerrasseId(fav.id); setPage("detail"); }}
+                  <div key={fav.id} onClick={() => navigate("detail", { terrasseId: fav.id })}
                     style={{ minWidth: 155, background: t.bgCard, borderRadius: 12, padding: 14, border: `1px solid ${t.border}`, cursor: "pointer", boxShadow: `0 2px 8px ${t.shadow}` }}>
                     <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: t.text, marginBottom: 4 }}>{fav.nom}</div>
                     <div style={{ fontFamily: F, fontSize: 12, color: t.textMuted }}>{fav.adresse || ""}</div>
@@ -1139,7 +1251,7 @@ export default function App() {
               <div style={{ fontSize: 48, marginBottom: 16 }}>{mode === "sun" ? "🌧️" : "☀️"}</div>
               <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>Aucune terrasse {mode === "sun" ? "ensoleillée" : "ombragée"} trouvée</div>
               <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>Essaye un autre créneau ou un autre lieu.</div>
-              <button onClick={() => setPage("search")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: t.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
+              <button onClick={() => navigate("search")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: t.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
                 Modifier la recherche
               </button>
             </div>
@@ -1331,14 +1443,14 @@ export default function App() {
               <div style={{ fontSize: 48, marginBottom: 16 }}>💛</div>
               <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>Aucun favori pour le moment</div>
               <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>Ajoute tes terrasses préférées ici.</div>
-              <button onClick={() => setPage("home")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: t.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
+              <button onClick={() => navigate("home")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: t.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
                 Explorer
               </button>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {favorites.map((fav) => (
-                <div key={fav.id} onClick={() => { setSelectedTerrasseId(fav.id); setPage("detail"); }}
+                <div key={fav.id} onClick={() => navigate("detail", { terrasseId: fav.id })}
                   style={{
                     background: t.bgCard, borderRadius: 16, padding: 18, cursor: "pointer",
                     border: `1px solid ${t.border}`, boxShadow: `0 2px 12px ${t.shadow}`,
