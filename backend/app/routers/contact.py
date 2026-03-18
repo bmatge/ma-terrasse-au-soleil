@@ -1,6 +1,7 @@
 """Contact form endpoint."""
 import time
 from email.message import EmailMessage
+from email.utils import make_msgid
 
 import aiosmtplib
 from fastapi import APIRouter, HTTPException
@@ -37,6 +38,7 @@ async def contact(body: ContactRequest) -> dict:
         raise HTTPException(status_code=422, detail="Nom et message requis.")
 
     msg = EmailMessage()
+    msg["Message-ID"] = make_msgid(domain="ecosysteme.matge.com")
     msg["Subject"] = f"[Au Soleil] Message de {body.name}"
     msg["From"] = settings.SMTP_FROM
     msg["To"] = settings.CONTACT_TO

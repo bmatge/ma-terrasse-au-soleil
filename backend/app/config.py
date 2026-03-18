@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     SMTP_HOST: str = "localhost"
     SMTP_PORT: int = 25
-    SMTP_FROM: str = "noreply@ausoleil.app"
+    SMTP_FROM: str = "noreply@ecosysteme.matge.com"
     CONTACT_TO: str = "bertrand+ausoleil@matge.com,virginie.bellot@ymail.com"
 
     model_config = {"env_file": ".env", "extra": "ignore"}

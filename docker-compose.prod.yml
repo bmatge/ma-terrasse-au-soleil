@@ -6,7 +6,7 @@ services:
       LOG_LEVEL: warning
       SMTP_HOST: mailserver
       SMTP_PORT: 25
-      SMTP_FROM: noreply@ausoleil.app
+      SMTP_FROM: noreply@ecosysteme.matge.com
     networks:
       - default
       - ecosystem-network
