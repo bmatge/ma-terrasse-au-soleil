@@ -863,12 +863,13 @@ export default function App() {
     }
   }, [selectedTerrasseId, searchCoords, navigate]);
 
-  const handleShare = useCallback((nom: string, adresse: string | null) => {
-    const txt = `${mode === "sun" ? "☀️" : "🌤️"} ${nom} — ${adresse || ""}\nTerrasse ${mode === "sun" ? "au soleil" : "à l'ombre"} !`;
+  const handleShare = useCallback((nom: string, adresse: string | null, id?: number) => {
+    const url = id ? `https://ausoleil.app/terrasse/${id}` : "https://ausoleil.app";
+    const txt = `${mode === "sun" ? "☀️" : "🌤️"} ${nom} — ${adresse || "Paris"}`;
     if (navigator.share) {
-      navigator.share({ title: "Terrasse au soleil", text: txt });
+      navigator.share({ title: nom, text: txt, url });
     } else {
-      navigator.clipboard?.writeText(txt);
+      navigator.clipboard?.writeText(url);
       setShared(true);
       setTimeout(() => setShared(false), 2000);
     }
@@ -1512,7 +1513,7 @@ export default function App() {
               }}>
               {isFav(terrasse.id) ? "❤️" : "🤍"} {isFav(terrasse.id) ? "Favori" : "Sauver"}
             </button>
-            <button onClick={() => handleShare(terrasse.nom, terrasse.adresse)}
+            <button onClick={() => handleShare(terrasse.nom, terrasse.adresse, terrasse.id)}
               style={{
                 flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                 padding: "14px", borderRadius: 12, border: `1.5px solid ${t.border}`,

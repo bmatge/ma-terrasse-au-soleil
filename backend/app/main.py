@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.dependencies import close_redis, init_redis
-from app.routers import contact, geocode, terrasses
+from app.routers import contact, geocode, og, terrasses
 
 
 @asynccontextmanager
@@ -26,6 +26,7 @@ app.add_middleware(
 app.include_router(terrasses.router)
 app.include_router(geocode.router)
 app.include_router(contact.router)
+app.include_router(og.router)
 
 
 @app.get("/api/health")
