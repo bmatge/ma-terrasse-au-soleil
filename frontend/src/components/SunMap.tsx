@@ -76,7 +76,6 @@ export default function SunMap({
       style: STYLE_URL,
       center: [lon, lat],
       zoom: 17,
-      interactive: false, // static map
       attributionControl: false,
       transformRequest: (url: string) => {
         if (url.startsWith(TILE_ORIGIN)) {
@@ -87,6 +86,15 @@ export default function SunMap({
     });
 
     mapRef.current = map;
+
+    // Disable all user interactions (keep programmatic camera moves working)
+    map.scrollZoom.disable();
+    map.boxZoom.disable();
+    map.dragRotate.disable();
+    map.dragPan.disable();
+    map.keyboard.disable();
+    map.doubleClickZoom.disable();
+    map.touchZoomRotate.disable();
 
     // Add terrasse marker
     const el = document.createElement("div");
@@ -150,7 +158,7 @@ export default function SunMap({
     if (!sunPos || sunPos.altitude <= 0) {
       src?.setData({ type: "FeatureCollection", features: [] });
       iconSrc?.setData({ type: "FeatureCollection", features: [] });
-      map.easeTo({ bearing: 0, pitch: 0, duration: 600 });
+      map.jumpTo({ bearing: 0, pitch: 0 });
       return;
     }
 
@@ -158,7 +166,7 @@ export default function SunMap({
     const bearing = (sunPos.azimuth + 180) % 360;
     // More pitch when sun is low (grazing angle), less when high (overhead)
     const pitch = Math.min(70, Math.max(15, 90 - sunPos.altitude));
-    map.easeTo({ bearing, pitch, duration: 600 });
+    map.jumpTo({ bearing, pitch });
 
     // Sun icon shown in the direction the light comes from
     const sunPoint = destinationPoint(lat, lon, sunPos.azimuth, 120);
