@@ -963,14 +963,14 @@ export default function App() {
           </div>
 
           {/* KPI */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, marginBottom: 10 }}>
             <button onClick={() => setKpiStationIndex((i) => (i - 1 + KPI_STATIONS.length) % KPI_STATIONS.length)}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: t.textMuted, padding: "4px 8px" }}>‹</button>
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: t.textMuted, padding: "2px 4px", lineHeight: 1 }}>‹</button>
             <span style={{ fontFamily: F, fontSize: 13, color: t.textSoft, fontWeight: 500 }}>
               À {kpi.station} · {kpi.hour}
             </span>
             <button onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: t.textMuted, padding: "4px 8px" }}>›</button>
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: t.textMuted, padding: "2px 4px", lineHeight: 1 }}>›</button>
           </div>
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
             <img src="/logo.png" alt="" aria-hidden="true" style={{
