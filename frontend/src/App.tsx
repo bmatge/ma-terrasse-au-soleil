@@ -1528,7 +1528,7 @@ export default function App() {
                 const sunny = status ? isSunnyStatus(status) : false;
                 const isSelected = h === selectedHour;
                 return (
-                  <div key={h} style={{ flex: 1, textAlign: "center" }}>
+                  <div key={h} onClick={() => setSearchHour(h)} style={{ flex: 1, textAlign: "center", cursor: "pointer" }}>
                     <div style={{
                       height: 28, borderRadius: 6, marginBottom: 4,
                       background: isSelected ? (sunny ? t.accent : "#EF4444") : (sunny ? t.accentLight : t.border),
@@ -1578,7 +1578,7 @@ export default function App() {
                 });
                 return matchingHours.length > 0 ? (
                   matchingHours.map((h) => (
-                    <span key={h} style={{ padding: "6px 14px", borderRadius: 100, fontSize: 13, fontWeight: 500, background: t.accentLight, color: t.accentDark, fontFamily: F }}>{h}</span>
+                    <span key={h} onClick={() => setSearchHour(h)} style={{ padding: "6px 14px", borderRadius: 100, fontSize: 13, fontWeight: 500, background: h === selectedHour ? t.accent : t.accentLight, color: h === selectedHour ? "#FFF" : t.accentDark, fontFamily: F, cursor: "pointer" }}>{h}</span>
                   ))
                 ) : (
                   <span style={{ fontSize: 13, color: t.textMuted }}>Aucun créneau disponible</span>
