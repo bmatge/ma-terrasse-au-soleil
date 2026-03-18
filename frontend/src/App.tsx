@@ -28,7 +28,7 @@ interface FavTerrasse {
   adresse: string | null;
 }
 
-type Page = "home" | "search" | "results" | "detail" | "favorites" | "about";
+type Page = "home" | "search" | "results" | "detail" | "favorites" | "about" | "contact";
 type Mode = "sun" | "shade";
 type ViewMode = "list" | "map";
 type SearchType = "address" | "terrasse" | "metro";
@@ -688,6 +688,8 @@ export default function App() {
       url = "/favorites";
     } else if (dest === "about") {
       url = "/about";
+    } else if (dest === "contact") {
+      url = "/contact";
     } else if (dest === "results") {
       const sp = new URLSearchParams();
       if (lat != null) sp.set("lat", String(lat));
@@ -737,6 +739,8 @@ export default function App() {
       setPage("favorites");
     } else if (path === "/about") {
       setPage("about");
+    } else if (path === "/contact") {
+      setPage("contact");
     }
     // else: home (default)
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -768,6 +772,10 @@ export default function App() {
         }
       } else if (path === "/favorites") {
         setPage("favorites");
+      } else if (path === "/about") {
+        setPage("about");
+      } else if (path === "/contact") {
+        setPage("contact");
       } else {
         setPage("home");
       }
@@ -909,6 +917,7 @@ export default function App() {
           { key: "home" as Page, label: "Accueil", emoji: "🏠" },
           { key: "search" as Page, label: "Recherche", emoji: "🔍" },
           { key: "favorites" as Page, label: "Favoris", emoji: "❤️" },
+          { key: "contact" as Page, label: "Contact", emoji: "✉️" },
           { key: "about" as Page, label: "À propos", emoji: "ℹ️" },
         ]).map(({ key, label, emoji }) => {
           const active = page === key;
@@ -1627,14 +1636,31 @@ export default function App() {
             Fait avec amour 🫶 par Virginie, Bertrand et Claude.
           </>)}
 
-          {section("✉️ Nous contacter", <ContactForm theme={t} fontFamily={F} />)}
-
           <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20, textAlign: "center" }}>
             <a href="https://github.com/bmatge/ma-terrasse-au-soleil" target="_blank" rel="noopener noreferrer"
               style={{ fontFamily: F, fontSize: 13, color: t.accent, textDecoration: "none" }}>
               Code source sur GitHub →
             </a>
           </div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (page === "contact") {
+    return (
+      <div style={wrap}>
+        <Nav back title="Contact" />
+        <div style={{ padding: "20px 24px 100px" }}>
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <div style={{ fontSize: 48, marginBottom: 8 }}>✉️</div>
+            <div style={{ fontFamily: F, fontWeight: 700, fontSize: 18, color: t.text }}>Écris-nous</div>
+            <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginTop: 4 }}>
+              Une idée, un bug, un bar à ajouter ?<br />On lit tout.
+            </div>
+          </div>
+          <ContactForm theme={t} fontFamily={F} />
         </div>
         <BottomNav />
       </div>
