@@ -1112,11 +1112,11 @@ export default function App() {
             }} />
             {/* Theme tint overlay on the logo */}
             <div style={{
-              position: "absolute", inset: 0, pointerEvents: "none",
+              position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
               background: mode === "sun" ? "rgba(180,83,9,0.18)" : "rgba(29,78,216,0.18)",
               mixBlendMode: "multiply",
             }} />
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", position: "relative", zIndex: 1 }}>
               <div style={{ flex: 1, padding: "20px 32px 20px 16px", textAlign: "left", background: "rgba(254, 243, 199, 0.65)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: 6, marginBottom: 4 }}>
                   <SunIcon size={18} color="#D97706" />
