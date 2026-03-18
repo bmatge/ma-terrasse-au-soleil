@@ -567,10 +567,12 @@ export default function App() {
   const [geoLocating, setGeoLocating] = useState(false);
   const [shared, setShared] = useState(false);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
+  const [showStreetView, setShowStreetView] = useState(false);
 
   // Favorites
   const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
   useEffect(() => localStorage.setItem("fav-terrasses", JSON.stringify(favorites)), [favorites]);
+  useEffect(() => setShowStreetView(false), [selectedTerrasseId]);
 
   const t = themes[mode];
   const debouncedQuery = useDebounce(searchQuery, 300);
@@ -1482,8 +1484,37 @@ export default function App() {
           {/* Weather summary */}
           <div style={{ fontSize: 13, color: t.textSoft, marginBottom: 16 }}>{timelineData.meteo_resume}</div>
 
-          {/* Sun direction map */}
-          <SunMap lat={terrasse.lat} lon={terrasse.lon} date={timelineData.date} selectedTime={selectedHour} theme={t} />
+          {/* Sun map / Street View toggle */}
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+              {(["map", "photo"] as const).map((v) => {
+                const active = (v === "photo") === showStreetView;
+                return (
+                  <button key={v} onClick={() => setShowStreetView(v === "photo")} style={{
+                    padding: "5px 14px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                    fontSize: 12, fontWeight: active ? 600 : 400,
+                    border: `1.5px solid ${active ? t.accent : t.border}`,
+                    background: active ? t.accentLight : "transparent",
+                    color: active ? t.accentDark : t.textMuted,
+                  }}>
+                    {v === "map" ? "📍 Ensoleillement" : "📷 Street View"}
+                  </button>
+                );
+              })}
+            </div>
+            {showStreetView ? (
+              <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${t.border}`, background: t.border, minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img
+                  src={`/api/streetview?lat=${terrasse.lat}&lon=${terrasse.lon}`}
+                  alt={`Vue Street View de ${terrasse.nom}`}
+                  style={{ width: "100%", display: "block" }}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
+              </div>
+            ) : (
+              <SunMap lat={terrasse.lat} lon={terrasse.lon} date={timelineData.date} selectedTime={selectedHour} theme={t} />
+            )}
+          </div>
 
           {/* Hourly summary grid */}
           <div style={{ marginBottom: 24 }}>

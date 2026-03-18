@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://redis:6379/0"
     LOG_LEVEL: str = "info"
 
+    GOOGLE_STREETVIEW_KEY: str = ""
+
     SMTP_HOST: str = "localhost"
     SMTP_PORT: int = 25
     SMTP_FROM: str = "noreply@ecosysteme.matge.com"
