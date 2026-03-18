@@ -565,7 +565,8 @@ export default function App() {
   const [selectedTerrasseId, setSelectedTerrasseId] = useState<number | null>(null);
   const [searchHour, setSearchHour] = useState(currentHourKey);
   const [searchDate, setSearchDate] = useState(todayISO()); // YYYY-MM-DD
-  const [searchRadius, setSearchRadius] = useState(500);
+  const [searchRadius, setSearchRadius] = useState(250);
+  const [resultFilter, setResultFilter] = useState<"all" | "sun" | "shade">("all");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
   const [shared, setShared] = useState(false);
@@ -1297,37 +1298,36 @@ export default function App() {
             </span>
           </div>
 
-          {/* Hour filter */}
-          <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, marginBottom: 10, scrollbarWidth: "none" }}>
-            {HOURS.map((h) => {
-              const active = (searchHour || currentHourKey()) === h;
-              return (
-                <button key={h} onClick={() => setSearchHour(h)} style={{
-                  flexShrink: 0, padding: "5px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontFamily: F,
-                  fontSize: 13, fontWeight: active ? 600 : 400,
-                  background: active ? t.accent : t.bgCard,
-                  color: active ? "#FFF" : t.textSoft,
-                  boxShadow: active ? `0 1px 4px ${t.shadow}` : `0 1px 2px ${t.shadow}`,
-                }}>{h}</button>
-              );
-            })}
-          </div>
-
-          {/* Radius filter */}
-          <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
-            {([250, 500, 1000, 2000] as const).map((r) => {
-              const label = r < 1000 ? `${r} m` : `${r / 1000} km`;
-              const active = searchRadius === r;
-              return (
-                <button key={r} onClick={() => setSearchRadius(r)} style={{
-                  padding: "5px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontFamily: F,
-                  fontSize: 13, fontWeight: active ? 600 : 400,
-                  background: active ? t.accent : t.bgCard,
-                  color: active ? "#FFF" : t.textSoft,
-                  boxShadow: active ? `0 1px 4px ${t.shadow}` : `0 1px 2px ${t.shadow}`,
-                }}>{label}</button>
-              );
-            })}
+          {/* Hour + Radius filters */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+            <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 2, scrollbarWidth: "none" }}>
+              {HOURS.map((h) => {
+                const active = (searchHour || currentHourKey()) === h;
+                return (
+                  <button key={h} onClick={() => setSearchHour(h)} style={{
+                    flexShrink: 0, padding: "6px 13px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                    fontSize: 13, fontWeight: active ? 600 : 400,
+                    border: `1.5px solid ${active ? t.accent : t.border}`,
+                    background: active ? t.accent : t.bgCard,
+                    color: active ? "#FFF" : t.textSoft,
+                  }}>{h}</button>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", gap: 6 }}>
+              {([100, 250, 500] as const).map((r) => {
+                const active = searchRadius === r;
+                return (
+                  <button key={r} onClick={() => setSearchRadius(r)} style={{
+                    padding: "6px 14px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                    fontSize: 13, fontWeight: active ? 600 : 400,
+                    border: `1.5px solid ${active ? t.accent : t.border}`,
+                    background: active ? t.accent : t.bgCard,
+                    color: active ? "#FFF" : t.textSoft,
+                  }}>{r} m</button>
+                );
+              })}
+            </div>
           </div>
 
           {nearbyLoading ? (
@@ -1349,10 +1349,22 @@ export default function App() {
           ) : (
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.4 }}>
-                  <span>☀️ {results.filter(r => isSunnyStatus(r.status)).length} au soleil</span>
-                  <span style={{ margin: "0 6px", color: t.border }}>·</span>
-                  <span>🏢 {results.filter(r => !isSunnyStatus(r.status)).length} à l'ombre</span>
+                <div style={{ display: "flex", gap: 6, fontSize: 13, lineHeight: 1.4 }}>
+                  {(["all", "sun", "shade"] as const).map((f) => {
+                    const sunN = results.filter(r => isSunnyStatus(r.status)).length;
+                    const shadeN = results.filter(r => !isSunnyStatus(r.status)).length;
+                    const label = f === "all" ? `Tous (${results.length})` : f === "sun" ? `☀️ ${sunN} au soleil` : `🏢 ${shadeN} à l'ombre`;
+                    const active = resultFilter === f;
+                    return (
+                      <button key={f} onClick={() => setResultFilter(f)} style={{
+                        padding: "4px 10px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                        fontSize: 12, fontWeight: active ? 600 : 400,
+                        border: `1.5px solid ${active ? t.accent : t.border}`,
+                        background: active ? t.accentLight : "transparent",
+                        color: active ? t.accentDark : t.textMuted,
+                      }}>{label}</button>
+                    );
+                  })}
                 </div>
                 <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 10, padding: 3 }}>
                   <button onClick={() => setViewMode("list")} style={{
@@ -1373,10 +1385,10 @@ export default function App() {
               </div>
 
               {viewMode === "map" ? (
-                <ResultsMap terrasses={results} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
+                <ResultsMap terrasses={results.filter(r => resultFilter === "all" || (resultFilter === "sun" ? isSunnyStatus(r.status) : !isSunnyStatus(r.status)))} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
               ) : (
                 <div className="terrasse-grid">
-                  {results.map((tr) => <TerrasseCard key={tr.id} terrasse={tr} />)}
+                  {results.filter(r => resultFilter === "all" || (resultFilter === "sun" ? isSunnyStatus(r.status) : !isSunnyStatus(r.status))).map((tr) => <TerrasseCard key={tr.id} terrasse={tr} />)}
                 </div>
               )}
             </div>
