@@ -7,6 +7,7 @@ services:
       SMTP_HOST: mailserver
       SMTP_PORT: 25
       SMTP_FROM: noreply@ecosysteme.matge.com
+      REDIS_URL: redis://ma-terrasse-au-soleil-redis-1:6379/0
     networks:
       - default
       - ecosystem-network
