@@ -501,7 +501,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCoords, setSearchCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [selectedTerrasseId, setSelectedTerrasseId] = useState<number | null>(null);
-  const [searchHour, setSearchHour] = useState("");
+  const [searchHour, setSearchHour] = useState(currentHourKey);
   const [searchDate, setSearchDate] = useState(todayISO()); // YYYY-MM-DD
   const [searchRadius, setSearchRadius] = useState(500);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -894,7 +894,7 @@ export default function App() {
       (searchType === "terrasse" && terrasseResults && terrasseResults.length > 0) ||
       (searchType === "address" && addressResults && addressResults.length > 0) ||
       (searchType === "metro" && filteredMetro.length > 0);
-    const canSearch = (selectedTerrasseId || searchCoords) && searchHour;
+    const canSearch = !!(selectedTerrasseId || searchCoords);
 
     const searchTypeTabs: { key: SearchType; label: string; icon: typeof MapPinIcon }[] = [
       { key: "address", label: "Adresse", icon: MapPinIcon },
@@ -1051,9 +1051,12 @@ export default function App() {
               Heure
             </label>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {HOURS.map((h) => (
-                <button key={h} onClick={() => setSearchHour(h)} style={pillStyle(searchHour === h)}>{h}</button>
-              ))}
+              {HOURS.map((h) => {
+                const past = searchDate === todayISO() && parseInt(h) < new Date().getHours();
+                return (
+                  <button key={h} onClick={() => !past && setSearchHour(h)} style={{ ...pillStyle(searchHour === h), ...(past ? { opacity: 0.3, cursor: "default" } : {}) }}>{h}</button>
+                );
+              })}
             </div>
           </div>
 
