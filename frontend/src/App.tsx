@@ -1106,7 +1106,16 @@ export default function App() {
               <div style={{ flex: 1, position: "relative" }}>
                 <input
                   value={searchQuery}
-                  onChange={(e) => { setSearchQuery(e.target.value); setDropdownOpen(true); setSelectedTerrasseId(null); setSearchCoords(null); }}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setSearchQuery(v);
+                    setDropdownOpen(true);
+                    setSelectedTerrasseId(null);
+                    setSearchCoords(null);
+                    if (v.toLowerCase().replace(/\s/g, "") === "ausoleil") {
+                      new Audio("/ausoleil.mp3").play().catch(() => {});
+                    }
+                  }}
                   onFocus={() => setDropdownOpen(true)}
                   placeholder={placeholders[searchType]}
                   style={{
