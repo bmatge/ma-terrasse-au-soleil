@@ -217,7 +217,7 @@ function ResultsMap({
         <div style="font-size:13px;font-family:${F}">
           <strong>${terrasse.nom}</strong><br/>
           <span style="color:#78716C">${terrasse.distance_m}m</span>
-          ${terrasse.soleil_jusqua ? `<br/><span style="color:#D97706">Soleil jusqu'a ${terrasse.soleil_jusqua}</span>` : ""}
+          ${terrasse.soleil_jusqua ? `<br/><span style="color:#D97706">Soleil jusqu'à ${terrasse.soleil_jusqua}</span>` : ""}
         </div>
       `);
 
@@ -244,7 +244,7 @@ function ResultsMap({
       ref={containerRef}
       style={{
         width: "100%",
-        height: 360,
+        height: "min(50vh, 500px)",
         borderRadius: 14,
         overflow: "hidden",
         border: `1px solid ${themes[mode].border}`,
@@ -418,7 +418,7 @@ export default function App() {
 
   const handleShare = useCallback(
     (nom: string, adresse: string | null) => {
-      const txt = `${mode === "sun" ? "\u2600\ufe0f" : "\ud83c\udf24\ufe0f"} ${nom} \u2014 ${adresse || ""}\nTerrasse ${mode === "sun" ? "au soleil" : "\u00e0 l'ombre"} !`;
+      const txt = `${mode === "sun" ? "☀️" : "🌤️"} ${nom} — ${adresse || ""}\nTerrasse ${mode === "sun" ? "au soleil" : "à l'ombre"} !`;
       if (navigator.share) {
         navigator.share({ title: "Terrasse au soleil", text: txt });
       } else {
@@ -562,7 +562,7 @@ export default function App() {
               <span>{terrasse.distance_m}m</span>
               {terrasse.soleil_jusqua && (
                 <span style={{ color: themes.sun.accentDark }}>
-                  Soleil jusqu'a {terrasse.soleil_jusqua}
+                  Soleil jusqu'à {terrasse.soleil_jusqua}
                 </span>
               )}
             </div>
@@ -581,7 +581,7 @@ export default function App() {
     );
   };
 
-  const wrap: React.CSSProperties = { minHeight: "100vh", background: t.bg, fontFamily: F, maxWidth: 430, margin: "0 auto" };
+  const wrap: React.CSSProperties = { minHeight: "100vh", background: t.bg, fontFamily: F, maxWidth: 860, margin: "0 auto" };
 
   // ─── HOME ───
   if (page === "home") {
@@ -605,7 +605,7 @@ export default function App() {
             <div>
               <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
               <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
-                {mode === "sun" ? "au soleil" : "\u00e0 l'ombre"}
+                {mode === "sun" ? "au soleil" : "à l'ombre"}
               </div>
             </div>
             <ModeToggle />
@@ -628,7 +628,7 @@ export default function App() {
                 <span style={{ fontSize: 24, fontWeight: 700, color: "#92400E" }}>{kpi.sunCount}</span>
               </div>
               <div style={{ fontSize: 12, color: "#92400E", fontWeight: 500 }}>au soleil</div>
-              <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>en ce moment ({kpi.hour})</div>
+              <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>centre de Paris ({kpi.hour})</div>
             </div>
             <div
               style={{
@@ -644,8 +644,8 @@ export default function App() {
                 <ShadeIcon size={18} color="#2563EB" />
                 <span style={{ fontSize: 24, fontWeight: 700, color: "#1E40AF" }}>{kpi.shadeCount}</span>
               </div>
-              <div style={{ fontSize: 12, color: "#1E40AF", fontWeight: 500 }}>a l'ombre</div>
-              <div style={{ fontSize: 10, color: "#1D4ED8", marginTop: 2 }}>en ce moment ({kpi.hour})</div>
+              <div style={{ fontSize: 12, color: "#1E40AF", fontWeight: 500 }}>à l'ombre</div>
+              <div style={{ fontSize: 10, color: "#1D4ED8", marginTop: 2 }}>centre de Paris ({kpi.hour})</div>
             </div>
           </div>
 
@@ -975,8 +975,8 @@ export default function App() {
             {selectedTerrasseId
               ? "Voir la timeline"
               : mode === "sun"
-                ? "\u2600\ufe0f  Trouver du soleil"
-                : "\ud83c\udf24\ufe0f  Trouver de l'ombre"}
+                ? "☀️  Trouver du soleil"
+                : "🌤️  Trouver de l'ombre"}
           </button>
         </div>
       </div>
@@ -987,14 +987,14 @@ export default function App() {
   if (page === "results") {
     return (
       <div style={wrap}>
-        <Nav back title={mode === "sun" ? "Terrasses au soleil" : "Terrasses \u00e0 l'ombre"} />
+        <Nav back title={mode === "sun" ? "Terrasses au soleil" : "Terrasses à l'ombre"} />
         <div style={{ padding: "12px 24px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: t.accentLight, borderRadius: 10, marginBottom: 16 }}>
             <ClockIcon size={14} />
             <span style={{ fontSize: 13, color: t.accentDark, fontWeight: 500 }}>
               {searchHour || currentHourKey()}
-              {searchQuery ? ` \u00b7 ${searchQuery}` : ""}
-              {nearbyData ? ` \u00b7 ${nearbyData.meteo.status === "degage" ? "Ciel d\u00e9gag\u00e9" : nearbyData.meteo.status === "mitige" ? "\u00c9claircies" : "Couvert"}` : ""}
+              {searchQuery ? ` · ${searchQuery}` : ""}
+              {nearbyData ? ` · ${nearbyData.meteo.status === "degage" ? "Ciel dégagé" : nearbyData.meteo.status === "mitige" ? "Éclaircies" : "Couvert"}` : ""}
             </span>
           </div>
 
@@ -1015,12 +1015,12 @@ export default function App() {
             </div>
           ) : results.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>{mode === "sun" ? "\ud83c\udf27\ufe0f" : "\u2600\ufe0f"}</div>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>{mode === "sun" ? "🌧️" : "☀️"}</div>
               <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>
-                Aucune terrasse {mode === "sun" ? "ensoleill\u00e9e" : "ombrag\u00e9e"} trouv\u00e9e
+                Aucune terrasse {mode === "sun" ? "ensoleillée" : "ombragée"} trouvée
               </div>
               <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>
-                Essaye un autre cr\u00e9neau ou un autre lieu.
+                Essaye un autre créneau ou un autre lieu.
               </div>
               <button
                 onClick={() => setPage("search")}
@@ -1044,7 +1044,7 @@ export default function App() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                 <span style={{ fontSize: 13, color: t.textMuted }}>
-                  {results.length} terrasse{results.length > 1 ? "s" : ""} trouv\u00e9e{results.length > 1 ? "s" : ""}
+                  {results.length} terrasse{results.length > 1 ? "s" : ""} trouvée{results.length > 1 ? "s" : ""}
                 </span>
                 <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 8, padding: 2 }}>
                   <button
@@ -1091,7 +1091,7 @@ export default function App() {
               {viewMode === "map" ? (
                 <ResultsMap terrasses={results} mode={mode} onTerrasseClick={openDetail} />
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div className="terrasse-grid">
                   {results.map((tr) => (
                     <TerrasseCard key={tr.id} terrasse={tr} />
                   ))}
@@ -1194,8 +1194,8 @@ export default function App() {
               )}
               <span style={{ fontSize: 15, fontWeight: 600, color: good ? t.accentDark : "#DC2626" }}>
                 {good
-                  ? `${mode === "sun" ? "Ensoleill\u00e9e" : "Ombrag\u00e9e"} \u00e0 ${selectedHour}`
-                  : `Pas ${mode === "sun" ? "de soleil" : "d'ombre"} \u00e0 ${selectedHour}`}
+                  ? `${mode === "sun" ? "Ensoleillée" : "Ombragée"} à ${selectedHour}`
+                  : `Pas ${mode === "sun" ? "de soleil" : "d'ombre"} à ${selectedHour}`}
               </span>
             </div>
           </div>
@@ -1212,10 +1212,10 @@ export default function App() {
               }}
             >
               <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: "#92400E", marginBottom: 4 }}>
-                Meilleur cr\u00e9neau : {bestWindow.debut} \u2013 {bestWindow.fin}
+                Meilleur créneau : {bestWindow.debut} – {bestWindow.fin}
               </div>
               <div style={{ fontFamily: F, fontSize: 13, color: "#B45309" }}>
-                {bestWindow.duree_minutes} min de soleil + ciel d\u00e9gag\u00e9
+                {bestWindow.duree_minutes} min de soleil + ciel dégagé
               </div>
             </div>
           )}
@@ -1244,7 +1244,7 @@ export default function App() {
               {timelineData.slots.map((slot, i) => (
                 <div
                   key={i}
-                  title={`${slot.time} \u2014 ${STATUS_CONFIG[slot.status]?.label || slot.status}`}
+                  title={`${slot.time} — ${STATUS_CONFIG[slot.status]?.label || slot.status}`}
                   style={{
                     flex: 1,
                     background: TIMELINE_STATUS_COLORS[slot.status] || "#E5E7EB",
@@ -1369,7 +1369,7 @@ export default function App() {
                 fontWeight: 500,
               }}
             >
-              <ShareIcon size={16} /> {shared ? "Copi\u00e9 !" : "Partager"}
+              <ShareIcon size={16} /> {shared ? "Copié !" : "Partager"}
             </button>
           </div>
 
@@ -1393,7 +1393,7 @@ export default function App() {
                 marginBottom: 10,
               }}
             >
-              Cr\u00e9neaux {mode === "sun" ? "ensoleill\u00e9s" : "ombrag\u00e9s"}
+              Créneaux {mode === "sun" ? "ensoleillés" : "ombragés"}
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {(() => {
@@ -1420,7 +1420,7 @@ export default function App() {
                     </span>
                   ))
                 ) : (
-                  <span style={{ fontSize: 13, color: t.textMuted }}>Aucun cr\u00e9neau disponible</span>
+                  <span style={{ fontSize: 13, color: t.textMuted }}>Aucun créneau disponible</span>
                 );
               })()}
             </div>
@@ -1438,9 +1438,9 @@ export default function App() {
         <div style={{ padding: "12px 24px 24px" }}>
           {favorites.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>{"\ud83d\udc9b"}</div>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>💛</div>
               <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>Aucun favori pour le moment</div>
-              <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>Ajoute tes terrasses pr\u00e9f\u00e9r\u00e9es ici.</div>
+              <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>Ajoute tes terrasses préférées ici.</div>
               <button
                 onClick={() => setPage("home")}
                 style={{
