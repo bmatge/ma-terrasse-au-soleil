@@ -38,7 +38,7 @@ const HOURS = [
   "15:00","16:00","17:00","18:00","19:00",
 ];
 const F = "'Helvetica Neue', Helvetica, Arial, sans-serif";
-const STYLE_URL = "/tiles/styles/liberty";
+const STYLE_URL = "/tiles/styles/bright";
 const TILE_ORIGIN = "https://tiles.openfreemap.org/";
 
 const METRO_STATIONS = [
@@ -347,6 +347,7 @@ function ResultsMap({
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const onClickRef = useRef(onTerrasseClick);
   onClickRef.current = onTerrasseClick;
+  const [is3D, setIs3D] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -398,8 +399,53 @@ function ResultsMap({
     }
   }, [terrasses, mode]);
 
+  const toggle3D = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const next = !is3D;
+    setIs3D(next);
+    if (next) {
+      map.easeTo({ pitch: 50, bearing: -20, duration: 600 });
+      const onReady = () => {
+        if (map.getLayer("buildings-3d")) return;
+        const firstSymbol = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
+        map.addLayer({
+          id: "buildings-3d",
+          source: "openmaptiles",
+          "source-layer": "building",
+          type: "fill-extrusion",
+          minzoom: 14,
+          paint: {
+            "fill-extrusion-color": "#d8d0c8",
+            "fill-extrusion-height": ["coalesce", ["get", "render_height"], ["get", "height"], 10],
+            "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0],
+            "fill-extrusion-opacity": 0.8,
+          },
+        }, firstSymbol);
+      };
+      map.isStyleLoaded() ? onReady() : map.once("styledata", onReady);
+    } else {
+      map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
+      if (map.getLayer("buildings-3d")) map.removeLayer("buildings-3d");
+    }
+  }, [is3D]);
+
+  const t = themes[mode];
   return (
-    <div ref={containerRef} style={{ width: "100%", height: "min(50vh, 500px)", borderRadius: 14, overflow: "hidden", border: `1px solid ${themes[mode].border}` }} />
+    <div style={{ position: "relative", width: "100%", height: "min(50vh, 500px)", borderRadius: 14, overflow: "hidden", border: `1px solid ${t.border}` }}>
+      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+      <button
+        onClick={toggle3D}
+        style={{
+          position: "absolute", bottom: 10, left: 10, zIndex: 1,
+          padding: "5px 10px", borderRadius: 6, border: "none", cursor: "pointer",
+          background: is3D ? t.accent : "rgba(255,255,255,0.92)",
+          color: is3D ? "#FFF" : t.textSoft,
+          fontSize: 12, fontWeight: 700, fontFamily: F,
+          boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+        }}
+      >{is3D ? "2D" : "3D"}</button>
+    </div>
   );
 }
 
