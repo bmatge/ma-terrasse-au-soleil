@@ -44,6 +44,7 @@ export interface NearbyTerrasse {
   distance_m: number;
   status: "soleil" | "mitige" | "couvert" | "ombre" | "nuit";
   soleil_jusqua: string | null;
+  has_profile: boolean;
 }
 
 export interface NearbyResponse {

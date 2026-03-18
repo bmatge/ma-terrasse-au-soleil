@@ -108,6 +108,7 @@ async def find_nearby_terrasses(
             "distance_m": row.distance_m,
             "status": status,
             "soleil_jusqua": soleil_jusqua,
+            "has_profile": profile is not None,
         })
 
     return {

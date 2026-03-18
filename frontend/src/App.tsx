@@ -160,11 +160,7 @@ const CrosshairIcon = ({ size = 20 }: { size?: number }) => (
     <line x1="2" y1="12" x2="6" y2="12" /><line x1="18" y1="12" x2="22" y2="12" />
   </svg>
 );
-const ClockIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-  </svg>
-);
+
 const ListIcon = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
@@ -604,7 +600,7 @@ export default function App() {
     return `${searchDate}T${hour}:00`;
   }, [searchHour, searchDate]);
 
-  const { data: nearbyData, isLoading: nearbyLoading } = useQuery({
+  const { data: nearbyData, isLoading: nearbyLoading, isError: nearbyError } = useQuery({
     queryKey: ["nearby", searchCoords?.lat, searchCoords?.lon, datetime, searchRadius],
     queryFn: () => getNearby(searchCoords!.lat, searchCoords!.lon, datetime, searchRadius),
     enabled: !!searchCoords,
@@ -971,6 +967,7 @@ export default function App() {
             <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12, fontFamily: F, color: t.textSoft }}>
               <span>{terrasse.distance_m}m</span>
               {terrasse.soleil_jusqua && <span style={{ color: themes.sun.accentDark }}>Soleil jusqu'à {terrasse.soleil_jusqua}</span>}
+              {!terrasse.has_profile && <span style={{ color: t.textMuted, fontStyle: "italic" }}>Estimé</span>}
             </div>
           </div>
           <button onClick={(e) => { e.stopPropagation(); toggleFav({ id: terrasse.id, nom: terrasse.nom, adresse: terrasse.adresse }); }}
@@ -1297,15 +1294,28 @@ export default function App() {
       <div style={wrap}>
         <Nav back title={mode === "sun" ? "Terrasses au soleil" : "Terrasses à l'ombre"} />
         <div style={{ padding: "12px 24px 24px" }}>
-            {/* Context info */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: t.accentLight, borderRadius: 10, marginBottom: 12 }}>
-            <ClockIcon size={14} />
-            <span style={{ fontSize: 13, color: t.accentDark, fontWeight: 500 }}>
-              {searchDate !== todayISO() && `${new Date(searchDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · `}
-              {searchHour || currentHourKey()}
-              {searchQuery ? ` · ${searchQuery}` : ""}
-              {nearbyData ? ` · ${nearbyData.meteo.status === "degage" ? "Ciel dégagé" : nearbyData.meteo.status === "mitige" ? "Éclaircies" : "Couvert"}` : ""}
+          {/* Erreur API */}
+          {nearbyError && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: "#FEF2F2", borderRadius: 10, marginBottom: 12, border: "1px solid #FECACA" }}>
+              <span>⚠️</span>
+              <span style={{ fontFamily: F, fontSize: 13, color: "#DC2626" }}>Service temporairement indisponible — réessaie dans quelques instants.</span>
+            </div>
+          )}
+
+          {/* Date picker */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <button onClick={() => { const d = new Date(searchDate + "T12:00:00"); d.setDate(d.getDate() - 1); setSearchDate(d.toISOString().split("T")[0]); }}
+              style={{ background: "none", border: `1.5px solid ${t.border}`, borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textSoft }}>
+              ←
+            </button>
+            <span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: t.text, textTransform: "capitalize" }}>
+              {searchDate === todayISO() ? "Aujourd'hui" : searchDate === (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split("T")[0]; })() ? "Demain" : new Date(searchDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+              {nearbyData && ` · ${nearbyData.meteo.status === "degage" ? "☀️" : nearbyData.meteo.status === "mitige" ? "🌤️" : "☁️"}`}
             </span>
+            <button onClick={() => { const d = new Date(searchDate + "T12:00:00"); d.setDate(d.getDate() + 1); setSearchDate(d.toISOString().split("T")[0]); }}
+              style={{ background: "none", border: `1.5px solid ${t.border}`, borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textSoft }}>
+              →
+            </button>
           </div>
 
           {/* Hour + Radius filters */}
