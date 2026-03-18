@@ -76,6 +76,31 @@ const METRO_STATIONS = [
   "Volontaires","Voltaire",
 ].sort();
 
+// Stations with coords for random KPI on home page
+const KPI_STATIONS: { name: string; lat: number; lon: number }[] = [
+  { name: "Bastille", lat: 48.8533, lon: 2.3692 },
+  { name: "République", lat: 48.8675, lon: 2.3637 },
+  { name: "Oberkampf", lat: 48.8649, lon: 2.3681 },
+  { name: "Ledru-Rollin", lat: 48.8515, lon: 2.3767 },
+  { name: "Nation", lat: 48.8485, lon: 2.3960 },
+  { name: "Reuilly-Diderot", lat: 48.8474, lon: 2.3866 },
+  { name: "Dupleix", lat: 48.8505, lon: 2.2937 },
+  { name: "Odéon", lat: 48.8522, lon: 2.3387 },
+  { name: "Gambetta", lat: 48.8653, lon: 2.3985 },
+  { name: "Place d'Italie", lat: 48.8312, lon: 2.3555 },
+  { name: "Belleville", lat: 48.8720, lon: 2.3766 },
+  { name: "Arts et Métiers", lat: 48.8653, lon: 2.3562 },
+  { name: "Saint-Paul", lat: 48.8552, lon: 2.3612 },
+  { name: "Père Lachaise", lat: 48.8625, lon: 2.3867 },
+  { name: "Censier-Daubenton", lat: 48.8408, lon: 2.3519 },
+  { name: "Voltaire", lat: 48.8578, lon: 2.3804 },
+  { name: "Bercy", lat: 48.8401, lon: 2.3796 },
+  { name: "Ménilmontant", lat: 48.8669, lon: 2.3834 },
+];
+
+// Pick a random station once per session
+const RANDOM_KPI_STATION = KPI_STATIONS[Math.floor(Math.random() * KPI_STATIONS.length)];
+
 // ─── Themes ───
 const themes = {
   sun: {
@@ -390,6 +415,7 @@ export default function App() {
   const [searchCoords, setSearchCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [selectedTerrasseId, setSelectedTerrasseId] = useState<number | null>(null);
   const [searchHour, setSearchHour] = useState("");
+  const [searchDate, setSearchDate] = useState(todayISO()); // YYYY-MM-DD
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
   const [shared, setShared] = useState(false);
@@ -423,8 +449,8 @@ export default function App() {
 
   const datetime = useMemo(() => {
     const hour = searchHour || currentHourKey();
-    return `${todayISO()}T${hour}:00`;
-  }, [searchHour]);
+    return `${searchDate}T${hour}:00`;
+  }, [searchHour, searchDate]);
 
   const { data: nearbyData, isLoading: nearbyLoading } = useQuery({
     queryKey: ["nearby", searchCoords?.lat, searchCoords?.lon, datetime],
@@ -433,15 +459,15 @@ export default function App() {
   });
 
   const { data: timelineData, isLoading: timelineLoading } = useQuery({
-    queryKey: ["timeline", selectedTerrasseId, todayISO()],
-    queryFn: () => getTimeline(selectedTerrasseId!),
+    queryKey: ["timeline", selectedTerrasseId, searchDate],
+    queryFn: () => getTimeline(selectedTerrasseId!, searchDate),
     enabled: !!selectedTerrasseId,
   });
 
-  // Home KPIs
+  // Home KPIs — random metro station per session
   const { data: homeData } = useQuery({
-    queryKey: ["home-nearby", todayISO(), currentHourKey()],
-    queryFn: () => getNearby(48.8566, 2.3522, `${todayISO()}T${currentHourKey()}:00`, 1000),
+    queryKey: ["home-nearby", RANDOM_KPI_STATION.name, todayISO(), currentHourKey()],
+    queryFn: () => getNearby(RANDOM_KPI_STATION.lat, RANDOM_KPI_STATION.lon, `${todayISO()}T${currentHourKey()}:00`, 500),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -459,10 +485,11 @@ export default function App() {
 
   const kpi = useMemo(() => {
     const hour = currentHourKey();
-    if (!homeData) return { sunCount: "...", shadeCount: "...", hour };
+    const station = RANDOM_KPI_STATION.name;
+    if (!homeData) return { sunCount: "...", shadeCount: "...", hour, station };
     const sunCount = homeData.terrasses.filter((tr) => isSunnyStatus(tr.status)).length;
     const shadeCount = homeData.terrasses.length - sunCount;
-    return { sunCount, shadeCount, hour };
+    return { sunCount, shadeCount, hour, station };
   }, [homeData]);
 
   const hourlyFromTimeline = useMemo(() => {
@@ -709,7 +736,7 @@ export default function App() {
                 <span style={{ fontSize: 24, fontWeight: 700, color: "#92400E" }}>{kpi.sunCount}</span>
               </div>
               <div style={{ fontSize: 12, color: "#92400E", fontWeight: 500 }}>au soleil</div>
-              <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>centre de Paris ({kpi.hour})</div>
+              <div style={{ fontSize: 10, color: "#B45309", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
             </div>
             <div style={{ flex: 1, padding: "16px", borderRadius: 14, background: "linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)", border: "1px solid #BFDBFE", textAlign: "center" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
@@ -717,7 +744,7 @@ export default function App() {
                 <span style={{ fontSize: 24, fontWeight: 700, color: "#1E40AF" }}>{kpi.shadeCount}</span>
               </div>
               <div style={{ fontSize: 12, color: "#1E40AF", fontWeight: 500 }}>à l'ombre</div>
-              <div style={{ fontSize: 10, color: "#1D4ED8", marginTop: 2 }}>centre de Paris ({kpi.hour})</div>
+              <div style={{ fontSize: 10, color: "#1D4ED8", marginTop: 2 }}>à {kpi.station} ({kpi.hour})</div>
             </div>
           </div>
 
@@ -891,6 +918,45 @@ export default function App() {
             </div>
           </div>
 
+          {/* Date */}
+          <div style={{ marginTop: 24 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
+              Date
+            </label>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+              {(() => {
+                const today = todayISO();
+                const d1 = new Date(); d1.setDate(d1.getDate() + 1);
+                const tomorrow = d1.toISOString().split("T")[0];
+                const d2 = new Date(); d2.setDate(d2.getDate() + 2);
+                const afterTomorrow = d2.toISOString().split("T")[0];
+                const dateOptions = [
+                  { value: today, label: "Aujourd'hui" },
+                  { value: tomorrow, label: "Demain" },
+                  { value: afterTomorrow, label: "Après-demain" },
+                ];
+                return (
+                  <>
+                    {dateOptions.map(({ value, label }) => (
+                      <button key={value} onClick={() => setSearchDate(value)} style={pillStyle(searchDate === value)}>{label}</button>
+                    ))}
+                    <input
+                      type="date"
+                      value={searchDate}
+                      min={today}
+                      onChange={(e) => setSearchDate(e.target.value)}
+                      style={{
+                        padding: "7px 12px", borderRadius: 100, border: `1.5px solid ${t.border}`,
+                        fontFamily: F, fontSize: 13, color: t.text, background: t.bgCard,
+                        cursor: "pointer", outline: "none",
+                      }}
+                    />
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+
           {/* Hour */}
           <div style={{ marginTop: 24 }}>
             <label style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
@@ -929,6 +995,7 @@ export default function App() {
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: t.accentLight, borderRadius: 10, marginBottom: 16 }}>
             <ClockIcon size={14} />
             <span style={{ fontSize: 13, color: t.accentDark, fontWeight: 500 }}>
+              {searchDate !== todayISO() && `${new Date(searchDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · `}
               {searchHour || currentHourKey()}
               {searchQuery ? ` · ${searchQuery}` : ""}
               {nearbyData ? ` · ${nearbyData.meteo.status === "degage" ? "Ciel dégagé" : nearbyData.meteo.status === "mitige" ? "Éclaircies" : "Couvert"}` : ""}
