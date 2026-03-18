@@ -854,7 +854,7 @@ export default function App() {
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", position: "sticky", top: 0, zIndex: 10, background: t.bg, borderBottom: `1px solid ${t.border}` }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {back && <button onClick={goBack} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: t.accent }}><BackIcon /></button>}
-        <span style={{ fontSize: 22, lineHeight: 1 }}>☀️</span>
+        <span style={{ fontSize: 22, lineHeight: 1 }}>{mode === "sun" ? "☀️" : "☁️"}</span>
         {title && <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: t.text }}>{title}</span>}
       </div>
       <ModeToggle />
@@ -950,7 +950,7 @@ export default function App() {
         <div style={{ padding: "56px 24px 24px", position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <span style={{ fontSize: 48, lineHeight: 1 }}>☀️</span>
+              <span style={{ fontSize: 48, lineHeight: 1 }}>{mode === "sun" ? "☀️" : "☁️"}</span>
               <div>
                 <div style={{ fontSize: 28, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
                 <div style={{ fontSize: 28, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
