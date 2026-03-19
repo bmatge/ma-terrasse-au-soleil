@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Float, String, DateTime
+from sqlalchemy import Float, Integer, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -21,6 +21,8 @@ class Terrasse(Base):
     longueur: Mapped[float | None] = mapped_column(Float, nullable=True)
     largeur: Mapped[float | None] = mapped_column(Float, nullable=True)
     source: Mapped[str] = mapped_column(String(30), default="paris_opendata")
+    price_level: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    google_place_id: Mapped[str | None] = mapped_column(String(300), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     horizon_profile: Mapped["HorizonProfile | None"] = relationship(

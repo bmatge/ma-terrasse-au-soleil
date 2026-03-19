@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import type { TimelineSlot, BestWindow } from "../api/types";
+import UvBadge from "./UvBadge";
 
 const STATUS_COLORS: Record<string, string> = {
   soleil: "bg-amber-400",
@@ -26,6 +28,13 @@ interface TimelineProps {
 export default function Timeline({ slots, bestWindow, meteoResume, onSlotHover }: TimelineProps) {
   // Group slots into hours for labels
   const hours = [...new Set(slots.map((s) => s.time.split(":")[0]))];
+
+  // Peak UV for the day
+  const peakUv = useMemo(() => {
+    if (slots.length === 0) return null;
+    const max = slots.reduce((best, s) => (s.uv_index > best.uv_index ? s : best), slots[0]);
+    return max.uv_index > 0 ? { value: max.uv_index, time: max.time } : null;
+  }, [slots]);
 
   return (
     <div>
@@ -82,6 +91,41 @@ export default function Timeline({ slots, bestWindow, meteoResume, onSlotHover }
           })}
         </div>
       </div>
+
+      {/* UV index bar */}
+      {peakUv && (
+        <div className="mt-6">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-medium text-gray-600">Indice UV</span>
+            <UvBadge uvIndex={peakUv.value} />
+            <span className="text-xs text-gray-400">pic à {peakUv.time}</span>
+          </div>
+          <div className="flex h-3 rounded-full overflow-hidden border border-gray-200">
+            {slots.map((slot, i) => {
+              const uv = slot.uv_index;
+              let bg = "bg-gray-100";
+              if (uv > 10) bg = "bg-purple-400";
+              else if (uv > 7) bg = "bg-red-400";
+              else if (uv > 5) bg = "bg-orange-400";
+              else if (uv > 2) bg = "bg-yellow-300";
+              else if (uv > 0) bg = "bg-green-300";
+              return (
+                <div
+                  key={i}
+                  className={`flex-1 ${bg} group relative cursor-pointer`}
+                  title={`${slot.time} — UV ${uv}`}
+                >
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10">
+                    <div className="bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                      {slot.time} — UV {uv}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap gap-3 mt-6 text-xs text-gray-600">

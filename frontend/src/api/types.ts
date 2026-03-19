@@ -5,6 +5,7 @@ export interface TerrasseSearchResult {
   arrondissement: string | null;
   lat: number;
   lon: number;
+  price_level: number | null;
 }
 
 export interface TimelineSlot {
@@ -12,6 +13,7 @@ export interface TimelineSlot {
   sun_altitude: number;
   urban_sunny: boolean;
   cloud_cover: number;
+  uv_index: number;
   status: "soleil" | "mitige" | "couvert" | "ombre_batiment" | "nuit";
 }
 
@@ -33,6 +35,7 @@ export interface MeteoInfo {
   cloud_cover: number;
   status: string;
   precipitation_probability: number;
+  uv_index: number;
 }
 
 export interface NearbyTerrasse {
@@ -45,6 +48,7 @@ export interface NearbyTerrasse {
   status: "soleil" | "mitige" | "couvert" | "ombre" | "nuit";
   soleil_jusqua: string | null;
   has_profile: boolean;
+  price_level: number | null;
 }
 
 export interface NearbyResponse {

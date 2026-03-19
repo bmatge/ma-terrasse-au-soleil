@@ -58,6 +58,7 @@ async def find_nearby_terrasses(
                     t.geometry::geography,
                     ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography
                 )::int AS distance_m,
+                t.price_level,
                 hp.profile
             FROM terrasses t
             LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
@@ -109,13 +110,17 @@ async def find_nearby_terrasses(
             "status": status,
             "soleil_jusqua": soleil_jusqua,
             "has_profile": profile is not None,
+            "price_level": row.price_level,
         })
+
+    uv_index = hour_weather.get("uv_index", 0.0)
 
     return {
         "meteo": {
             "cloud_cover": cloud_cover,
             "status": weather_status(cloud_cover),
             "precipitation_probability": hour_weather.get("precipitation_probability", 0),
+            "uv_index": round(uv_index, 1),
         },
         "terrasses": terrasses,
     }

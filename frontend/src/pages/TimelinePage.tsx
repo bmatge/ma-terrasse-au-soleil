@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getTimeline } from "../api/terrasses";
 import Timeline from "../components/Timeline";
 import SunMap from "../components/SunMap";
+import PriceLevel from "../components/PriceLevel";
 import { track } from "../analytics";
 
 function currentTimeRounded(): string {
@@ -72,7 +73,12 @@ export default function TimelinePage() {
         <h2 className="text-2xl font-bold text-gray-800 mt-2">
           {data.terrasse.nom}
         </h2>
-        <p className="text-gray-500">{data.terrasse.adresse}</p>
+        <p className="text-gray-500">
+          {data.terrasse.adresse}
+          {data.terrasse.price_level != null && data.terrasse.price_level > 0 && (
+            <PriceLevel level={data.terrasse.price_level} className="ml-2" />
+          )}
+        </p>
       </div>
 
       {/* Date selector */}

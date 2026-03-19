@@ -5,6 +5,7 @@ import { getNearby } from "../api/terrasses";
 import Map from "../components/Map";
 import TerrasseCard from "../components/TerrasseCard";
 import TimeSlider from "../components/TimeSlider";
+import UvBadge from "../components/UvBadge";
 import { track } from "../analytics";
 
 function currentTime(): string {
@@ -92,6 +93,13 @@ export default function NearbyPage() {
 
       {/* Time slider */}
       <TimeSlider value={time} onChange={setTime} />
+
+      {/* UV index */}
+      {data?.meteo && data.meteo.uv_index > 0 && (
+        <div className="flex items-center gap-2">
+          <UvBadge uvIndex={data.meteo.uv_index} />
+        </div>
+      )}
 
       {/* Map */}
       <Map

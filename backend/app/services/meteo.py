@@ -44,7 +44,7 @@ async def get_hourly_weather(
     params = {
         "latitude": lat_grid,
         "longitude": lon_grid,
-        "hourly": "cloud_cover,direct_radiation,precipitation_probability",
+        "hourly": "cloud_cover,direct_radiation,precipitation_probability,uv_index",
         "timezone": "Europe/Paris",
         "start_date": target_date.isoformat(),
         "end_date": target_date.isoformat(),
@@ -61,6 +61,7 @@ async def get_hourly_weather(
     cloud = data["hourly"]["cloud_cover"]
     radiation = data["hourly"]["direct_radiation"]
     precip = data["hourly"]["precipitation_probability"]
+    uv = data["hourly"]["uv_index"]
 
     for i, time_str in enumerate(times):
         hour_key = time_str.split("T")[1][:5]  # "HH:MM"
@@ -68,6 +69,7 @@ async def get_hourly_weather(
             "cloud_cover": cloud[i],
             "direct_radiation": radiation[i],
             "precipitation_probability": precip[i],
+            "uv_index": uv[i],
         }
 
     # Cache for 1 hour

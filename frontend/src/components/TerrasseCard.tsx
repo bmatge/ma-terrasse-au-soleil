@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { NearbyTerrasse } from "../api/types";
+import PriceLevel from "./PriceLevel";
 
 const STATUS_CONFIG: Record<string, { icon: string; color: string; label: string }> = {
   soleil: { icon: "\u2600\uFE0F", color: "text-amber-600", label: "Au soleil" },
@@ -24,7 +25,12 @@ export default function TerrasseCard({ terrasse }: TerrasseCardProps) {
       <div className="text-2xl">{config.icon}</div>
       <div className="flex-1 min-w-0">
         <div className="font-medium text-gray-800 truncate">{terrasse.nom}</div>
-        <div className="text-sm text-gray-500 truncate">{terrasse.adresse}</div>
+        <div className="text-sm text-gray-500 truncate">
+          {terrasse.adresse}
+          {terrasse.price_level != null && terrasse.price_level > 0 && (
+            <PriceLevel level={terrasse.price_level} className="ml-2" />
+          )}
+        </div>
       </div>
       <div className="text-right shrink-0">
         <div className={`text-sm font-medium ${config.color}`}>
