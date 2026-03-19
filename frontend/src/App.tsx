@@ -1748,7 +1748,8 @@ export default function App() {
                 background: isFav(terrasse.id) ? "#FEF2F2" : t.bgCard, cursor: "pointer",
                 color: isFav(terrasse.id) ? "#EF4444" : t.text, fontFamily: F, fontSize: 14, fontWeight: 500,
               }}>
-              {isFav(terrasse.id) ? "❤️" : "🤍"} {isFav(terrasse.id) ? "Favori" : "Sauver"}
+              <HeartIcon filled={isFav(terrasse.id)} size={17} />
+              {isFav(terrasse.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
             </button>
             <button onClick={() => handleShare(terrasse.nom, terrasse.adresse, terrasse.id)}
               style={{
@@ -1756,7 +1757,11 @@ export default function App() {
                 padding: "14px", borderRadius: 12, border: `1.5px solid ${t.border}`,
                 background: t.bgCard, cursor: "pointer", color: t.text, fontFamily: F, fontSize: 14, fontWeight: 500,
               }}>
-              📤 {shared ? "Copié !" : "Envoyer aux potes"}
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              {shared ? "Copié !" : "Envoyer aux potes"}
             </button>
           </div>
 
