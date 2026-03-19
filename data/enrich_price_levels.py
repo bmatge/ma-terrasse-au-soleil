@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Batch-enrich terrasses with Google Places price_level.
 
-Queries terrasses that don't have a price_level yet and fetches it from
-the Google Places API. Rate-limited to avoid quota issues.
+Uses Nearby Search on each terrasse's GPS coordinates to find the closest
+restaurant/cafe/bar and grab its priceLevel.
 
 Usage:
     python -m data.enrich_price_levels [--limit 100] [--delay 0.2]
@@ -47,9 +47,7 @@ async def main(limit: int, delay: float) -> None:
 
     for i, row in enumerate(rows, 1):
         try:
-            price, display_name = await fetch_price_level(
-                row.nom, row.lat, row.lon, adresse=row.adresse,
-            )
+            price, display_name = await fetch_price_level(row.lat, row.lon)
             if price is not None:
                 with engine.connect() as conn:
                     conn.execute(
@@ -64,16 +62,15 @@ async def main(limit: int, delay: float) -> None:
                     display_name, PRICE_LABELS.get(price, price),
                 )
             elif display_name:
-                # Google found the place but it has no price data
                 found_no_price += 1
-                logger.debug(
+                logger.info(
                     "[%d/%d] %s -> found '%s' but no price",
                     i, len(rows), row.nom, display_name,
                 )
             else:
                 not_found += 1
-                logger.debug(
-                    "[%d/%d] %s @ %s -> not found on Google",
+                logger.info(
+                    "[%d/%d] %s @ %s -> no restaurant within 30m",
                     i, len(rows), row.nom, row.adresse or "?",
                 )
         except Exception as e:
