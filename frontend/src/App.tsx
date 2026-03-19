@@ -1672,32 +1672,51 @@ export default function App() {
         <Nav back title="" />
 
         {/* Hero card */}
-        <div style={{ margin: "0 20px 20px", padding: "28px 24px", borderRadius: 20, background: t.gradient, position: "relative", overflow: "hidden" }}>
+        <div style={{ margin: "0 20px 20px", padding: "24px 24px 20px", borderRadius: 20, background: t.gradient, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
           <div style={{ position: "relative" }}>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#FFF", marginBottom: 6 }}>{terrasse.nom_commercial || terrasse.nom}</div>
-            {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{terrasse.adresse}</div>}
-            {terrasse.arrondissement && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{terrasse.arrondissement}</div>}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 8 }}>
-              {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontFamily: F }}>
-                  {PLACE_TYPE_CONFIG[terrasse.place_type].icon} {PLACE_TYPE_CONFIG[terrasse.place_type].label}
-                </span>
-              )}
-              {terrasse.price_level != null && terrasse.price_level > 0 && (
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontFamily: F }}>{"€".repeat(terrasse.price_level)}</span>
-              )}
-              {terrasse.rating != null && (
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontFamily: F }}>⭐ {terrasse.rating.toFixed(1)}{terrasse.user_rating_count ? ` (${terrasse.user_rating_count})` : ""}</span>
-              )}
-            </div>
-            {(terrasse.phone || terrasse.website || terrasse.google_maps_uri) && (
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 8 }}>
-                {terrasse.phone && <a href={`tel:${terrasse.phone}`} style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>{terrasse.phone}</a>}
-                {terrasse.website && <a href={terrasse.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>Site web</a>}
-                {terrasse.google_maps_uri && <a href={terrasse.google_maps_uri} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>Google Maps</a>}
+            <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", marginBottom: 4, lineHeight: 1.2 }}>{terrasse.nom_commercial || terrasse.nom}</div>
+            {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)" }}>{terrasse.adresse}{terrasse.arrondissement ? ` · ${terrasse.arrondissement}` : ""}</div>}
+
+            {/* Meta row: type/price/rating left, action icons right */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
+                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", borderRadius: 100, padding: "3px 10px", fontFamily: F }}>
+                    {PLACE_TYPE_CONFIG[terrasse.place_type].icon} {PLACE_TYPE_CONFIG[terrasse.place_type].label}
+                  </span>
+                )}
+                {terrasse.price_level != null && terrasse.price_level > 0 && (
+                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", borderRadius: 100, padding: "3px 10px", fontFamily: F, fontWeight: 600 }}>{"€".repeat(terrasse.price_level)}</span>
+                )}
+                {terrasse.rating != null && (
+                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>⭐ {terrasse.rating.toFixed(1)}{terrasse.user_rating_count ? ` (${terrasse.user_rating_count})` : ""}</span>
+                )}
               </div>
-            )}
+              {/* Icon buttons */}
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                {terrasse.phone && (
+                  <a href={`tel:${terrasse.phone}`} title={terrasse.phone} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.16 6.16l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                  </a>
+                )}
+                {terrasse.website && (
+                  <a href={terrasse.website} target="_blank" rel="noopener noreferrer" title="Site web" style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                  </a>
+                )}
+                {terrasse.google_maps_uri && (
+                  <a href={terrasse.google_maps_uri} target="_blank" rel="noopener noreferrer" title="Google Maps" style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <MapPinIcon size={16} color="#FFF" />
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1712,35 +1731,38 @@ export default function App() {
             </div>
           </div>
 
-          {/* Best window */}
-          {bestWindow && (
-            <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: "#FEF3C7", border: "1px solid #FDE68A" }}>
-              <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: "#92400E", marginBottom: 4 }}>
-                Meilleur créneau : {bestWindow.debut} – {bestWindow.fin}
+          {/* Best window + météo + UV — bloc amber unifié */}
+          <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: "#FEF3C7", border: "1px solid #FDE68A" }}>
+            {bestWindow ? (
+              <>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                  <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: "#92400E" }}>
+                    ☀️ {bestWindow.debut} – {bestWindow.fin} · {bestWindow.duree_minutes} min
+                  </div>
+                  {currentSlot && currentSlot.uv_index > 0 && (() => {
+                    const uv = currentSlot.uv_index;
+                    const { label, color } = uv <= 2 ? { label: "UV faible", color: "#166534" }
+                      : uv <= 5 ? { label: "UV modéré", color: "#854D0E" }
+                      : uv <= 7 ? { label: "UV fort", color: "#9A3412" }
+                      : { label: "UV très fort", color: "#991B1B" };
+                    return <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: F }}>{uv} · {label}</span>;
+                  })()}
+                </div>
+                <div style={{ fontFamily: F, fontSize: 12, color: "#B45309" }}>{timelineData.meteo_resume}</div>
+              </>
+            ) : (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ fontFamily: F, fontSize: 13, color: "#B45309" }}>{timelineData.meteo_resume}</div>
+                {currentSlot && currentSlot.uv_index > 0 && (() => {
+                  const uv = currentSlot.uv_index;
+                  const { label, color } = uv <= 2 ? { label: "UV faible", color: "#166534" }
+                    : uv <= 5 ? { label: "UV modéré", color: "#854D0E" }
+                    : uv <= 7 ? { label: "UV fort", color: "#9A3412" }
+                    : { label: "UV très fort", color: "#991B1B" };
+                  return <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: F }}>{uv} · {label}</span>;
+                })()}
               </div>
-              <div style={{ fontFamily: F, fontSize: 13, color: "#B45309" }}>
-                {bestWindow.duree_minutes} min de soleil + ciel dégagé
-              </div>
-            </div>
-          )}
-
-          {/* Weather summary + UV */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, gap: 10 }}>
-            <div style={{ fontSize: 13, color: t.textSoft }}>{timelineData.meteo_resume}</div>
-            {currentSlot && currentSlot.uv_index > 0 && (() => {
-              const uv = currentSlot.uv_index;
-              const { label, color, bg } = uv <= 2
-                ? { label: "Faible", color: "#166534", bg: "#DCFCE7" }
-                : uv <= 5 ? { label: "Modéré", color: "#854D0E", bg: "#FEF9C3" }
-                : uv <= 7 ? { label: "Fort", color: "#9A3412", bg: "#FFEDD5" }
-                : uv <= 10 ? { label: "Très fort", color: "#991B1B", bg: "#FEE2E2" }
-                : { label: "Extrême", color: "#581C87", bg: "#F3E8FF" };
-              return (
-                <span style={{ flexShrink: 0, fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100, color, background: bg, fontFamily: F }}>
-                  UV {uv} · {label}
-                </span>
-              );
-            })()}
+            )}
           </div>
 
           {/* Sun map / Street View toggle */}
