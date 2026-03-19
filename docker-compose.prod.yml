@@ -5,6 +5,7 @@ services:
     environment:
       LOG_LEVEL: warning
       GOOGLE_STREETVIEW_KEY: ${GOOGLE_STREETVIEW_KEY}
+      GOOGLE_PLACES_KEY: ${GOOGLE_PLACES_KEY}
       SMTP_HOST: mailserver
       SMTP_PORT: 25
       SMTP_FROM: noreply@ecosysteme.matge.com
