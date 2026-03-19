@@ -164,6 +164,16 @@ const themes = {
 };
 
 // ─── Status config ───
+const PLACE_TYPE_CONFIG: Record<string, { label: string; icon: string }> = {
+  bar: { label: "Bar", icon: "🍺" },
+  restaurant: { label: "Restaurant", icon: "🍽️" },
+  cafe: { label: "Café", icon: "☕" },
+  bakery: { label: "Boulangerie", icon: "🥐" },
+  night_club: { label: "Club", icon: "🎵" },
+  ice_cream_shop: { label: "Glacier", icon: "🍦" },
+  meal_takeaway: { label: "À emporter", icon: "🥡" },
+};
+
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
   soleil: { label: "Au soleil", color: "#92400E", icon: "sun" },        // 8.0:1 on #FEF3C7 ✅
   mitige: { label: "Mitigé", color: "#78350F", icon: "sun" },           // 9.8:1 on #FEF3C7 ✅
@@ -1058,6 +1068,19 @@ export default function App() {
               <StatusBadge status={terrasse.status} />
             </div>
             {terrasse.adresse && <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+              {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
+                <span style={{ fontSize: 11, color: t.textSoft, fontFamily: F }}>
+                  {PLACE_TYPE_CONFIG[terrasse.place_type].icon} {PLACE_TYPE_CONFIG[terrasse.place_type].label}
+                </span>
+              )}
+              {terrasse.price_level != null && terrasse.price_level > 0 && (
+                <span style={{ fontSize: 11, color: t.textSoft, fontFamily: F }}>{"€".repeat(terrasse.price_level)}</span>
+              )}
+              {terrasse.rating != null && (
+                <span style={{ fontSize: 11, color: t.textSoft, fontFamily: F }}>⭐ {terrasse.rating.toFixed(1)}{terrasse.user_rating_count ? ` (${terrasse.user_rating_count})` : ""}</span>
+              )}
+            </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12, fontFamily: F, color: t.textSoft }}>
               <span>{terrasse.distance_m}m</span>
               {terrasse.soleil_jusqua && <span style={{ color: themes.sun.accentDark }}>Soleil jusqu'à {terrasse.soleil_jusqua}</span>}
@@ -1655,6 +1678,26 @@ export default function App() {
             <div style={{ fontSize: 24, fontWeight: 700, color: "#FFF", marginBottom: 6 }}>{terrasse.nom_commercial || terrasse.nom}</div>
             {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{terrasse.adresse}</div>}
             {terrasse.arrondissement && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{terrasse.arrondissement}</div>}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 8 }}>
+              {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontFamily: F }}>
+                  {PLACE_TYPE_CONFIG[terrasse.place_type].icon} {PLACE_TYPE_CONFIG[terrasse.place_type].label}
+                </span>
+              )}
+              {terrasse.price_level != null && terrasse.price_level > 0 && (
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontFamily: F }}>{"€".repeat(terrasse.price_level)}</span>
+              )}
+              {terrasse.rating != null && (
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontFamily: F }}>⭐ {terrasse.rating.toFixed(1)}{terrasse.user_rating_count ? ` (${terrasse.user_rating_count})` : ""}</span>
+              )}
+            </div>
+            {(terrasse.phone || terrasse.website || terrasse.google_maps_uri) && (
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 8 }}>
+                {terrasse.phone && <a href={`tel:${terrasse.phone}`} style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>{terrasse.phone}</a>}
+                {terrasse.website && <a href={terrasse.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>Site web</a>}
+                {terrasse.google_maps_uri && <a href={terrasse.google_maps_uri} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>Google Maps</a>}
+              </div>
+            )}
           </div>
         </div>
 
