@@ -59,6 +59,9 @@ async def find_nearby_terrasses(
                     ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography
                 )::int AS distance_m,
                 t.price_level,
+                t.place_type,
+                t.rating,
+                t.user_rating_count,
                 hp.profile
             FROM terrasses t
             LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
@@ -111,6 +114,9 @@ async def find_nearby_terrasses(
             "soleil_jusqua": soleil_jusqua,
             "has_profile": profile is not None,
             "price_level": row.price_level,
+            "place_type": row.place_type,
+            "rating": row.rating,
+            "user_rating_count": row.user_rating_count,
         })
 
     uv_index = hour_weather.get("uv_index", 0.0)

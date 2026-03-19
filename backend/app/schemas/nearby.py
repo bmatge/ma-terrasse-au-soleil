@@ -18,6 +18,9 @@ class NearbyTerrasse(BaseModel):
     status: str
     soleil_jusqua: str | None
     price_level: int | None = None
+    place_type: str | None = None
+    rating: float | None = None
+    user_rating_count: int | None = None
 
 
 class NearbyResponse(BaseModel):

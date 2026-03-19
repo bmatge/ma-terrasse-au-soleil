@@ -9,3 +9,9 @@ class TerrasseSearchResult(BaseModel):
     lat: float
     lon: float
     price_level: int | None = None
+    place_type: str | None = None
+    rating: float | None = None
+    user_rating_count: int | None = None
+    phone: str | None = None
+    website: str | None = None
+    google_maps_uri: str | None = None
