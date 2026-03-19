@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "info"
 
     GOOGLE_STREETVIEW_KEY: str = ""
+    GOOGLE_PLACES_KEY: str = ""
 
     SMTP_HOST: str = "localhost"
     SMTP_PORT: int = 25

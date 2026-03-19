@@ -5,6 +5,7 @@ class MeteoInfo(BaseModel):
     cloud_cover: int
     status: str
     precipitation_probability: int
+    uv_index: float
 
 
 class NearbyTerrasse(BaseModel):
@@ -16,6 +17,7 @@ class NearbyTerrasse(BaseModel):
     distance_m: int
     status: str
     soleil_jusqua: str | None
+    price_level: int | None = None
 
 
 class NearbyResponse(BaseModel):

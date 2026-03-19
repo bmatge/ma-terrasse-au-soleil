@@ -31,6 +31,7 @@ async def search_terrasses(
             SELECT
                 id, nom, adresse, arrondissement,
                 ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
+                price_level,
                 similarity(nom, :q) AS sim
             FROM terrasses
             WHERE nom % :q OR adresse % :q
@@ -47,7 +48,8 @@ async def search_terrasses(
             text("""
                 SELECT
                     id, nom, adresse, arrondissement,
-                    ST_X(geometry) AS lon, ST_Y(geometry) AS lat
+                    ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
+                    price_level
                 FROM terrasses
                 WHERE nom ILIKE :pattern OR adresse ILIKE :pattern
                 ORDER BY nom
@@ -61,6 +63,7 @@ async def search_terrasses(
         TerrasseSearchResult(
             id=r.id, nom=r.nom, adresse=r.adresse,
             arrondissement=r.arrondissement, lat=r.lat, lon=r.lon,
+            price_level=r.price_level,
         )
         for r in rows
     ]
@@ -80,6 +83,7 @@ async def get_timeline(
             SELECT
                 t.id, t.nom, t.adresse, t.arrondissement,
                 ST_X(t.geometry) AS lon, ST_Y(t.geometry) AS lat,
+                t.price_level,
                 hp.profile
             FROM terrasses t
             LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
@@ -103,6 +107,7 @@ async def get_timeline(
         terrasse=TerrasseSearchResult(
             id=row.id, nom=row.nom, adresse=row.adresse,
             arrondissement=row.arrondissement, lat=row.lat, lon=row.lon,
+            price_level=row.price_level,
         ),
         date=target_date.isoformat(),
         slots=timeline["slots"],

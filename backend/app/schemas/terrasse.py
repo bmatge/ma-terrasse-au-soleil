@@ -8,3 +8,4 @@ class TerrasseSearchResult(BaseModel):
     arrondissement: str | None
     lat: float
     lon: float
+    price_level: int | None = None

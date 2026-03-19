@@ -109,10 +109,11 @@ async def build_timeline(
         sun_alt, sun_azi = get_sun_position(lat, lon, current)
         urban_sunny = is_sunny(profile, sun_alt, sun_azi)
 
-        # Interpolate cloud cover from hourly data
+        # Interpolate cloud cover and UV from hourly data
         hour_key = f"{current.hour:02d}:00"
         hour_weather = weather.get(hour_key, {})
         cloud_cover = hour_weather.get("cloud_cover", 50)
+        uv_index = hour_weather.get("uv_index", 0.0)
 
         status = _combined_status(sun_alt, urban_sunny, cloud_cover)
 
@@ -121,6 +122,7 @@ async def build_timeline(
             "sun_altitude": round(sun_alt, 1),
             "urban_sunny": urban_sunny,
             "cloud_cover": cloud_cover,
+            "uv_index": round(uv_index, 1),
             "status": status,
         })
 

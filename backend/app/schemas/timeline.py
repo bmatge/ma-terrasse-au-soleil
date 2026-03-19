@@ -6,6 +6,7 @@ class TimelineSlot(BaseModel):
     sun_altitude: float
     urban_sunny: bool
     cloud_cover: int
+    uv_index: float
     status: str
 
 
