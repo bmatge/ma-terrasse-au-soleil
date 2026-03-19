@@ -5,7 +5,7 @@ Uses Nearby Search on each terrasse's GPS coordinates to find the closest
 restaurant/cafe/bar and grab its details.
 
 Usage:
-    python -m data.enrich_price_levels [--limit 100] [--delay 0.2]
+    python -m data.enrich_price_levels [--limit 100] [--delay 0.2] [--force]
 """
 import argparse
 import asyncio
@@ -23,16 +23,18 @@ logger = logging.getLogger(__name__)
 PRICE_LABELS = {0: "FREE", 1: "$", 2: "$$", 3: "$$$", 4: "$$$$"}
 
 
-async def main(limit: int, delay: float) -> None:
+async def main(limit: int, delay: float, force: bool = False) -> None:
     engine = create_engine(settings.DATABASE_URL_SYNC)
+
+    where_clause = "TRUE" if force else "price_level IS NULL AND place_type IS NULL"
 
     with engine.connect() as conn:
         rows = conn.execute(
-            text("""
+            text(f"""
                 SELECT id, nom, adresse,
                        ST_X(geometry) AS lon, ST_Y(geometry) AS lat
                 FROM terrasses
-                WHERE price_level IS NULL AND place_type IS NULL
+                WHERE {where_clause}
                 ORDER BY id
                 LIMIT :limit
             """),
@@ -112,6 +114,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Enrich terrasses with Google Places data")
     parser.add_argument("--limit", type=int, default=100, help="Max terrasses to process")
     parser.add_argument("--delay", type=float, default=0.2, help="Delay between API calls (seconds)")
+    parser.add_argument("--force", action="store_true", help="Re-enrich all terrasses, even already enriched ones")
     args = parser.parse_args()
 
-    asyncio.run(main(args.limit, args.delay))
+    asyncio.run(main(args.limit, args.delay, args.force))
