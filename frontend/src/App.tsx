@@ -590,6 +590,7 @@ export default function App() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
   const [shared, setShared] = useState(false);
+  const [showInstall, setShowInstall] = useState(false);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
   const [showStreetView, setShowStreetView] = useState(false);
 
@@ -1154,10 +1155,84 @@ export default function App() {
             </div>
           )}
 
-          <div style={{ marginTop: 48, textAlign: "center" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 40 }}>
+            <button onClick={() => handleShare("Au Soleil", "Terrasses ensoleillées à Paris")} style={{
+              display: "flex", alignItems: "center", gap: 6, background: "none", border: "none",
+              cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textMuted, padding: 0,
+            }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              {shared ? "Lien copié !" : "Partager"}
+            </button>
+            <button onClick={() => setShowInstall(true)} style={{
+              display: "flex", alignItems: "center", gap: 6, background: "none", border: "none",
+              cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textMuted, padding: 0,
+            }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Installer l'app
+            </button>
+          </div>
+
+          <div style={{ marginTop: 16, textAlign: "center" }}>
             <span style={{ fontSize: 12, color: t.textMuted }}>Paris intra-muros · Ensoleillement calculé en temps réel</span>
           </div>
         </div>
+
+        {/* PWA Install Modal */}
+        {showInstall && (
+          <div onClick={() => setShowInstall(false)} style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 9999,
+            display: "flex", alignItems: "flex-end", justifyContent: "center",
+          }}>
+            <div onClick={(e) => e.stopPropagation()} style={{
+              background: "#FFF", borderRadius: "20px 20px 0 0", padding: "28px 24px 36px",
+              width: "100%", maxWidth: 440, maxHeight: "80vh", overflowY: "auto",
+              boxShadow: "0 -4px 30px rgba(0,0,0,0.15)",
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                <span style={{ fontSize: 18, fontWeight: 700, fontFamily: F, color: "#1C1917" }}>Installer Au Soleil</span>
+                <button onClick={() => setShowInstall(false)} style={{
+                  background: "#F5F5F4", border: "none", borderRadius: "50%", width: 32, height: 32,
+                  cursor: "pointer", fontSize: 18, color: "#78716C", display: "flex", alignItems: "center", justifyContent: "center",
+                }}>×</button>
+              </div>
+              <p style={{ fontSize: 14, color: "#57534E", lineHeight: 1.5, fontFamily: F, margin: "0 0 20px" }}>
+                Ajoute Au Soleil sur ton écran d'accueil pour y accéder en un tap, comme une app native !
+              </p>
+
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, fontFamily: F, color: "#1C1917", marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83" fill="#1C1917"/><path d="M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11" fill="#1C1917"/></svg>
+                  iPhone / iPad
+                </div>
+                <ol style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "#57534E", fontFamily: F, lineHeight: 1.8 }}>
+                  <li>Ouvrir <strong>ausoleil.app</strong> dans <strong>Safari</strong></li>
+                  <li>Appuyer sur le bouton <strong>Partager</strong> <span style={{ display: "inline-flex", alignItems: "center", verticalAlign: "middle", background: "#F5F5F4", borderRadius: 4, padding: "1px 4px" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#57534E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                  </span></li>
+                  <li>Choisir <strong>« Sur l'écran d'accueil »</strong></li>
+                </ol>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 600, fontFamily: F, color: "#1C1917", marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M17.523 2H6.477C5.768 2 5.2 2.768 5.2 3.477v17.046C5.2 21.232 5.768 22 6.477 22h11.046c.709 0 1.277-.768 1.277-1.477V3.477C18.8 2.768 18.232 2 17.523 2z" fill="none" stroke="#1C1917" strokeWidth="1.5"/><path d="M3.064 7.044l3.57 2.236 2.578-4.316L12.784 9.3l2.578-4.316 2.578 4.316 2.932-1.836" stroke="#34A853" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/><circle cx="12" cy="15" r="4" fill="none" stroke="#4285F4" strokeWidth="1.5"/><path d="M8 15h8" stroke="#EA4335" strokeWidth="1.5"/><path d="M12 11v8" stroke="#FBBC05" strokeWidth="1.5"/></svg>
+                  Android
+                </div>
+                <ol style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "#57534E", fontFamily: F, lineHeight: 1.8 }}>
+                  <li>Ouvrir <strong>ausoleil.app</strong> dans <strong>Chrome</strong></li>
+                  <li>Appuyer sur le menu <strong>⋮</strong> (en haut à droite)</li>
+                  <li>Choisir <strong>« Installer l'application »</strong> ou <strong>« Ajouter à l'écran d'accueil »</strong></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        )}
+
         <BottomNav />
       </div>
     );
