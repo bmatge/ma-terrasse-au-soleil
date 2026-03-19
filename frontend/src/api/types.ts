@@ -1,6 +1,7 @@
 export interface TerrasseSearchResult {
   id: number;
   nom: string;
+  nom_commercial: string | null;
   adresse: string | null;
   arrondissement: string | null;
   lat: number;
@@ -47,6 +48,7 @@ export interface MeteoInfo {
 export interface NearbyTerrasse {
   id: number;
   nom: string;
+  nom_commercial: string | null;
   adresse: string | null;
   lat: number;
   lon: number;

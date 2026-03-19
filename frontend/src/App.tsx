@@ -474,7 +474,7 @@ function ResultsMap({
       el.style.cssText = `width:14px;height:14px;background:${cfg.color};border:2px solid white;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.3);`;
       const popup = new maplibregl.Popup({ offset: 10 }).setHTML(`
         <div style="font-size:13px;font-family:${F}">
-          <strong>${terrasse.nom}</strong><br/>
+          <strong>${terrasse.nom_commercial || terrasse.nom}</strong><br/>
           <span style="color:#78716C">${terrasse.distance_m}m</span>
           ${terrasse.soleil_jusqua ? `<br/><span style="color:#D97706">Soleil jusqu'à ${terrasse.soleil_jusqua}</span>` : ""}
         </div>
@@ -1054,7 +1054,7 @@ export default function App() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <span style={{ fontFamily: F, fontWeight: 600, fontSize: 17, color: t.text }}>{terrasse.nom}</span>
+              <span style={{ fontFamily: F, fontWeight: 600, fontSize: 17, color: t.text }}>{terrasse.nom_commercial || terrasse.nom}</span>
               <StatusBadge status={terrasse.status} />
             </div>
             {terrasse.adresse && <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>}
@@ -1361,7 +1361,7 @@ export default function App() {
                           style={{ display: "flex", flexDirection: "column", padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${t.border}` }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                             <CoffeeIcon size={14} color={t.textMuted} />
-                            <span style={{ fontSize: 14, fontWeight: 500, color: t.text, fontFamily: F }}>{tr.nom}</span>
+                            <span style={{ fontSize: 14, fontWeight: 500, color: t.text, fontFamily: F }}>{tr.nom_commercial || tr.nom}</span>
                           </div>
                           <span style={{ fontSize: 12, color: t.textMuted, fontFamily: F, marginLeft: 22 }}>{tr.adresse}</span>
                         </div>
@@ -1638,7 +1638,7 @@ export default function App() {
         <div style={{ margin: "0 20px 20px", padding: "28px 24px", borderRadius: 20, background: t.gradient, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
           <div style={{ position: "relative" }}>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#FFF", marginBottom: 6 }}>{terrasse.nom}</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "#FFF", marginBottom: 6 }}>{terrasse.nom_commercial || terrasse.nom}</div>
             {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{terrasse.adresse}</div>}
             {terrasse.arrondissement && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{terrasse.arrondissement}</div>}
           </div>
@@ -1692,7 +1692,7 @@ export default function App() {
               <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${t.border}`, background: t.border, minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <img
                   src={`/api/streetview?lat=${terrasse.lat}&lon=${terrasse.lon}`}
-                  alt={`Vue Street View de ${terrasse.nom}`}
+                  alt={`Vue Street View de ${terrasse.nom_commercial || terrasse.nom}`}
                   style={{ width: "100%", display: "block" }}
                   onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                 />

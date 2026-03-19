@@ -4,6 +4,7 @@ from pydantic import BaseModel
 class TerrasseSearchResult(BaseModel):
     id: int
     nom: str
+    nom_commercial: str | None = None
     adresse: str | None
     arrondissement: str | None
     lat: float

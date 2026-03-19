@@ -25,6 +25,7 @@ PRICE_MAP = {
 }
 
 FIELD_MASK = ",".join([
+    "places.name",
     "places.priceLevel",
     "places.displayName",
     "places.location",
@@ -40,6 +41,7 @@ FIELD_MASK = ",".join([
 @dataclass
 class PlaceInfo:
     """Data fetched from Google Places API."""
+    google_place_id: str | None = None
     price_level: int | None = None
     display_name: str | None = None
     place_type: str | None = None
@@ -100,7 +102,12 @@ async def fetch_place_info(
     price_str = place.get("priceLevel")
     price_level = PRICE_MAP.get(price_str) if price_str else None
 
+    # "name" is "places/{placeId}" — extract just the ID
+    raw_name = place.get("name", "")
+    place_id = raw_name.split("/")[-1] if raw_name else None
+
     return PlaceInfo(
+        google_place_id=place_id,
         price_level=price_level,
         display_name=place.get("displayName", {}).get("text"),
         place_type=place.get("primaryType"),
