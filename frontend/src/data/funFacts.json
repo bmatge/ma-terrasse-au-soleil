@@ -498,5 +498,1005 @@
     "id": 100,
     "category": "terrasse",
     "fact": "Chaque année, le premier rayon de soleil printanier déclenche l'invasion simultanée de toutes les terrasses de Paris. Les Parisiens appellent ça « le Grand Déploiement »."
+  },
+  {
+    "id": 101,
+    "category": "printemps",
+    "fact": "Paris connaît en moyenne 10 jours de gel en janvier, mais dès mars, les platanes bourgeonnent et les terrasses ressortent leurs chaises. Le printemps parisien dure officiellement 92 jours."
+  },
+  {
+    "id": 102,
+    "category": "café",
+    "fact": "La France consomme environ 6,5 kg de café par habitant et par an. Les Parisiens, eux, en boivent une bonne partie en terrasse."
+  },
+  {
+    "id": 103,
+    "category": "printemps",
+    "fact": "Les cerisiers en fleurs du Parc de Sceaux, aux portes de Paris, attirent chaque printemps des milliers de visiteurs pour les hanami à la française."
+  },
+  {
+    "id": 104,
+    "category": "café",
+    "fact": "Le café a été introduit à Paris en 1669 par l'ambassadeur ottoman Soliman Aga, qui en offrait dans des tasses en or à la cour de Louis XIV."
+  },
+  {
+    "id": 105,
+    "category": "terrasse",
+    "fact": "Les premières chaises de terrasse pliantes parisiennes ont été brevete en 1947. Avant, on posait des tabourets fixes que les cafetiers rentraient chaque soir."
+  },
+  {
+    "id": 106,
+    "category": "soleil",
+    "fact": "En avril à Paris, le soleil se lève vers 7h et se couche vers 20h45 : 13h45 de lumière disponible pour les terrasses printanières."
+  },
+  {
+    "id": 107,
+    "category": "paris",
+    "fact": "Paris possède 37 ponts sur la Seine intra-muros. Chacun offre un angle différent pour observer la course du soleil sur l'eau."
+  },
+  {
+    "id": 108,
+    "category": "café",
+    "fact": "Un expresso parisien contient en moyenne 7 grammes de café moulu. La tradition veut qu'il soit bu en moins de 3 minutes pour apprécier la crema."
+  },
+  {
+    "id": 109,
+    "category": "printemps",
+    "fact": "Le marché aux fleurs de l'Île de la Cité existe depuis 1808 — le plus vieux marché de Paris. En mars, il déborde de mimosas et de jonquilles."
+  },
+  {
+    "id": 110,
+    "category": "terrasse",
+    "fact": "À Paris, il existe une terrasse accessible en bateau-bus : celle du Café Fluctuat, quai de l'Hôtel-de-Ville. Vue sur Notre-Dame comprise."
+  },
+  {
+    "id": 111,
+    "category": "soleil",
+    "fact": "L'axe historique de Paris — Louvre, Champs-Élysées, Grande Arche — est orienté à 26° nord-ouest. À l'équinoxe, le soleil se couche exactement dans cet axe."
+  },
+  {
+    "id": 112,
+    "category": "café",
+    "fact": "Le Café de la Régence, Place du Palais-Royal, fut le café des échecs par excellence : Napoléon, Voltaire et Rousseau y jouèrent tous."
+  },
+  {
+    "id": 113,
+    "category": "paris",
+    "fact": "Le 10e arrondissement est l'arrondissement qui compte le plus de terrasses en valeur absolue à Paris, avec plus de 900 autorisations."
+  },
+  {
+    "id": 114,
+    "category": "printemps",
+    "fact": "La Seine monte en moyenne de 30 cm au printemps à cause de la fonte des neiges du Morvan. Les quais bas sont parfois submergés… et les terrasses éphémères avec."
+  },
+  {
+    "id": 115,
+    "category": "soleil",
+    "fact": "La latitude de Paris (48°51'N) implique que le soleil de midi culmine à seulement 18° en décembre mais à 65° en juin : un écart de 47°, soit presque un quart de cercle."
+  },
+  {
+    "id": 116,
+    "category": "café",
+    "fact": "Le terme « bistrot » viendrait du russe « bystro » (vite), crié par les soldats cosses en 1814 à Paris. Légende urbaine probable, mais tellement parisienne."
+  },
+  {
+    "id": 117,
+    "category": "terrasse",
+    "fact": "Les tables de bistrot rondes en marbre ont été inventées pour une raison pratique : aucun coin sur lequel se cogner dans un passage étroit de terrasse."
+  },
+  {
+    "id": 118,
+    "category": "paris",
+    "fact": "Paris compte 26 forêts et bois, dont deux géants : Boulogne (846 ha) et Vincennes (995 ha). Avec leurs clairières ensoleillées, ils forment les plus grandes terrasses naturelles de la ville."
+  },
+  {
+    "id": 119,
+    "category": "printemps",
+    "fact": "La Fête du Muguet, le 1er mai, est la seule journée de l'année où n'importe qui peut vendre des fleurs sans licence commerciale dans les rues de Paris."
+  },
+  {
+    "id": 120,
+    "category": "soleil",
+    "fact": "Le phénomène de « réverbération urbaine » à Paris peut faire monter la température ressentie de 8°C sur une terrasse exposée plein sud entourée de façades blanches en calcaire."
+  },
+  {
+    "id": 121,
+    "category": "café",
+    "fact": "Le Café Procope, ouvert en 1686, fut aussi la première salle de lecture de journaux publique de Paris. Les clients y restaient des heures pour le prix d'un café."
+  },
+  {
+    "id": 122,
+    "category": "terrasse",
+    "fact": "La superficie totale des terrasses parisiennes autorisées représente environ 134 000 m² — soit presque la surface de 19 terrains de football."
+  },
+  {
+    "id": 123,
+    "category": "paris",
+    "fact": "Le réseau de métro parisien compte 302 stations. Si on les alignait, les quais feraient 100 km de longueur — mais pas une seule terrasse en sous-sol."
+  },
+  {
+    "id": 124,
+    "category": "printemps",
+    "fact": "Paris reçoit en mai ses mois les plus pluvieux de l'année avec une moyenne de 63 mm — mais aussi ses journées de terrasse les plus douces avec 18°C en moyenne."
+  },
+  {
+    "id": 125,
+    "category": "café",
+    "fact": "Voltaire était réputé boire jusqu'à 40 tasses de café par jour, mélangé au chocolat. Son café favori ? Le Café de Procope, rue de l'Ancienne-Comédie."
+  },
+  {
+    "id": 126,
+    "category": "soleil",
+    "fact": "L'ombre portée d'un être humain est aussi longue que sa taille à Paris vers 8h du matin en été, et 6 fois sa taille à midi en décembre."
+  },
+  {
+    "id": 127,
+    "category": "terrasse",
+    "fact": "En droit parisien, une terrasse doit être retirée en moins de 30 minutes en cas d'alerte météo. Les cafetiers sont devenus de fins météorologues."
+  },
+  {
+    "id": 128,
+    "category": "paris",
+    "fact": "Le Palais-Royal abrite 260 colonnes de Buren, chacune d'elles projetant une ombre légèrement différente selon l'heure. Un cadran solaire géant involontaire."
+  },
+  {
+    "id": 129,
+    "category": "printemps",
+    "fact": "La Nuit des Musées, chaque troisième samedi de mai, transforme Paris en une gigantesque terrasse culturelle à ciel ouvert jusqu'à minuit."
+  },
+  {
+    "id": 130,
+    "category": "café",
+    "fact": "Le prix d'un café expresso à Paris varie de 1€ à plus de 8€ selon le quartier. Place de l'Opéra, certains cafés pratiquent les tarifs les plus élevés de France."
+  },
+  {
+    "id": 131,
+    "category": "soleil",
+    "fact": "La Tour Eiffel peut être illuminée par 336 projecteurs. Le soir en été, ce sont 336 soleils artificiels qui compensent la nuit tardive de Paris."
+  },
+  {
+    "id": 132,
+    "category": "terrasse",
+    "fact": "Le premier brumisateur de terrasse à Paris a été installé en 1994 sur les Champs-Élysées, lors d'un été particulièrement chaud. Depuis, c'est une institution."
+  },
+  {
+    "id": 133,
+    "category": "paris",
+    "fact": "La Promenade Plantée, premier parc linéaire surélevé du monde (1993), précède la High Line new-yorkaise de 16 ans et offre 4,5 km de jardins au-dessus des toits."
+  },
+  {
+    "id": 134,
+    "category": "printemps",
+    "fact": "Le Marathon de Paris, couru chaque premier dimanche d'avril, traverse 42 km de rues parisiennes. Les terrasses sur le parcours installent leurs chaises dès 7h du matin."
+  },
+  {
+    "id": 135,
+    "category": "café",
+    "fact": "Le grand café parisien typique s'appelle une « brasserie » car ces établissements brassaient eux-mêmes leur bière à l'origine, au XIXe siècle, souvent tenus par des Alsaciens."
+  },
+  {
+    "id": 136,
+    "category": "soleil",
+    "fact": "En mai, Paris bénéficie en moyenne de 208 heures de soleil — c'est le mois printanier le plus lumineux, devant avril (175h) et mars (155h)."
+  },
+  {
+    "id": 137,
+    "category": "terrasse",
+    "fact": "La largeur minimale réglementaire d'un passage pour piétons entre une terrasse et la façade est de 1,80 m à Paris. Juste de quoi passer avec un plateau."
+  },
+  {
+    "id": 138,
+    "category": "paris",
+    "fact": "Paris intra-muros ne couvre que 105 km². La ville entière tiendrait dans un carré de 10 km de côté — mais contiendrait quand même plus de 13 000 terrasses."
+  },
+  {
+    "id": 139,
+    "category": "printemps",
+    "fact": "La Fête de la Nature, chaque mois de mai, transforme le Champ-de-Mars en immense prairie où Parisiens et pigeons cohabitent pacifiquement au soleil."
+  },
+  {
+    "id": 140,
+    "category": "café",
+    "fact": "La chaîne de cafés la plus parisienne, Café de Flore, sert environ 1 500 couverts par jour en été. Sa terrasse est réservée 6 semaines à l'avance en juillet."
+  },
+  {
+    "id": 141,
+    "category": "soleil",
+    "fact": "Un verre de vin rosé en terrasse sous le soleil parisien monte de 2 à 3°C en 15 minutes. La science de l'apéro mérite ses propres recherches."
+  },
+  {
+    "id": 142,
+    "category": "terrasse",
+    "fact": "Les stores de terrasse parisiens doivent être d'une couleur approuvée par la mairie selon le quartier. Dans le Marais, le rouge bordeaux est très recommandé."
+  },
+  {
+    "id": 143,
+    "category": "paris",
+    "fact": "Le 1er arrondissement de Paris est le plus touristique et le moins peuplé : 17 000 habitants pour des millions de visiteurs par an. Les terrasses y vivent à l'envers du monde."
+  },
+  {
+    "id": 144,
+    "category": "printemps",
+    "fact": "La première terrasse de l'année à Paris ouvre traditionnellement le 1er mars, même si la météo n'est pas au rendez-vous. C'est une question de principe."
+  },
+  {
+    "id": 145,
+    "category": "café",
+    "fact": "La machine à expresso a été inventée en Italie en 1884 par Angelo Moriondo, mais c'est à Paris qu'elle a trouvé sa culture de consommation debout au zinc."
+  },
+  {
+    "id": 146,
+    "category": "soleil",
+    "fact": "L'énergie solaire reçue par 1 m² de terrasse parisienne en juillet équivaut à 5 kWh par jour — soit l'énergie nécessaire pour alimenter un réfrigérateur pendant 2,5 jours."
+  },
+  {
+    "id": 147,
+    "category": "terrasse",
+    "fact": "Les serviettes de terrasse en papier sont remplacées en France par des millions chaque jour. Paris expérimente depuis 2021 des serviettes lavables dans plusieurs établissements."
+  },
+  {
+    "id": 148,
+    "category": "paris",
+    "fact": "Paris est traversée par 6 rivières et canaux navigables. Leurs berges abritent des centaines de terrasses flottantes : péniches-cafés, guinguettes et bars à ciel ouvert."
+  },
+  {
+    "id": 149,
+    "category": "printemps",
+    "fact": "Le Printemps des Poètes, chaque mars, afiche des milliers de poèmes dans les vitrines, les cafés et les terrasses parisiennes. La plus belle décoration de saison."
+  },
+  {
+    "id": 150,
+    "category": "café",
+    "fact": "Le garçon de café parisien peut porter jusqu'à 12 verres à la fois sur un plateau. Un exploit d'équilibre transmis de génération en génération depuis la Belle Époque."
+  },
+  {
+    "id": 151,
+    "category": "soleil",
+    "fact": "L'azimut du soleil à Paris varie de 50° (nord-est) au lever en été à 310° (nord-ouest) au coucher. Les rues orientées à 310° offrent les plus beaux couchers de soleil."
+  },
+  {
+    "id": 152,
+    "category": "terrasse",
+    "fact": "La plus haute terrasse de bar de Paris culmine à 163 mètres : le bar du Pullman Tour Eiffel. Le prix du verre augmente proportionnellement à l'altitude."
+  },
+  {
+    "id": 153,
+    "category": "paris",
+    "fact": "Les Buttes-Chaumont ont été le premier parc parisien à autoriser le pique-nique sur pelouse, en 1985. Avant, les gardiens vous chassaient à coups de sifflet."
+  },
+  {
+    "id": 154,
+    "category": "printemps",
+    "fact": "Paris plante chaque printemps environ 120 000 fleurs annuelles dans ses jardinières et massifs. Les géraniums rouges restent la fleur officieuse des balcons parisiens."
+  },
+  {
+    "id": 155,
+    "category": "café",
+    "fact": "Honoré de Balzac écrivait la nuit et dormait le jour, réveillé à minuit pour écrire jusqu'à l'aube avec une cafetière entière de café corsé. Son appartement, rue Raynouard, est aujourd'hui musée."
+  },
+  {
+    "id": 156,
+    "category": "soleil",
+    "fact": "La réflexion du soleil sur la Seine peut créer des reflets qui montent jusqu'aux façades des immeubles riverains. Les appartements du quai de Bourbon bénéficient d'une double dose de lumière naturelle."
+  },
+  {
+    "id": 157,
+    "category": "terrasse",
+    "fact": "Il faut en moyenne 47 secondes à un serveur parisien expérimenté pour aller du bar à la terrasse et revenir avec la commande. Chronométré par des journalistes en 2018."
+  },
+  {
+    "id": 158,
+    "category": "paris",
+    "fact": "La Coulée Verte (ex-Promenade Plantée) dispose de 10 jardins thématiques suspendus à 10 mètres de hauteur. Certains ont des bancs baignés de soleil jusqu'à 18h."
+  },
+  {
+    "id": 159,
+    "category": "printemps",
+    "fact": "Le premier vol de rouge-gorge dans les jardins parisiens est observé statistiquement entre le 12 et le 18 mars. Les Parisiens en terrasse sont les premiers à le signaler."
+  },
+  {
+    "id": 160,
+    "category": "café",
+    "fact": "Le Café Anglais, ouvert en 1802 boulevard des Italiens, était si célèbre que les princes européens en visite à Paris y réservaient des tables un mois à l'avance."
+  },
+  {
+    "id": 161,
+    "category": "soleil",
+    "fact": "Les rayons du soleil couchant à Paris créent une lumière à température de couleur de 2700K — identique à celle des ampoules « lumière chaude ». Les photographes appellent ça « l'heure d'or »."
+  },
+  {
+    "id": 162,
+    "category": "terrasse",
+    "fact": "Le son ambiant moyen d'une terrasse parisienne l'été est de 72 décibels — autant qu'un aspirateur à 3 mètres. La loi limite à 70 dB après 22h."
+  },
+  {
+    "id": 163,
+    "category": "paris",
+    "fact": "Le Marché d'Aligre dans le 12e est le marché le plus fréquenté de Paris après Rungis. Son café-bistrot Café du Marché ouvre à 6h du matin pour les maraîchers."
+  },
+  {
+    "id": 164,
+    "category": "printemps",
+    "fact": "Les parisiens achètent 3 fois plus de vélos en mars-avril qu'en décembre. Le printemps est la saison des bonnes résolutions et des livraisons de café en terrasse."
+  },
+  {
+    "id": 165,
+    "category": "café",
+    "fact": "La France compte environ 25 000 torréfacteurs artisanaux, mais Paris en accueille une concentration exceptionnelle dans le 11e arrondissement, surnommé le « triangle du café spécialisé »."
+  },
+  {
+    "id": 166,
+    "category": "soleil",
+    "fact": "Un tableau de Monet, « La Gare Saint-Lazare » (1877), capture la lumière parisienne sous la verrière à travers la vapeur des locomotives. C'est la première peinture de pollution lumineuse urbaine."
+  },
+  {
+    "id": 167,
+    "category": "terrasse",
+    "fact": "Le Palais-Royal et ses terrasses intérieures sont protégés du vent dominant (ouest-sud-ouest) par leurs arcades. La température y est en moyenne 3°C plus douce qu'à l'extérieur."
+  },
+  {
+    "id": 168,
+    "category": "paris",
+    "fact": "Paris possède 6 000 km de trottoirs. Si tous étaient bordés de terrasses, vous pourriez marcher des mois sans jamais manquer d'un café."
+  },
+  {
+    "id": 169,
+    "category": "printemps",
+    "fact": "La Foire du Trône, la plus grande fête foraine de France, s'installe chaque printemps dans la Pelouse de Reuilly depuis 1959. Elle attire 5 millions de visiteurs en 9 semaines."
+  },
+  {
+    "id": 170,
+    "category": "café",
+    "fact": "Le « café liégeois » n'est pas liégeois. Rebaptisé ainsi après 1914 pour ne plus l'appeler « café viennois » (par hostilité à l'Autriche alliée de l'Allemagne), il est né dans les brasseries parisiennes."
+  },
+  {
+    "id": 171,
+    "category": "soleil",
+    "fact": "La Place du Tertre à Montmartre bénéficie de 30 minutes de soleil supplémentaires le matin grâce à son altitude, par rapport aux terrasses du bas de Paris."
+  },
+  {
+    "id": 172,
+    "category": "terrasse",
+    "fact": "Une terrasse parisienne génère en moyenne 2 à 3 fois plus de chiffre d'affaires par m² qu'une salle intérieure. Pas étonnant que les cafetiers se battent pour chaque centimètre."
+  },
+  {
+    "id": 173,
+    "category": "paris",
+    "fact": "La Place des Victoires (1686) est la première place circulaire de Paris. Construite pour accueillir une statue du Roi-Soleil, elle était littéralement conçue autour du soleil."
+  },
+  {
+    "id": 174,
+    "category": "printemps",
+    "fact": "Le Printemps du Cinéma, chaque mars, propose le ticket de cinéma à 4€ dans toute la France. Les files d'attente devant les cinémas de Paris ressemblent à des queues de terrasse par beau temps."
+  },
+  {
+    "id": 175,
+    "category": "café",
+    "fact": "L'eau gazeuse a été popularisée dans les cafés parisiens au XIXe siècle par le pharmacien Augustin Prieur, qui la prescrivait comme remède digestif avant qu'elle ne devienne un accompagnement du café."
+  },
+  {
+    "id": 176,
+    "category": "soleil",
+    "fact": "La fenêtre d'ensoleillement optimal pour une terrasse parisienne plein sud est de 10h à 16h en hiver, et de 8h à 19h en été — avec le creux de la sieste entre 14h et 15h."
+  },
+  {
+    "id": 177,
+    "category": "terrasse",
+    "fact": "Le premier parasol de terrasse parisien serait apparu au Café Tortoni sur les Grands Boulevards vers 1820, pour protéger les clients du soleil de l'après-midi."
+  },
+  {
+    "id": 178,
+    "category": "paris",
+    "fact": "Le Square du Vert-Galant, à la pointe de l'île de la Cité, est l'un des rares espaces verts parisiens entouré d'eau sur trois côtés. Un solarium naturel en plein cœur de Paris."
+  },
+  {
+    "id": 179,
+    "category": "printemps",
+    "fact": "Les terrasses parisiennes ouvrent statistiquement 18 jours plus tôt au printemps qu'il y a 30 ans, selon les données de la mairie de Paris. Le réchauffement climatique a ses avantages terrasse."
+  },
+  {
+    "id": 180,
+    "category": "café",
+    "fact": "Les cafés parisiens servent en moyenne 300 expressos par jour. Les machines à café professionnelles des grands établissements fonctionnent sous 9 bars de pression."
+  },
+  {
+    "id": 181,
+    "category": "soleil",
+    "fact": "À l'équinoxe de printemps (20 mars), le soleil se lève à Paris exactement à l'est (azimut 90°) et se couche exactement à l'ouest. C'est le seul jour de l'année où toutes les rues est-ouest sont illuminées du lever au coucher."
+  },
+  {
+    "id": 182,
+    "category": "terrasse",
+    "fact": "La redevance d'occupation du domaine public pour une terrasse parisienne a augmenté de 12% entre 2020 et 2023. Certains cafetiers du 8e paient plus de 20 000€ par an pour leur terrasse."
+  },
+  {
+    "id": 183,
+    "category": "paris",
+    "fact": "Paris possède 460 fontaines, dont 100 fontaines Wallace, ces fontaines d'eau potable vert anglais offertes par le mécène britannique Richard Wallace en 1872. Indispensables en terrasse par forte chaleur."
+  },
+  {
+    "id": 184,
+    "category": "printemps",
+    "fact": "La Fête du Beaujolais nouveau, chaque troisième jeudi de novembre, est souvent confondue avec le printemps par les terrasses qui débordent de consommateurs malgré le froid."
+  },
+  {
+    "id": 185,
+    "category": "café",
+    "fact": "L'invention du café glacé à Paris est attribuée au Café Napolitain sur les Grands Boulevards, vers 1890. Une révolution pour les terrasses estivales de l'époque."
+  },
+  {
+    "id": 186,
+    "category": "soleil",
+    "fact": "La luminosité à Paris en mai atteint en moyenne 60 000 lux à midi par temps ensoleillé — soit 150 fois l'éclairage d'un bureau standard. De quoi lire sans lunettes n'importe quel menu de terrasse."
+  },
+  {
+    "id": 187,
+    "category": "terrasse",
+    "fact": "Les terrasses de la Place du Châtelet sont les seules de Paris entourées de quatre scènes de spectacle dans un rayon de 200 mètres. Elles offrent souvent des concerts impromptus gratuits."
+  },
+  {
+    "id": 188,
+    "category": "paris",
+    "fact": "La Seine ne gèle plus depuis 1956. Avant le réchauffement climatique, les Parisiens organisaient des courses de traîneaux sur le fleuve gelé et installaient des stands de boissons chaudes."
+  },
+  {
+    "id": 189,
+    "category": "printemps",
+    "fact": "Le magnolia de l'École de Médecine rue de la Bûcherie, planté en 1742, est l'un des plus vieux arbres de Paris. Chaque mars, sa floraison annonce officiellement le printemps aux terrasses du 5e."
+  },
+  {
+    "id": 190,
+    "category": "café",
+    "fact": "L'expression « avoir le cafard » viendrait des soldats de retour d'Algérie qui, au café, se retrouvaient mélancoliques au fond de leur tasse. Aujourd'hui, en terrasse, le cafard est moins fréquent."
+  },
+  {
+    "id": 191,
+    "category": "soleil",
+    "fact": "La Tour Eiffel est peinte d'une couleur spéciale, le « brun Tour Eiffel », déclinée en trois teintes de bas en haut pour que la tour semble de couleur uniforme sous le soleil parisien."
+  },
+  {
+    "id": 192,
+    "category": "terrasse",
+    "fact": "Lors de la Coupe du Monde de football 1998, les terrasses parisiennes ont enregistré des hausses de fréquentation de 300%. La nuit du 12 juillet, les chiffres d'affaires ont battu tous les records."
+  },
+  {
+    "id": 193,
+    "category": "paris",
+    "fact": "Paris a été la première ville au monde à installer l'éclairage public en 1667, sous Louis XIV. Depuis, la Ville Lumière mérite son surnom autant la nuit que les terrasses le méritent le jour."
+  },
+  {
+    "id": 194,
+    "category": "printemps",
+    "fact": "Les allergies au pollen touchent 25% des Parisiens. Malgré les éternuements, 83% d'entre eux continuent à s'installer en terrasse au printemps selon une étude Ipsos."
+  },
+  {
+    "id": 195,
+    "category": "café",
+    "fact": "Le café est la deuxième boisson la plus consommée en France après l'eau, et la première en terrasse. 84% des Français en boivent au moins une tasse par jour."
+  },
+  {
+    "id": 196,
+    "category": "soleil",
+    "fact": "Le ciel de Paris est « laiteux » à cause des aérosols urbains. Contrairement au ciel bleu profond de la Méditerranée, la lumière y est diffuse et flatteuse — idéale pour les photos en terrasse."
+  },
+  {
+    "id": 197,
+    "category": "terrasse",
+    "fact": "La terrasse la plus ancienne encore en activité de Paris serait celle du Café Procope, ouverte en 1686. Six siècles de printemps, d'été et de discussions philosophiques à ciel ouvert."
+  },
+  {
+    "id": 198,
+    "category": "paris",
+    "fact": "Le Canal de l'Ourcq, dans le 19e arrondissement, accueille chaque été une plage artificielle avec bains de soleil et guinguettes. Paris-Plages version nord-est."
+  },
+  {
+    "id": 199,
+    "category": "printemps",
+    "fact": "Paris lance chaque printemps son opération « Végétalisons Paris » qui permet aux habitants de planter des fleurs sur les trottoirs. Plus de 3 000 micro-jardins ont été créés depuis 2015."
+  },
+  {
+    "id": 200,
+    "category": "café",
+    "fact": "Le record du monde de la plus longue conversation de café en terrasse a été tenté en 2019 à Paris : 18 heures sans quitter sa chaise. L'arbitre a fini par commander aussi."
+  },
+  {
+    "id": 201,
+    "category": "soleil",
+    "fact": "En été, les façades haussmanniennes en pierre calcaire atteignent 45°C en surface côté soleil et restent à 18°C côté ombre — une différence de 27°C sur 30 cm d'épaisseur de pierre."
+  },
+  {
+    "id": 202,
+    "category": "terrasse",
+    "fact": "Le plastique des chaises de terrasse jaunit après environ 3 saisons au soleil à Paris. Les cafetiers les remplacent en moyenne tous les 4 ans, soit 50 000 chaises par an dans toute la ville."
+  },
+  {
+    "id": 203,
+    "category": "paris",
+    "fact": "Paris-Plages, inaugurée en 2002, transforme les berges de la Seine en plage pendant 5 semaines. Elle accueille 4 millions de visiteurs par été — sans une seule vraie vague."
+  },
+  {
+    "id": 204,
+    "category": "printemps",
+    "fact": "Les premiers pique-niqueurs du printemps investissent les berges de la Seine dès le premier weekend de mars à Paris, même si la température ne dépasse pas 12°C. Le soleil compte plus que la chaleur."
+  },
+  {
+    "id": 205,
+    "category": "café",
+    "fact": "Le café turc a été servi pour la première fois à Paris en 1672. Il fallait l'avaler avec le marc, sans filtre. Les Parisiens ont rapidement inventé le café filtré pour ne pas mâcher leur boisson."
+  },
+  {
+    "id": 206,
+    "category": "soleil",
+    "fact": "La lumière solaire fait blanchir les stores de terrasse d'environ 20% par saison. Le rouge devient rose, le bleu devient ciel. Certains cafetiers renouvellent leurs stores chaque printemps."
+  },
+  {
+    "id": 207,
+    "category": "terrasse",
+    "fact": "Une terrasse parisienne de 20 m² peut accueillir 16 personnes en configuration standard (tables de 2) ou 8 en configuration romantique (tables de 4 face au soleil)."
+  },
+  {
+    "id": 208,
+    "category": "paris",
+    "fact": "Le 11e arrondissement, sans grand monument touristique, est le plus densément peuplé de Paris (153 000 habitants) et aussi celui qui a vu le plus de terrasses nouvelles depuis 2020."
+  },
+  {
+    "id": 209,
+    "category": "printemps",
+    "fact": "La première hirondelle aperçue à Paris chaque année est signalée dans la presse depuis 1850. En 2023, le premier signalement date du 25 mars — dans le ciel au-dessus d'une terrasse de la Bastille."
+  },
+  {
+    "id": 210,
+    "category": "café",
+    "fact": "Le mot « cafeteria » vient de l'espagnol mexicain et n'a rien à voir avec la culture du café parisien. Un vrai Parisien ne met jamais les pieds dans une cafeteria."
+  },
+  {
+    "id": 211,
+    "category": "soleil",
+    "fact": "En hiver, les quartiers sud de Paris (13e, 14e) reçoivent jusqu'à 20 minutes de soleil supplémentaires par jour par rapport aux quartiers nord, en raison de la déclivité topographique de la ville."
+  },
+  {
+    "id": 212,
+    "category": "terrasse",
+    "fact": "Les menus ardoise des terrasses parisiennes ont remplacé les menus imprimés dans 60% des établissements depuis 2010. La craie résiste mieux au soleil que l'encre."
+  },
+  {
+    "id": 213,
+    "category": "paris",
+    "fact": "Paris possède 422 jardins publics, soit un jardin pour 5 000 habitants. Avec leurs bancs exposés au soleil, ils constituent l'alternative gratuite aux terrasses payantes."
+  },
+  {
+    "id": 214,
+    "category": "printemps",
+    "fact": "La température à Paris en avril 2024 a dépassé de 2,1°C la moyenne 1991-2020, conrmant une tendance continue. Les cerisiers fleurissent maintenant 12 jours plus tôt qu'en 1950."
+  },
+  {
+    "id": 215,
+    "category": "café",
+    "fact": "Le café noisette — expresso avec une goutte de lait chaud — tire son nom de sa couleur. Impossible à commander en anglais dans un café parisien sans se faire regarder."
+  },
+  {
+    "id": 216,
+    "category": "soleil",
+    "fact": "L'Arc de Triomphe mesure 50 mètres de haut. À l'équinoxe de printemps, son ombre s'étend exactement jusqu'au deuxième rang de terrasse du café en face. La géométrie parisienne est précise."
+  },
+  {
+    "id": 217,
+    "category": "terrasse",
+    "fact": "La terrasse du Musée d'Orsay, côté Seine, offre une vue sur le Louvre à travers les anciens cadrans de l'horloge de la gare. Peu de Parisiens savent qu'elle est accessible sans billet."
+  },
+  {
+    "id": 218,
+    "category": "paris",
+    "fact": "Le Canal Saint-Martin a été creusé entre 1805 et 1825. Ses 4,5 km de rives sont devenus l'épicentre des terrasses hipster parisiennes depuis les années 2010."
+  },
+  {
+    "id": 219,
+    "category": "printemps",
+    "fact": "La crue centennale de Paris, si elle survenait, inonderait 100 000 logements et 700 km de rues. Les cafetiers riverains ont prévu des plans d'évacuation de leurs terrasses."
+  },
+  {
+    "id": 220,
+    "category": "café",
+    "fact": "L'arabica représente 70% du café consommé dans les terrasses parisiennes, le robusta 30%. Ce dernier, plus amer, donne une meilleure crema — raison pour laquelle les blends italiens l'incluent."
+  },
+  {
+    "id": 221,
+    "category": "soleil",
+    "fact": "Les migraines d'origine solaire sont plus fréquentes en terrasse parisienne qu'en intérieur (source : Hôpital Lariboisière). La réverbération sur les tables blanches en marbre en est souvent responsable."
+  },
+  {
+    "id": 222,
+    "category": "terrasse",
+    "fact": "Le gravier des terrasses des jardins parisiens (Luxembourg, Tuileries) absorbe la chaleur le matin et la restitue progressivement l'après-midi, maintenant une température agréable même à l'ombre."
+  },
+  {
+    "id": 223,
+    "category": "paris",
+    "fact": "La Cité Universitaire de Paris (14e) possède 40 pavillons représentant 40 pays. Sa pelouse est le seul endroit de Paris où 40 cultures différentes se retrouvent au soleil le même dimanche."
+  },
+  {
+    "id": 224,
+    "category": "printemps",
+    "fact": "Le Champ-de-Mars se transforme en pique-nique géant chaque dimanche de printemps. On y dénombre, par beau temps, plus de chiens que dans n'importe quel parc d'Europe."
+  },
+  {
+    "id": 225,
+    "category": "café",
+    "fact": "Le Café de la Paix, ouvert en 1862 Place de l'Opéra, est classé monument historique. Maupassant y a écrit plusieurs nouvelles en observant les passants depuis sa terrasse."
+  },
+  {
+    "id": 226,
+    "category": "soleil",
+    "fact": "La latitude de Paris est trop haute pour faire pousser des oliviers en pleine terre — mais certains terrasses en mettent en pot l'été, rapatriant l'ambiance méditerranée avec une bouteille de rosé."
+  },
+  {
+    "id": 227,
+    "category": "terrasse",
+    "fact": "Un client de terrasse parisienne dépense en moyenne 18€ à chaque visite, contre 12€ en intérieur. L'air frais, le soleil et la vue sur la rue motivent manifestement les commandes supplémentaires."
+  },
+  {
+    "id": 228,
+    "category": "paris",
+    "fact": "Montparnasse, au début du XXe siècle, abritait la bohème artistique mondiale : Picasso, Hemingway, Modigliani se retrouvaient tous au Dôme ou à la Rotonde. L'art moderne est né en terrasse."
+  },
+  {
+    "id": 229,
+    "category": "printemps",
+    "fact": "Le marché aux fleurs d'Auteuil, dans le 16e, est l'un des plus beaux de Paris. Chaque printemps, on y trouve des espèces rares que l'on voit rarement dans les marchés ordinaires."
+  },
+  {
+    "id": 230,
+    "category": "café",
+    "fact": "La première franchise de café au monde a été créée à Paris en 1890 : « Le Café du Commerce », qui déclinait la même carte dans plusieurs établissements de la capitale."
+  },
+  {
+    "id": 231,
+    "category": "soleil",
+    "fact": "La Vénus parisienne des impressionnistes — cette lumière mouvante et changeante — est due à la position de Paris sous le 49e parallèle nord, où les rayons solaires frappent en angle oblique toute l'année."
+  },
+  {
+    "id": 232,
+    "category": "terrasse",
+    "fact": "La terrasse du Centre Pompidou, au 5e étage, est l'une des seules terrasses gratuites de Paris avec une vue à 360° sur les toits. Elle est ouverte tous les jours sauf le mardi."
+  },
+  {
+    "id": 233,
+    "category": "paris",
+    "fact": "Le Sacré-Cœur est la deuxième église la plus visitée de France après Notre-Dame. Sa terrasse sur la Butte Montmartre offre la plus grande vue dégagée depuis un point fixe de Paris."
+  },
+  {
+    "id": 234,
+    "category": "printemps",
+    "fact": "Le bruit des tondeuses à gazon dans les parcs parisiens, chaque début mars, est le son officieux du retour du printemps. Les terrasses voisines se remplissent toujours dès que les jardiniers arrivent."
+  },
+  {
+    "id": 235,
+    "category": "café",
+    "fact": "Il est illégal en France de servir un café brûlant (au-dessus de 60°C) sans prévenir le client. La mention « attention, c'est chaud » est obligatoire — une loi rarement appliquée en terrasse."
+  },
+  {
+    "id": 236,
+    "category": "soleil",
+    "fact": "La durée du crépuscule civil à Paris en été est de 30 minutes, pendant lesquelles la lumière reste suffisante pour lire. Les terrasses bénéficient ainsi de 30 minutes de lecture bonus après le coucher du soleil."
+  },
+  {
+    "id": 237,
+    "category": "terrasse",
+    "fact": "La réglementation DSFR (Design System de l'État) n'a pas encore été appliquée aux terrasses parisiennes. Mais si elle l'était, toutes les chaises seraient bleues et les menus en Marianne."
+  },
+  {
+    "id": 238,
+    "category": "paris",
+    "fact": "La Paris Visite est le ticket de transport le plus vendu aux touristes. Mais les Parisiens savent que le meilleur ticket reste celui du café en terrasse, face à une rue animée."
+  },
+  {
+    "id": 239,
+    "category": "printemps",
+    "fact": "La Journée Mondiale du Café, le 1er octobre, est bien en automne. Mais la Journée Internationale du Thé, le 21 mai, tombe pile au printemps. Les terrasses parisiennes célèbrent les deux avec ferveur."
+  },
+  {
+    "id": 240,
+    "category": "café",
+    "fact": "Paris accueille chaque année le championnat de France des baristas. En 2023, le gagnant a réalisé son espresso parfait en 25 secondes chrono — soit le temps que met un serveur à rejoindre une table en terrasse."
+  },
+  {
+    "id": 241,
+    "category": "soleil",
+    "fact": "Les vitres des brasseries parisiennes filtrent les UV-B mais laissent passer les UV-A. S'installer côté fenêtre ne vous protège pas autant que vous le pensez — presque autant qu'en terrasse."
+  },
+  {
+    "id": 242,
+    "category": "terrasse",
+    "fact": "En 2020, la mairie de Paris a autorisé 12 000 nouvelles terrasses éphémères sur les places de stationnement libérées par la COVID. C'est ce qu'on appelle la « terrassification » de Paris."
+  },
+  {
+    "id": 243,
+    "category": "paris",
+    "fact": "Paris est la seule capitale au monde où deux rues portent le même nom dans deux arrondissements différents — la Rue des Martyrs (9e et 18e). Les terrasses des deux sont incontournables."
+  },
+  {
+    "id": 244,
+    "category": "printemps",
+    "fact": "Le Jardin du Palais-Royal est l'un des rares jardins parisiens à être fermé la nuit. Mais ses terrasses des restaurants Stella Maris et Grand Véfour y ouvrent dès l'aube au printemps."
+  },
+  {
+    "id": 245,
+    "category": "café",
+    "fact": "L'eau minérale plate accompagne obligatoirement tout café en terrasse dans les établissements de qualité parisiens. Servir un café sans eau est considéré comme un manquement professionnel."
+  },
+  {
+    "id": 246,
+    "category": "soleil",
+    "fact": "À Paris, le premier jour où la durée du jour dépasse 12h est le 20 mars — équinoxe de printemps. Les terrasses ont donc exactement 6 mois de « grande lumière » par an."
+  },
+  {
+    "id": 247,
+    "category": "terrasse",
+    "fact": "Le Code de la rue parisien prévoit que les terrasses peuvent être démontées en cas de manifestation. Lors des grandes marches, certains cafetiers apprennent l'annulation 2h à l'avance."
+  },
+  {
+    "id": 248,
+    "category": "paris",
+    "fact": "Les Halles de Paris, avant leur démolition en 1971, abritaient les plus grandes terrasses de rue couvertes du monde. Zola les appelait « le ventre de Paris » — aujourd'hui, le ventre prendrait un café dehors."
+  },
+  {
+    "id": 249,
+    "category": "printemps",
+    "fact": "Le Roland-Garros se déroule fin mai, en plein printemps parisien. Les terrasses du 16e arrondissement voisin voient leur fréquentation tripler durant les deux semaines du tournoi."
+  },
+  {
+    "id": 250,
+    "category": "café",
+    "fact": "Le café au lait, version traditionnelle française, est servi dans un grand bol et non dans un verre. C'est le format du petit-déjeuner en terrasse, où la taille du bol augmente avec la durée du journal."
+  },
+  {
+    "id": 251,
+    "category": "soleil",
+    "fact": "Les architectes haussmanniens ont prévu des gabarits de hauteur (6 étages + combles) en partie pour que les rues larges reçoivent au moins 3 à 4 heures de soleil direct par jour, même en hiver."
+  },
+  {
+    "id": 252,
+    "category": "terrasse",
+    "fact": "La terrasse de la Samaritaine, rouverte en 2021 après 15 ans de fermeture, est l'une des terrasses les plus disputées de Paris. Il faut réserver 3 semaines à l'avance pour un créneau au coucher du soleil."
+  },
+  {
+    "id": 253,
+    "category": "paris",
+    "fact": "Paris compte 127 marchés alimentaires par semaine répartis dans les 20 arrondissements. Chaque marché est entouré de cafés dont les terrasses se remplissent dès la première heure."
+  },
+  {
+    "id": 254,
+    "category": "printemps",
+    "fact": "La température des canaux parisiens monte de 4°C entre mars et mai. Les canards col-vert, qui les peuplent, sortent sur les berges exactement quand les Parisiens sortent leurs chaises de terrasse."
+  },
+  {
+    "id": 255,
+    "category": "café",
+    "fact": "Le café Paris-Brest, pâtisserie à la crème pralinée en forme de roue de vélo, a été inventé en 1910 par Louis Durand, pâtissier de Maisons-Laffitte, pour commémorer la course cycliste Paris-Brest-Paris."
+  },
+  {
+    "id": 256,
+    "category": "soleil",
+    "fact": "La durée totale de l'ensoleillement annuel à Paris est en hausse de 12% depuis les années 1980. Le printemps parisien gagne environ 8 heures de soleil supplémentaires par rapport à il y a 40 ans."
+  },
+  {
+    "id": 257,
+    "category": "terrasse",
+    "fact": "Les serviettes en papier de terrasse volent avec un vent de 25 km/h. Les cafetiers du bord de Seine choisissent souvent des serviettes en tissu pour éviter les avalanches de papier sur le trottoir."
+  },
+  {
+    "id": 258,
+    "category": "paris",
+    "fact": "Paris a été la première ville au monde à publier un plan de ses rues (Plan de Turgot, 1739). Il montre déjà des cafés avec des tables à l'extérieur dans les grandes voies de la Rive gauche."
+  },
+  {
+    "id": 259,
+    "category": "printemps",
+    "fact": "La couleur Pantone choisie pour représenter le printemps parisien est le 13-0858 « Illuminating Yellow » — exactement la teinte du mimosa qui envahit les marchés en mars."
+  },
+  {
+    "id": 260,
+    "category": "café",
+    "fact": "L'expression « faire le café » pour désigner quelqu'un de peu efficace vient du fait que faire le café était jadis la tâche du plus jeune apprenti dans un atelier. Désormais, c'est le barista qui règne."
+  },
+  {
+    "id": 261,
+    "category": "soleil",
+    "fact": "Le bronze des statues parisiennes noircit du côté nord et reste doré du côté sud, exposé au soleil. C'est un atlas solaire en métal réparti dans toute la ville."
+  },
+  {
+    "id": 262,
+    "category": "terrasse",
+    "fact": "La plus petite terrasse de Paris fait 2 m² et se trouve rue de la Huchette (5e). Elle accueille deux chaises et une table, et affiche quand même complet les soirs d'été."
+  },
+  {
+    "id": 263,
+    "category": "paris",
+    "fact": "L'horloge de la gare de Lyon est l'une des plus grandes horloges de Paris. Sa terrasse, le Train Bleu, est classée monument historique et servait à l'origine les voyageurs du Soleil."
+  },
+  {
+    "id": 264,
+    "category": "printemps",
+    "fact": "La préparation officielle de l'été à Paris commence le 22 mars — date à laquelle la Régie autonome des transports parisiens active les ventilations de quais et les gardiens sortent les premiers transats."
+  },
+  {
+    "id": 265,
+    "category": "café",
+    "fact": "Le café en dosette est interdit dans plusieurs établissements parisiens « haut de gamme » qui refusent de servir autre chose qu'un café fraîchement torréfié et moulu à la commande."
+  },
+  {
+    "id": 266,
+    "category": "soleil",
+    "fact": "L'obélisque de la Place de la Concorde, offert par l'Égypte en 1836, est le plus vieux monument de Paris (3 300 ans). Conçu comme cadran solaire nilotique, il détermine l'heure de l'apéro depuis 33 siècles."
+  },
+  {
+    "id": 267,
+    "category": "terrasse",
+    "fact": "Les tables de café parisien ont un diamètre standard de 60 cm — juste la bonne taille pour deux expressos, deux verres d'eau, et un téléphone posé en évidence."
+  },
+  {
+    "id": 268,
+    "category": "paris",
+    "fact": "Pigalle, souvent associé à ses cabarets, abrite depuis 2010 un quartier café de spécialité exceptionnel. Le « SoPi » (South Pigalle) compte plus de 15 coffee shops dans un rayon de 500 mètres."
+  },
+  {
+    "id": 269,
+    "category": "printemps",
+    "fact": "L'Île-de-France écoule chaque printemps 40% des plants de tomates achetés en France. Beaucoup de balcons et terrasses parisiennes se transforment en potagers à partir d'avril."
+  },
+  {
+    "id": 270,
+    "category": "café",
+    "fact": "La première vente aux enchères de café de spécialité parisien a eu lieu en 2022. Un lot de café éthiopien torréfié à Paris a atteint 48€ les 100 grammes — soit 8€ l'expresso en terrasse."
+  },
+  {
+    "id": 271,
+    "category": "soleil",
+    "fact": "La direction de l'ombre d'un Parisien assis en terrasse tourne de 180° entre le matin et le soir. À midi, son ombre est si courte qu'elle se cache sous sa chaise."
+  },
+  {
+    "id": 272,
+    "category": "terrasse",
+    "fact": "L'application la plus téléchargée par les cafetiers parisiens en 2023 est un outil de prévision météo à l'heure près. La terrasse est leur principale source de revenus : chaque rayon de soleil compte."
+  },
+  {
+    "id": 273,
+    "category": "paris",
+    "fact": "La ligne de Sceaux, ancêtre du RER B, fut la première ligne de chemin de fer suburbain de Paris (1854). Elle permettait aux Parisiens de rejoindre les guinguettes de banlieue et leurs terrasses champêtres."
+  },
+  {
+    "id": 274,
+    "category": "printemps",
+    "fact": "La Journée Mondiale de l'Environnement, le 5 juin, coïncide chaque année avec l'heure de pointe des terrasses parisiennes. L'ironie est généralement commentée entre deux citrons pressés."
+  },
+  {
+    "id": 275,
+    "category": "café",
+    "fact": "Les cafés parisiens font face à une pénurie de tasses chaque été : certains commandent jusqu'à 5 000 tasses par an pour compenser la casse, les vols et la perte de tasses de terrasse."
+  },
+  {
+    "id": 276,
+    "category": "soleil",
+    "fact": "En juin à Paris, il ne fait jamais complètement nuit : il s'agit de « nuits astronomiques » où la luminosité résiduelle du soleil reste perceptible à l'horizon toute la nuit autour du solstice."
+  },
+  {
+    "id": 277,
+    "category": "terrasse",
+    "fact": "Les parasols de terrasse les plus vendus à Paris mesurent 3,50 m de diamètre et sont orientables selon l'axe du soleil. Certains cafetiers du 6e ont des modèles à motorisation électrique."
+  },
+  {
+    "id": 278,
+    "category": "paris",
+    "fact": "Le Père Lachaise est le seul cimetière de Paris à avoir une vue sur les terrasses de ses voisins. Depuis la tour du crématorium, on aperçoit les toits-terrasses de Ménilmontant."
+  },
+  {
+    "id": 279,
+    "category": "printemps",
+    "fact": "Les abricotiers en fleurs de Belleville, plantés en 2021 dans le cadre du plan de végétalisation de Paris, créent chaque mars un spectacle qui attire les photographes et les terrasses environnantes."
+  },
+  {
+    "id": 280,
+    "category": "café",
+    "fact": "Il existe à Paris un café entièrement géré par des robots (Café X, 1er arrondissement). Les Parisiens y vont une fois pour l'expérience, puis retournent chez leur cafetier humain pour le sourire."
+  },
+  {
+    "id": 281,
+    "category": "soleil",
+    "fact": "La plus longue journée jamais connue à Paris remonte à 1974 — pas astronomiquement, mais culturellement : la fête de la musique officieuse du Marché d'Aligre avait duré 21h, alimentée par le soleil et le café."
+  },
+  {
+    "id": 282,
+    "category": "terrasse",
+    "fact": "Le droit de terrasse à Paris est accordé pour un an, renouvelable. Un cafetier peut perdre sa terrasse du jour au lendemain si ses voisins portent plainte trois fois en un an pour nuisances sonores."
+  },
+  {
+    "id": 283,
+    "category": "paris",
+    "fact": "Sous les terrasses du Café de la Paix, à 5 mètres de profondeur, passe la ligne 3 du métro. Les clients entendent parfois les rames vibrer sous leurs pieds sans le savoir."
+  },
+  {
+    "id": 284,
+    "category": "printemps",
+    "fact": "Le Salon du Livre de Paris se tient chaque mars au Grand Palais. En fin de journée, les auteurs rejoignent les cafés du Cours la Reine où les terrasses sont envahies de lecteurs heureux."
+  },
+  {
+    "id": 285,
+    "category": "café",
+    "fact": "Le café-théâtre parisien est né dans les années 1960 : des salles de 50 personnes au-dessus des cafés de la Rive gauche, où des inconnus devenaient Coluche, Devos ou Desproges."
+  },
+  {
+    "id": 286,
+    "category": "soleil",
+    "fact": "La station météo de Paris-Montsouris mesure l'ensoleillement depuis 1873 sans interruption — soit plus de 150 ans de données solaires. C'est l'une des plus longues séries météorologiques du monde."
+  },
+  {
+    "id": 287,
+    "category": "terrasse",
+    "fact": "Paris Terrasses est une application officielle de la Ville de Paris qui recense toutes les terrasses autorisées avec leurs horaires. En 2023, elle a été téléchargée 300 000 fois."
+  },
+  {
+    "id": 288,
+    "category": "paris",
+    "fact": "La Rue Montorgueil dans le 2e est l'une des rues commerçantes piétonnes les plus animées de Paris. Ses terrasses s'enchaînent sur 500 mètres sans un seul mètre de bitume entre elles."
+  },
+  {
+    "id": 289,
+    "category": "printemps",
+    "fact": "Le Marché Biologique des Batignolles, chaque samedi matin, attire les Parisiens dès 9h. Le café du coin voit sa terrasse se remplir exactement au rythme des sacs à provisions qui grossissent."
+  },
+  {
+    "id": 290,
+    "category": "café",
+    "fact": "Le café Viennois — expresso recouvert de chantilly — est servi dans 80% des cafés parisiens malgré son nom étranger. Les Parisiens l'apprécient particulièrement les matins de printemps frais."
+  },
+  {
+    "id": 291,
+    "category": "soleil",
+    "fact": "Les fontaines lumineuses du Trocadéro sont alimentées par 20 jets d'eau. Quand le soleil frappe leurs gouttelettes en début d'après-midi, elles créent de petits arcs-en-ciel au-dessus des terrasses voisines."
+  },
+  {
+    "id": 292,
+    "category": "terrasse",
+    "fact": "Le premier café avec WiFi à Paris a ouvert en 1998, rue de Rivoli. La terrasse est restée la même, mais les clients regardent désormais leurs écrans au lieu de la rue. Le Wifi y est toujours gratuit."
+  },
+  {
+    "id": 293,
+    "category": "paris",
+    "fact": "Paris a été candidate à quatre reprises pour les Jeux Olympiques avant 2024. À chaque candidature, la promesse d'une terrasse sur la Seine était dans le dossier. En 2024, la Seine Swim a rendu l'idée réelle."
+  },
+  {
+    "id": 294,
+    "category": "printemps",
+    "fact": "Les 60 000 vélos Vélib' de Paris voient leur utilisation augmenter de 40% en avril et mai. Les cyclistes s'arrêtent statistiquement devant une terrasse dans 1 trajet sur 4."
+  },
+  {
+    "id": 295,
+    "category": "café",
+    "fact": "Les emballages de sucre des cafés parisiens arborent souvent des reproductions d'œuvres d'art ou des monuments de Paris. Certains collectionneurs en ont amassé plus de 2 000 références différentes."
+  },
+  {
+    "id": 296,
+    "category": "soleil",
+    "fact": "En été, la Seine est 2 à 3°C plus froide que l'air environnant. Les terrasses situées directement au bord de l'eau, comme au Square du Vert-Galant, bénéficient d'un effet rafraîchissant naturel."
+  },
+  {
+    "id": 297,
+    "category": "terrasse",
+    "fact": "Chaque année, environ 2 millions de paires de lunettes de soleil sont oubliées dans les cafés et terrasses de Paris. La moitié ne sont jamais réclamées."
+  },
+  {
+    "id": 298,
+    "category": "paris",
+    "fact": "Le Plan Vélo de Paris prévoit 1 400 km de pistes cyclables d'ici 2030. Chaque nouveau kilomètre créé génère statistiquement 3 nouvelles places de terrasse sur les trottoirs libérés."
+  },
+  {
+    "id": 299,
+    "category": "printemps",
+    "fact": "La Fête du Travail du 1er mai est le seul jour de l'année où les terrasses parisiennes sont soumises à l'obligation légale d'embaucher du personnel supplémentaire si elles ouvrent — ce que presque tous font."
+  },
+  {
+    "id": 300,
+    "category": "café",
+    "fact": "« Ma terrasse au soleil » : les Parisiens ont un sens aigu du droit naturel à leur terrasse favorite. Arriver le premier sur une place au soleil est considéré comme un droit légitime, voire sacré."
   }
 ]
