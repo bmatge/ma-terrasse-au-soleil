@@ -39,6 +39,7 @@ async def fetch_price_level(
     Returns (None, None) if no match found or API key is not configured.
     """
     if not settings.GOOGLE_PLACES_KEY:
+        logger.warning("GOOGLE_PLACES_KEY is not set, skipping")
         return None, None
 
     headers = {
@@ -61,8 +62,12 @@ async def fetch_price_level(
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         resp = await client.post(NEARBY_SEARCH_URL, json=body, headers=headers)
-        resp.raise_for_status()
+        if resp.status_code != 200:
+            logger.error("Google API error %d: %s", resp.status_code, resp.text[:500])
+            resp.raise_for_status()
         data = resp.json()
+
+    logger.debug("Google response for (%.5f, %.5f): %s", lat, lon, data)
 
     places = data.get("places", [])
     if not places:
