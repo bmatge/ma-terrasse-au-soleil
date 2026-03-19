@@ -5,6 +5,8 @@ import { getTimeline } from "../api/terrasses";
 import Timeline from "../components/Timeline";
 import SunMap from "../components/SunMap";
 import PriceLevel from "../components/PriceLevel";
+import PlaceTypeBadge from "../components/PlaceTypeBadge";
+import Rating from "../components/Rating";
 import { track } from "../analytics";
 
 function currentTimeRounded(): string {
@@ -73,12 +75,37 @@ export default function TimelinePage() {
         <h2 className="text-2xl font-bold text-gray-800 mt-2">
           {data.terrasse.nom}
         </h2>
-        <p className="text-gray-500">
-          {data.terrasse.adresse}
-          {data.terrasse.price_level != null && data.terrasse.price_level > 0 && (
-            <PriceLevel level={data.terrasse.price_level} className="ml-2" />
+        <p className="text-gray-500">{data.terrasse.adresse}</p>
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          {data.terrasse.place_type && (
+            <PlaceTypeBadge type={data.terrasse.place_type} />
           )}
-        </p>
+          {data.terrasse.price_level != null && data.terrasse.price_level > 0 && (
+            <PriceLevel level={data.terrasse.price_level} />
+          )}
+          {data.terrasse.rating != null && (
+            <Rating rating={data.terrasse.rating} count={data.terrasse.user_rating_count} />
+          )}
+        </div>
+        {(data.terrasse.phone || data.terrasse.website || data.terrasse.google_maps_uri) && (
+          <div className="flex items-center gap-3 mt-2 text-sm">
+            {data.terrasse.phone && (
+              <a href={`tel:${data.terrasse.phone}`} className="text-amber-600 hover:underline">
+                {data.terrasse.phone}
+              </a>
+            )}
+            {data.terrasse.website && (
+              <a href={data.terrasse.website} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline">
+                Site web
+              </a>
+            )}
+            {data.terrasse.google_maps_uri && (
+              <a href={data.terrasse.google_maps_uri} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline">
+                Google Maps
+              </a>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Date selector */}

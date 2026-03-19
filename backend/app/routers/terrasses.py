@@ -31,7 +31,8 @@ async def search_terrasses(
             SELECT
                 id, nom, adresse, arrondissement,
                 ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
-                price_level,
+                price_level, place_type, rating, user_rating_count,
+                phone, website, google_maps_uri,
                 similarity(nom, :q) AS sim
             FROM terrasses
             WHERE nom % :q OR adresse % :q
@@ -49,7 +50,8 @@ async def search_terrasses(
                 SELECT
                     id, nom, adresse, arrondissement,
                     ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
-                    price_level
+                    price_level, place_type, rating, user_rating_count,
+                    phone, website, google_maps_uri
                 FROM terrasses
                 WHERE nom ILIKE :pattern OR adresse ILIKE :pattern
                 ORDER BY nom
@@ -64,6 +66,10 @@ async def search_terrasses(
             id=r.id, nom=r.nom, adresse=r.adresse,
             arrondissement=r.arrondissement, lat=r.lat, lon=r.lon,
             price_level=r.price_level,
+            place_type=r.place_type, rating=r.rating,
+            user_rating_count=r.user_rating_count,
+            phone=r.phone, website=r.website,
+            google_maps_uri=r.google_maps_uri,
         )
         for r in rows
     ]
@@ -83,7 +89,8 @@ async def get_timeline(
             SELECT
                 t.id, t.nom, t.adresse, t.arrondissement,
                 ST_X(t.geometry) AS lon, ST_Y(t.geometry) AS lat,
-                t.price_level,
+                t.price_level, t.place_type, t.rating, t.user_rating_count,
+                t.phone, t.website, t.google_maps_uri,
                 hp.profile
             FROM terrasses t
             LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
@@ -108,6 +115,10 @@ async def get_timeline(
             id=row.id, nom=row.nom, adresse=row.adresse,
             arrondissement=row.arrondissement, lat=row.lat, lon=row.lon,
             price_level=row.price_level,
+            place_type=row.place_type, rating=row.rating,
+            user_rating_count=row.user_rating_count,
+            phone=row.phone, website=row.website,
+            google_maps_uri=row.google_maps_uri,
         ),
         date=target_date.isoformat(),
         slots=timeline["slots"],

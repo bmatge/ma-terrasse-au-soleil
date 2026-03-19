@@ -6,6 +6,12 @@ export interface TerrasseSearchResult {
   lat: number;
   lon: number;
   price_level: number | null;
+  place_type: string | null;
+  rating: number | null;
+  user_rating_count: number | null;
+  phone: string | null;
+  website: string | null;
+  google_maps_uri: string | null;
 }
 
 export interface TimelineSlot {
@@ -49,6 +55,9 @@ export interface NearbyTerrasse {
   soleil_jusqua: string | null;
   has_profile: boolean;
   price_level: number | null;
+  place_type: string | null;
+  rating: number | null;
+  user_rating_count: number | null;
 }
 
 export interface NearbyResponse {

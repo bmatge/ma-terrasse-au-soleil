@@ -1,11 +1,10 @@
-"""Google Places API integration for price level enrichment.
+"""Google Places API integration for enriching terrasse data.
 
-Uses the Places API (New) Nearby Search to find the closest restaurant
-to a terrasse's GPS coordinates and fetch its priceLevel. This approach
-is more reliable than text search because DB names are legal entity names
-(raison sociale) that rarely match the public-facing Google name.
+Uses the Places API (New) Nearby Search to find the closest restaurant/bar/cafe
+to a terrasse's GPS coordinates and fetch price level, rating, phone, website, etc.
 """
 import logging
+from dataclasses import dataclass
 
 import httpx
 from sqlalchemy import text
@@ -25,27 +24,50 @@ PRICE_MAP = {
     "PRICE_LEVEL_VERY_EXPENSIVE": 4,
 }
 
+FIELD_MASK = ",".join([
+    "places.priceLevel",
+    "places.displayName",
+    "places.location",
+    "places.primaryType",
+    "places.rating",
+    "places.userRatingCount",
+    "places.nationalPhoneNumber",
+    "places.websiteUri",
+    "places.googleMapsUri",
+])
 
-async def fetch_price_level(
+
+@dataclass
+class PlaceInfo:
+    """Data fetched from Google Places API."""
+    price_level: int | None = None
+    display_name: str | None = None
+    place_type: str | None = None
+    rating: float | None = None
+    user_rating_count: int | None = None
+    phone: str | None = None
+    website: str | None = None
+    google_maps_uri: str | None = None
+
+
+async def fetch_place_info(
     lat: float,
     lon: float,
     radius_m: float = 30.0,
-) -> tuple[int | None, str | None]:
-    """Find the nearest restaurant via Nearby Search and return (priceLevel, displayName).
+) -> PlaceInfo:
+    """Find the nearest restaurant/bar/cafe via Nearby Search and return its details.
 
     Uses a tight radius (30m default) around the terrasse's exact GPS coords
     to find the matching venue by proximity rather than name.
-
-    Returns (None, None) if no match found or API key is not configured.
     """
     if not settings.GOOGLE_PLACES_KEY:
         logger.warning("GOOGLE_PLACES_KEY is not set, skipping")
-        return None, None
+        return PlaceInfo()
 
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": settings.GOOGLE_PLACES_KEY,
-        "X-Goog-FieldMask": "places.priceLevel,places.displayName,places.location",
+        "X-Goog-FieldMask": FIELD_MASK,
     }
 
     body = {
@@ -71,16 +93,34 @@ async def fetch_price_level(
 
     places = data.get("places", [])
     if not places:
-        return None, None
+        return PlaceInfo()
 
     place = places[0]
-    display_name = place.get("displayName", {}).get("text")
 
     price_str = place.get("priceLevel")
-    if price_str is None:
-        return None, display_name
+    price_level = PRICE_MAP.get(price_str) if price_str else None
 
-    return PRICE_MAP.get(price_str), display_name
+    return PlaceInfo(
+        price_level=price_level,
+        display_name=place.get("displayName", {}).get("text"),
+        place_type=place.get("primaryType"),
+        rating=place.get("rating"),
+        user_rating_count=place.get("userRatingCount"),
+        phone=place.get("nationalPhoneNumber"),
+        website=place.get("websiteUri"),
+        google_maps_uri=place.get("googleMapsUri"),
+    )
+
+
+# Keep backward-compatible wrapper for existing callers
+async def fetch_price_level(
+    lat: float,
+    lon: float,
+    radius_m: float = 30.0,
+) -> tuple[int | None, str | None]:
+    """Backward-compatible wrapper returning (priceLevel, displayName)."""
+    info = await fetch_place_info(lat, lon, radius_m)
+    return info.price_level, info.display_name
 
 
 async def enrich_terrasse_price(
