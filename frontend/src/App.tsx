@@ -1497,6 +1497,20 @@ export default function App() {
             <span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: t.text, textTransform: "capitalize" }}>
               {searchDate === todayISO() ? "Aujourd'hui" : searchDate === (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split("T")[0]; })() ? "Demain" : new Date(searchDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
               {nearbyData && ` · ${nearbyData.meteo.status === "degage" ? "☀️" : nearbyData.meteo.status === "mitige" ? "🌤️" : "☁️"}`}
+              {nearbyData && nearbyData.meteo.uv_index > 0 && (() => {
+                const uv = nearbyData.meteo.uv_index;
+                const { color, bg } = uv <= 2
+                  ? { color: "#166534", bg: "#DCFCE7" }
+                  : uv <= 5 ? { color: "#854D0E", bg: "#FEF9C3" }
+                  : uv <= 7 ? { color: "#9A3412", bg: "#FFEDD5" }
+                  : uv <= 10 ? { color: "#991B1B", bg: "#FEE2E2" }
+                  : { color: "#581C87", bg: "#F3E8FF" };
+                return (
+                  <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 100, color, background: bg, fontFamily: F, verticalAlign: "middle" }}>
+                    UV {uv}
+                  </span>
+                );
+              })()}
             </span>
             <button onClick={() => { const d = new Date(searchDate + "T12:00:00"); d.setDate(d.getDate() + 1); setSearchDate(d.toISOString().split("T")[0]); }}
               style={{ background: "none", border: `1.5px solid ${t.border}`, borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textSoft }}>
@@ -1667,8 +1681,24 @@ export default function App() {
             </div>
           )}
 
-          {/* Weather summary */}
-          <div style={{ fontSize: 13, color: t.textSoft, marginBottom: 16 }}>{timelineData.meteo_resume}</div>
+          {/* Weather summary + UV */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, gap: 10 }}>
+            <div style={{ fontSize: 13, color: t.textSoft }}>{timelineData.meteo_resume}</div>
+            {currentSlot && currentSlot.uv_index > 0 && (() => {
+              const uv = currentSlot.uv_index;
+              const { label, color, bg } = uv <= 2
+                ? { label: "Faible", color: "#166534", bg: "#DCFCE7" }
+                : uv <= 5 ? { label: "Modéré", color: "#854D0E", bg: "#FEF9C3" }
+                : uv <= 7 ? { label: "Fort", color: "#9A3412", bg: "#FFEDD5" }
+                : uv <= 10 ? { label: "Très fort", color: "#991B1B", bg: "#FEE2E2" }
+                : { label: "Extrême", color: "#581C87", bg: "#F3E8FF" };
+              return (
+                <span style={{ flexShrink: 0, fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100, color, background: bg, fontFamily: F }}>
+                  UV {uv} · {label}
+                </span>
+              );
+            })()}
+          </div>
 
           {/* Sun map / Street View toggle */}
           <div style={{ marginBottom: 20 }}>
