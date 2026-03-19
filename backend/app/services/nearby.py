@@ -51,6 +51,7 @@ async def find_nearby_terrasses(
             SELECT
                 t.id,
                 t.nom,
+                t.nom_commercial,
                 t.adresse,
                 ST_X(t.geometry) AS lon,
                 ST_Y(t.geometry) AS lat,
@@ -106,6 +107,7 @@ async def find_nearby_terrasses(
         terrasses.append({
             "id": row.id,
             "nom": row.nom,
+            "nom_commercial": row.nom_commercial,
             "adresse": row.adresse,
             "lat": row.lat,
             "lon": row.lon,

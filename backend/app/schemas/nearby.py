@@ -11,6 +11,7 @@ class MeteoInfo(BaseModel):
 class NearbyTerrasse(BaseModel):
     id: int
     nom: str
+    nom_commercial: str | None = None
     adresse: str | None
     lat: float
     lon: float

@@ -29,13 +29,13 @@ async def search_terrasses(
     result = await db.execute(
         text("""
             SELECT
-                id, nom, adresse, arrondissement,
+                id, nom, nom_commercial, adresse, arrondissement,
                 ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
                 price_level, place_type, rating, user_rating_count,
                 phone, website, google_maps_uri,
                 similarity(nom, :q) AS sim
             FROM terrasses
-            WHERE nom % :q OR adresse % :q
+            WHERE nom % :q OR adresse % :q OR nom_commercial % :q
             ORDER BY sim DESC
             LIMIT :limit
         """),
@@ -48,12 +48,12 @@ async def search_terrasses(
         result = await db.execute(
             text("""
                 SELECT
-                    id, nom, adresse, arrondissement,
+                    id, nom, nom_commercial, adresse, arrondissement,
                     ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
                     price_level, place_type, rating, user_rating_count,
                     phone, website, google_maps_uri
                 FROM terrasses
-                WHERE nom ILIKE :pattern OR adresse ILIKE :pattern
+                WHERE nom ILIKE :pattern OR adresse ILIKE :pattern OR nom_commercial ILIKE :pattern
                 ORDER BY nom
                 LIMIT :limit
             """),
@@ -63,7 +63,8 @@ async def search_terrasses(
 
     return [
         TerrasseSearchResult(
-            id=r.id, nom=r.nom, adresse=r.adresse,
+            id=r.id, nom=r.nom, nom_commercial=r.nom_commercial,
+            adresse=r.adresse,
             arrondissement=r.arrondissement, lat=r.lat, lon=r.lon,
             price_level=r.price_level,
             place_type=r.place_type, rating=r.rating,
@@ -87,7 +88,7 @@ async def get_timeline(
     result = await db.execute(
         text("""
             SELECT
-                t.id, t.nom, t.adresse, t.arrondissement,
+                t.id, t.nom, t.nom_commercial, t.adresse, t.arrondissement,
                 ST_X(t.geometry) AS lon, ST_Y(t.geometry) AS lat,
                 t.price_level, t.place_type, t.rating, t.user_rating_count,
                 t.phone, t.website, t.google_maps_uri,

@@ -61,7 +61,9 @@ async def main(limit: int, delay: float, force: bool = False) -> None:
                                 user_rating_count = :user_rating_count,
                                 phone = :phone,
                                 website = :website,
-                                google_maps_uri = :google_maps_uri
+                                google_maps_uri = :google_maps_uri,
+                                nom_commercial = :nom_commercial,
+                                google_place_id = :google_place_id
                             WHERE id = :id
                         """),
                         {
@@ -72,6 +74,8 @@ async def main(limit: int, delay: float, force: bool = False) -> None:
                             "phone": info.phone,
                             "website": info.website,
                             "google_maps_uri": info.google_maps_uri,
+                            "nom_commercial": info.display_name,
+                            "google_place_id": info.google_place_id,
                             "id": row.id,
                         },
                     )

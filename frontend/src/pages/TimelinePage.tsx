@@ -73,7 +73,7 @@ export default function TimelinePage() {
           &larr; Retour
         </Link>
         <h2 className="text-2xl font-bold text-gray-800 mt-2">
-          {data.terrasse.nom}
+          {data.terrasse.nom_commercial || data.terrasse.nom}
         </h2>
         <p className="text-gray-500">{data.terrasse.adresse}</p>
         <div className="flex items-center gap-2 mt-1 flex-wrap">

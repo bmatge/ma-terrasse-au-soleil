@@ -116,7 +116,7 @@ export default function Map({ center, terrasses, onTerrasseClick, onMoveEnd }: M
 
       const popup = new maplibregl.Popup({ offset: 10 }).setHTML(`
         <div style="font-size:13px">
-          <strong>${t.nom}</strong><br/>
+          <strong>${t.nom_commercial || t.nom}</strong><br/>
           <span>${t.distance_m}m</span>
           ${t.soleil_jusqua ? `<br/><span style="color:#d97706">Soleil jusqu'à ${t.soleil_jusqua}</span>` : ""}
         </div>

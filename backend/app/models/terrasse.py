@@ -29,6 +29,7 @@ class Terrasse(Base):
     phone: Mapped[str | None] = mapped_column(String(30), nullable=True)
     website: Mapped[str | None] = mapped_column(String(500), nullable=True)
     google_maps_uri: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    nom_commercial: Mapped[str | None] = mapped_column(String(300), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     horizon_profile: Mapped["HorizonProfile | None"] = relationship(

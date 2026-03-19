@@ -26,7 +26,7 @@ export default function TerrasseCard({ terrasse }: TerrasseCardProps) {
     >
       <div className="text-2xl">{config.icon}</div>
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-gray-800 truncate">{terrasse.nom}</div>
+        <div className="font-medium text-gray-800 truncate">{terrasse.nom_commercial || terrasse.nom}</div>
         <div className="text-sm text-gray-500 truncate">
           {terrasse.adresse}
         </div>
