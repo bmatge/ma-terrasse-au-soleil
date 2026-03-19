@@ -17,6 +17,7 @@ import type {
   TimelineSlot,
 } from "./api/types";
 import { useDebounce } from "./hooks/useDebounce";
+import funFacts from "./data/funFacts.json";
 
 setWorkerUrl(cspWorkerUrl);
 
@@ -593,6 +594,7 @@ export default function App() {
   const [showInstall, setShowInstall] = useState(false);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
   const [showStreetView, setShowStreetView] = useState(false);
+  const [funFactIndex, setFunFactIndex] = useState(() => Math.floor(Math.random() * funFacts.length));
 
   // Favorites
   const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
@@ -1177,8 +1179,13 @@ export default function App() {
             </button>
           </div>
 
-          <div style={{ marginTop: 16, textAlign: "center" }}>
-            <span style={{ fontSize: 12, color: t.textMuted }}>Paris intra-muros · Ensoleillement calculé en temps réel</span>
+          <div
+            onClick={() => setFunFactIndex((i) => (i + 1) % funFacts.length)}
+            style={{ marginTop: 16, padding: "14px 18px", background: t.bgCard, borderRadius: 14, border: `1px solid ${t.border}`, cursor: "pointer", textAlign: "center" }}
+          >
+            <div style={{ fontSize: 11, fontWeight: 600, color: t.accent, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>Le saviez-vous ?</div>
+            <div style={{ fontSize: 13, color: t.textSoft, lineHeight: 1.5, fontFamily: F }}>{funFacts[funFactIndex].fact}</div>
+            <div style={{ fontSize: 11, color: t.textMuted, marginTop: 8 }}>Tap pour une autre anecdote</div>
           </div>
         </div>
 
