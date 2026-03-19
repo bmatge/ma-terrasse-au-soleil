@@ -5,7 +5,7 @@ Queries terrasses that don't have a price_level yet and fetches it from
 the Google Places API. Rate-limited to avoid quota issues.
 
 Usage:
-    python data/enrich_price_levels.py [--limit 100] [--delay 0.2]
+    python -m data.enrich_price_levels [--limit 100] [--delay 0.2]
 """
 import argparse
 import asyncio
@@ -20,6 +20,8 @@ from app.services.google_places import fetch_price_level
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 logger = logging.getLogger(__name__)
 
+PRICE_LABELS = {0: "FREE", 1: "$", 2: "$$", 3: "$$$", 4: "$$$$"}
+
 
 async def main(limit: int, delay: float) -> None:
     engine = create_engine(settings.DATABASE_URL_SYNC)
@@ -27,7 +29,8 @@ async def main(limit: int, delay: float) -> None:
     with engine.connect() as conn:
         rows = conn.execute(
             text("""
-                SELECT id, nom, ST_X(geometry) AS lon, ST_Y(geometry) AS lat
+                SELECT id, nom, adresse,
+                       ST_X(geometry) AS lon, ST_Y(geometry) AS lat
                 FROM terrasses
                 WHERE price_level IS NULL
                 ORDER BY id
@@ -39,9 +42,14 @@ async def main(limit: int, delay: float) -> None:
     logger.info("Found %d terrasses to enrich", len(rows))
 
     updated = 0
-    for row in rows:
+    found_no_price = 0
+    not_found = 0
+
+    for i, row in enumerate(rows, 1):
         try:
-            price = await fetch_price_level(row.nom, row.lat, row.lon)
+            price, display_name = await fetch_price_level(
+                row.nom, row.lat, row.lon, adresse=row.adresse,
+            )
             if price is not None:
                 with engine.connect() as conn:
                     conn.execute(
@@ -50,15 +58,33 @@ async def main(limit: int, delay: float) -> None:
                     )
                     conn.commit()
                 updated += 1
-                logger.info("[%d] %s -> price_level=%d", row.id, row.nom, price)
+                logger.info(
+                    "[%d/%d] %s @ %s -> %s (%s)",
+                    i, len(rows), row.nom, row.adresse or "?",
+                    display_name, PRICE_LABELS.get(price, price),
+                )
+            elif display_name:
+                # Google found the place but it has no price data
+                found_no_price += 1
+                logger.debug(
+                    "[%d/%d] %s -> found '%s' but no price",
+                    i, len(rows), row.nom, display_name,
+                )
             else:
-                logger.info("[%d] %s -> no price data", row.id, row.nom)
+                not_found += 1
+                logger.debug(
+                    "[%d/%d] %s @ %s -> not found on Google",
+                    i, len(rows), row.nom, row.adresse or "?",
+                )
         except Exception as e:
-            logger.warning("[%d] %s -> error: %s", row.id, row.nom, e)
+            logger.warning("[%d/%d] %s -> error: %s", i, len(rows), row.nom, e)
 
         time.sleep(delay)
 
-    logger.info("Done. Updated %d / %d terrasses", updated, len(rows))
+    logger.info(
+        "Done. %d updated, %d found but no price, %d not found (out of %d)",
+        updated, found_no_price, not_found, len(rows),
+    )
 
 
 if __name__ == "__main__":
