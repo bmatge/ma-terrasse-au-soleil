@@ -18,6 +18,7 @@ import type {
 } from "./api/types";
 import { useDebounce } from "./hooks/useDebounce";
 import funFacts from "./data/funFacts.json";
+import UpdatePrompt from "./components/UpdatePrompt";
 
 setWorkerUrl(cspWorkerUrl);
 
@@ -1217,6 +1218,7 @@ export default function App() {
           </div>
         </div>
 
+        <UpdatePrompt />
         {/* PWA Install Modal */}
         {showInstall && (
           <div onClick={() => setShowInstall(false)} style={{
