@@ -1,0 +1,502 @@
+[
+  {
+    "id": 1,
+    "category": "paris",
+    "fact": "Paris ne compte que 6 panneaux STOP dans toute la ville. Priorité aux terrasses, pas aux stops !"
+  },
+  {
+    "id": 2,
+    "category": "soleil",
+    "fact": "Paris reçoit en moyenne 1 662 heures d'ensoleillement par an, soit environ 4h33 par jour."
+  },
+  {
+    "id": 3,
+    "category": "terrasse",
+    "fact": "On recense plus de 12 000 terrasses de cafés et restaurants à Paris. C'est la plus grande concentration au monde."
+  },
+  {
+    "id": 4,
+    "category": "paris",
+    "fact": "La Tour Eiffel grandit d'environ 15 cm en été à cause de la dilatation thermique due au soleil."
+  },
+  {
+    "id": 5,
+    "category": "ombre",
+    "fact": "Le platane, arbre roi des terrasses parisiennes, a été planté massivement sous Napoléon III pour fournir de l'ombre aux boulevards."
+  },
+  {
+    "id": 6,
+    "category": "soleil",
+    "fact": "Le 21 juin, jour le plus long à Paris, le soleil se lève à 5h46 et se couche à 21h58 : presque 16h15 de terrasse possible !"
+  },
+  {
+    "id": 7,
+    "category": "terrasse",
+    "fact": "Les terrasses chauffées ont été interdites à Paris depuis le 1er avril 2022 pour des raisons écologiques."
+  },
+  {
+    "id": 8,
+    "category": "paris",
+    "fact": "Le Café de Flore existe depuis 1887. Son exposition plein sud en fait l'une des terrasses les plus ensoleillées de Saint-Germain."
+  },
+  {
+    "id": 9,
+    "category": "soleil",
+    "fact": "La lumière du soleil met 8 minutes et 20 secondes pour atteindre votre terrasse parisienne."
+  },
+  {
+    "id": 10,
+    "category": "ombre",
+    "fact": "L'ombre de la Tour Eiffel se déplace de plus de 300 mètres au cours d'une journée d'été."
+  },
+  {
+    "id": 11,
+    "category": "terrasse",
+    "fact": "Le mot « terrasse » vient du latin « terra » (terre). À l'origine, c'était un amas de terre aplanie."
+  },
+  {
+    "id": 12,
+    "category": "paris",
+    "fact": "Le boulevard Haussmann est orienté est-ouest, ce qui en fait l'un des axes les plus ensoleillés de Paris l'après-midi."
+  },
+  {
+    "id": 13,
+    "category": "soleil",
+    "fact": "En plein soleil d'été à Paris, la température au sol d'une terrasse peut atteindre 60°C. Gare aux pieds nus !"
+  },
+  {
+    "id": 14,
+    "category": "terrasse",
+    "fact": "Pendant le COVID, Paris a autorisé l'extension temporaire des terrasses. Certaines rues sont devenues de véritables salons à ciel ouvert."
+  },
+  {
+    "id": 15,
+    "category": "ombre",
+    "fact": "Un store de terrasse bien orienté peut réduire la température ressentie de 10 à 15°C."
+  },
+  {
+    "id": 16,
+    "category": "paris",
+    "fact": "Le Jardin du Luxembourg possède exactement 106 statues. Parfait pour siroter un café à l'ombre d'une reine de France."
+  },
+  {
+    "id": 17,
+    "category": "soleil",
+    "fact": "Le record d'ensoleillement à Paris est de 2 171 heures, enregistré en 2022. Une année bénie pour les terrasses !"
+  },
+  {
+    "id": 18,
+    "category": "terrasse",
+    "fact": "Un Parisien passe en moyenne 2h30 par semaine en terrasse entre avril et septembre."
+  },
+  {
+    "id": 19,
+    "category": "paris",
+    "fact": "Paris est à 48°51' de latitude nord, soit à peu près la même que Vancouver. Mais avec bien plus de terrasses."
+  },
+  {
+    "id": 20,
+    "category": "ombre",
+    "fact": "Les immeubles haussmanniens, avec leurs 6 étages standards, projettent une ombre d'environ 25 mètres à midi en hiver."
+  },
+  {
+    "id": 21,
+    "category": "soleil",
+    "fact": "Le soleil est au plus haut à Paris le 21 juin : il atteint un angle de 65° au-dessus de l'horizon."
+  },
+  {
+    "id": 22,
+    "category": "terrasse",
+    "fact": "La première terrasse de café à Paris daterait de 1686, au Café Procope, le plus vieux café de la capitale."
+  },
+  {
+    "id": 23,
+    "category": "paris",
+    "fact": "La Place des Vosges (1612) est la plus ancienne place de Paris. Ses arcades offrent de l'ombre depuis plus de 400 ans."
+  },
+  {
+    "id": 24,
+    "category": "soleil",
+    "fact": "En décembre, Paris ne reçoit que 60 heures de soleil en moyenne. Chaque rayon en terrasse est un trésor !"
+  },
+  {
+    "id": 25,
+    "category": "ombre",
+    "fact": "Le Sacré-Cœur, perché à 130 m d'altitude sur la Butte Montmartre, ne fait jamais d'ombre aux terrasses en contrebas."
+  },
+  {
+    "id": 26,
+    "category": "terrasse",
+    "fact": "La redevance pour une terrasse à Paris coûte entre 20€ et 150€ par m² et par an, selon l'arrondissement."
+  },
+  {
+    "id": 27,
+    "category": "paris",
+    "fact": "Il y a environ 9 000 cafés et bistrots à Paris. Si tu en fais un par jour, il te faudra presque 25 ans."
+  },
+  {
+    "id": 28,
+    "category": "soleil",
+    "fact": "La vitamine D produite en 15 minutes de soleil sur une terrasse équivaut à boire 20 verres de lait."
+  },
+  {
+    "id": 29,
+    "category": "ombre",
+    "fact": "Les marronniers des Champs-Élysées créent une canopée qui couvre 80% du trottoir en été. Nature climatisation !"
+  },
+  {
+    "id": 30,
+    "category": "terrasse",
+    "fact": "Le record de la plus grande terrasse éphémère de Paris a été établi sur le Champ-de-Mars : 2 000 places assises."
+  },
+  {
+    "id": 31,
+    "category": "paris",
+    "fact": "La Seine coule d'est en ouest à Paris. Ses quais rive droite (nord) profitent donc du soleil toute l'après-midi."
+  },
+  {
+    "id": 32,
+    "category": "soleil",
+    "fact": "Un parasol rouge absorbe plus de chaleur qu'un parasol blanc. Les terrasses blanches sont jusqu'à 5°C plus fraîches."
+  },
+  {
+    "id": 33,
+    "category": "terrasse",
+    "fact": "Les chaises en rotin, icônes des terrasses parisiennes, sont fabriquées à la main par une poignée d'artisans en France."
+  },
+  {
+    "id": 34,
+    "category": "paris",
+    "fact": "Le Pont Neuf, malgré son nom, est le plus vieux pont de Paris (1607). Il offre 238 mètres de vue ensoleillée."
+  },
+  {
+    "id": 35,
+    "category": "ombre",
+    "fact": "En été, le côté pair des rues nord-sud est généralement le plus ensoleillé l'après-midi à Paris."
+  },
+  {
+    "id": 36,
+    "category": "soleil",
+    "fact": "Le mois de juillet est le plus ensoleillé à Paris avec environ 240 heures de soleil. Août n'est que 2e !"
+  },
+  {
+    "id": 37,
+    "category": "terrasse",
+    "fact": "La couleur verte des chaises de terrasse du Jardin du Luxembourg est brevetée : « vert Luxembourg »."
+  },
+  {
+    "id": 38,
+    "category": "paris",
+    "fact": "Montmartre est le point le plus élevé de Paris (130 m). Ses terrasses captent les premiers et derniers rayons du jour."
+  },
+  {
+    "id": 39,
+    "category": "soleil",
+    "fact": "Un nuage d'été peut faire chuter la température de votre terrasse de 7°C en quelques secondes seulement."
+  },
+  {
+    "id": 40,
+    "category": "ombre",
+    "fact": "Les passages couverts de Paris (une vingtaine encore debout) ont été les ancêtres des terrasses à l'abri du soleil et de la pluie."
+  },
+  {
+    "id": 41,
+    "category": "terrasse",
+    "fact": "La tradition du « demi en terrasse » (25 cl de bière) date du XIXe siècle. Avant, on buvait la bière par pinte."
+  },
+  {
+    "id": 42,
+    "category": "paris",
+    "fact": "L'île Saint-Louis n'a que 11 rues mais concentre certaines des terrasses les plus pittoresques de Paris."
+  },
+  {
+    "id": 43,
+    "category": "soleil",
+    "fact": "Le soleil se déplace de 15° par heure dans le ciel. En 2h, l'ombre a complètement changé de côté de la rue."
+  },
+  {
+    "id": 44,
+    "category": "terrasse",
+    "fact": "Jean-Paul Sartre et Simone de Beauvoir ont écrit une grande partie de leur œuvre en terrasse des Deux Magots et du Café de Flore."
+  },
+  {
+    "id": 45,
+    "category": "ombre",
+    "fact": "Les voûtes de la Rue de Rivoli créent une ombre permanente sur 2,5 km. Le plus long « couloir d'ombre » de Paris."
+  },
+  {
+    "id": 46,
+    "category": "paris",
+    "fact": "Le 2e arrondissement est le plus petit de Paris (0,99 km²) mais il abrite près de 200 terrasses. Le plus dense !"
+  },
+  {
+    "id": 47,
+    "category": "soleil",
+    "fact": "La crème solaire a été inventée en 1936 par Eugène Schueller, fondateur de L'Oréal… un Parisien !"
+  },
+  {
+    "id": 48,
+    "category": "terrasse",
+    "fact": "Les terrasses orientées sud-ouest sont les reines de l'apéro : elles captent le soleil couchant pile à l'heure de l'apéritif."
+  },
+  {
+    "id": 49,
+    "category": "paris",
+    "fact": "Il existe un café dans les Catacombes de Paris. La terrasse est au frais garanti : 14°C toute l'année."
+  },
+  {
+    "id": 50,
+    "category": "ombre",
+    "fact": "La canopée des Halles, inaugurée en 2016, crée 14 000 m² d'ombre artistique au cœur de Paris."
+  },
+  {
+    "id": 51,
+    "category": "soleil",
+    "fact": "Les UV traversent les nuages à 80%. Même sous un ciel gris parisien, votre terrasse vous bronze !"
+  },
+  {
+    "id": 52,
+    "category": "terrasse",
+    "fact": "Hemingway disait : « Si tu as la chance d'avoir vécu à Paris, alors où que tu ailles, Paris restera toujours avec toi. » Surtout ses terrasses."
+  },
+  {
+    "id": 53,
+    "category": "paris",
+    "fact": "Le Canal Saint-Martin, avec ses écluses et ses platanes, est devenu le QG des terrasses branchées du 10e."
+  },
+  {
+    "id": 54,
+    "category": "soleil",
+    "fact": "Le phénomène de « canyon urbain » fait que certaines rues étroites de Paris ne voient le soleil que 2h par jour en hiver."
+  },
+  {
+    "id": 55,
+    "category": "ombre",
+    "fact": "Un arbre adulte en ville peut « climatiser » l'équivalent de 5 appareils de climatisation. Merci les platanes !"
+  },
+  {
+    "id": 56,
+    "category": "terrasse",
+    "fact": "Le café allongé a été inventé pour les clients de terrasse qui voulaient rester plus longtemps sans recommander."
+  },
+  {
+    "id": 57,
+    "category": "paris",
+    "fact": "La Butte-aux-Cailles dans le 13e arrondissement est un village secret de Paris avec des terrasses encore méconnues des touristes."
+  },
+  {
+    "id": 58,
+    "category": "soleil",
+    "fact": "L'albédo des façades en pierre de taille parisiennes réfléchit jusqu'à 40% de la lumière. Double dose de soleil en terrasse !"
+  },
+  {
+    "id": 59,
+    "category": "terrasse",
+    "fact": "Les serveurs de terrasses parisiennes parcourent en moyenne 10 km par service. Un marathon par semaine !"
+  },
+  {
+    "id": 60,
+    "category": "ombre",
+    "fact": "Notre-Dame de Paris projette une ombre de plus de 90 mètres au soleil couchant d'été."
+  },
+  {
+    "id": 61,
+    "category": "paris",
+    "fact": "Le Marais doit son nom aux marécages qui s'y trouvaient. Aujourd'hui, les seules zones humides sont les brumisateurs de terrasse."
+  },
+  {
+    "id": 62,
+    "category": "soleil",
+    "fact": "Paris est plus au nord que Montréal. Mais grâce au Gulf Stream, les terrasses y sont ouvertes 8 mois par an."
+  },
+  {
+    "id": 63,
+    "category": "terrasse",
+    "fact": "Le « petit noir » (expresso) coûte en moyenne 30% moins cher au comptoir qu'en terrasse à Paris."
+  },
+  {
+    "id": 64,
+    "category": "paris",
+    "fact": "La Rue Crémieux dans le 12e, avec ses façades colorées, est l'une des rues les plus photogéniques (et ensoleillées) de Paris."
+  },
+  {
+    "id": 65,
+    "category": "soleil",
+    "fact": "Les toits en zinc de Paris réfléchissent la lumière et réchauffent les derniers étages. Les toits-terrasses y sont des fournaises en été."
+  },
+  {
+    "id": 66,
+    "category": "ombre",
+    "fact": "Le Jardin des Tuileries a été dessiné par Le Nôtre pour que ses allées principales restent ombragées aux heures les plus chaudes."
+  },
+  {
+    "id": 67,
+    "category": "terrasse",
+    "fact": "Les terrasses parisiennes sont réglementées : 22h max de fermeture en semaine, 0h30 le week-end (avec dérogations)."
+  },
+  {
+    "id": 68,
+    "category": "paris",
+    "fact": "Le périphérique parisien fait exactement 35 km. Si tous ses cafés avaient des terrasses, ça ferait la plus longue terrasse du monde."
+  },
+  {
+    "id": 69,
+    "category": "soleil",
+    "fact": "La place de la Concorde, la plus grande de Paris (8,6 ha), est aussi l'une des plus exposées au soleil : aucun bâtiment ne lui fait d'ombre."
+  },
+  {
+    "id": 70,
+    "category": "terrasse",
+    "fact": "La tradition du garçon de café en tablier blanc et gilet noir date de la Belle Époque, quand les terrasses sont devenues un art de vivre."
+  },
+  {
+    "id": 71,
+    "category": "ombre",
+    "fact": "Le Père-Lachaise, avec ses 5 300 arbres, est l'un des endroits les plus ombragés de Paris. Mais les terrasses y sont rares."
+  },
+  {
+    "id": 72,
+    "category": "paris",
+    "fact": "Paris compte 484 000 arbres. C'est 23 arbres par hectare, et autant de spots d'ombre potentiels pour votre terrasse."
+  },
+  {
+    "id": 73,
+    "category": "soleil",
+    "fact": "En 2019, Paris a atteint 42,6°C, record absolu. Ce jour-là, les brumisateurs de terrasses valaient de l'or."
+  },
+  {
+    "id": 74,
+    "category": "terrasse",
+    "fact": "Le comptoir parisien typique est en zinc car ce métal est antibactérien. La terrasse, elle, est désinfectée par les UV !"
+  },
+  {
+    "id": 75,
+    "category": "paris",
+    "fact": "La devise de Paris « Fluctuat nec mergitur » (Il tangue mais ne coule pas) pourrait s'appliquer à un verre sur une terrasse venteuse."
+  },
+  {
+    "id": 76,
+    "category": "soleil",
+    "fact": "Le coucher de soleil dure environ 3 minutes à Paris. Juste le temps de trinquer avant la nuit."
+  },
+  {
+    "id": 77,
+    "category": "ombre",
+    "fact": "L'Arc de Triomphe projette une ombre si massive qu'elle couvre entièrement la Place de l'Étoile en fin de journée d'hiver."
+  },
+  {
+    "id": 78,
+    "category": "terrasse",
+    "fact": "Les chaises de terrasse parisiennes sont souvent tournées vers la rue, jamais vers le mur. Voir et être vu, c'est la règle !"
+  },
+  {
+    "id": 79,
+    "category": "paris",
+    "fact": "Belleville est le quartier le plus cosmopolite de Paris et aussi celui avec la plus forte pente : les terrasses y ont vue sur tout Paris."
+  },
+  {
+    "id": 80,
+    "category": "soleil",
+    "fact": "Le cadran solaire de l'église Saint-Sulpice est l'un des plus précis au monde. Il indiquait l'heure du midi… et de l'apéro."
+  },
+  {
+    "id": 81,
+    "category": "terrasse",
+    "fact": "Marcel Proust écrivait souvent au Café de la Paix, Place de l'Opéra. Sa madeleine, c'était peut-être un cookie de terrasse."
+  },
+  {
+    "id": 82,
+    "category": "ombre",
+    "fact": "La Fondation Louis Vuitton, avec ses voiles de verre, crée des jeux d'ombre spectaculaires qui changent toutes les heures."
+  },
+  {
+    "id": 83,
+    "category": "paris",
+    "fact": "Le plus vieux arbre de Paris est un robinier planté en 1601 au Square Viviani. Il fait de l'ombre depuis 425 ans."
+  },
+  {
+    "id": 84,
+    "category": "soleil",
+    "fact": "Les Parisiens consomment 3 fois plus de rosé que la moyenne nationale entre juin et août. Coïncidence avec le soleil ? Non."
+  },
+  {
+    "id": 85,
+    "category": "terrasse",
+    "fact": "À Paris, on dit « prendre un verre en terrasse » et non « sur la terrasse ». C'est une nuance culturelle, pas grammaticale."
+  },
+  {
+    "id": 86,
+    "category": "paris",
+    "fact": "Les Berges de Seine aménagées offrent 2,3 km de terrasses éphémères chaque été depuis 2013."
+  },
+  {
+    "id": 87,
+    "category": "soleil",
+    "fact": "Le phénomène Stonehenge parisien : deux fois par an, le soleil se couche pile dans l'axe des Champs-Élysées."
+  },
+  {
+    "id": 88,
+    "category": "ombre",
+    "fact": "La Tour Montparnasse (210 m) est le plus grand « faiseur d'ombre » de Paris. Elle plonge des quartiers entiers dans l'ombre en hiver."
+  },
+  {
+    "id": 89,
+    "category": "terrasse",
+    "fact": "Le « café-crème » n'existe pas vraiment en France. Les vrais Parisiens commandent un « crème » tout court en terrasse."
+  },
+  {
+    "id": 90,
+    "category": "paris",
+    "fact": "Le Parc des Buttes-Chaumont a été construit sur une ancienne carrière de gypse. Ses terrasses surplombent un faux lac et une fausse grotte."
+  },
+  {
+    "id": 91,
+    "category": "soleil",
+    "fact": "L'effet d'îlot de chaleur urbain fait que Paris est en moyenne 3 à 4°C plus chaud que la campagne environnante."
+  },
+  {
+    "id": 92,
+    "category": "terrasse",
+    "fact": "La « terrassification » de Paris s'est accélérée : +30% de terrasses autorisées entre 2020 et 2023."
+  },
+  {
+    "id": 93,
+    "category": "ombre",
+    "fact": "Les auvents des brasseries parisiennes sont souvent rouges car cette couleur donne un teint flatteur aux clients assis en dessous."
+  },
+  {
+    "id": 94,
+    "category": "paris",
+    "fact": "Le Comptoir Général dans le 10e cache une terrasse tropicale secrète derrière une façade anonyme. Paris adore les terrasses cachées."
+  },
+  {
+    "id": 95,
+    "category": "soleil",
+    "fact": "Le soleil de mars à Paris a la même intensité que celui de septembre. Le printemps des terrasses commence plus tôt qu'on ne le croit !"
+  },
+  {
+    "id": 96,
+    "category": "terrasse",
+    "fact": "Les pigeons parisiens préfèrent les terrasses côté soleil. Ils ont aussi leur app « Ma terrasse au soleil » intégrée."
+  },
+  {
+    "id": 97,
+    "category": "paris",
+    "fact": "Le Palais Royal possède l'une des terrasses les plus protégées du vent de Paris, grâce à son architecture en cour fermée."
+  },
+  {
+    "id": 98,
+    "category": "soleil",
+    "fact": "La lumière dorée de Paris, célébrée par les peintres impressionnistes, est due à la réflexion du soleil sur la pierre calcaire et le zinc."
+  },
+  {
+    "id": 99,
+    "category": "ombre",
+    "fact": "Le plus grand cadran solaire de Paris est au Palais de la Découverte. L'ombre y est élevée au rang de science."
+  },
+  {
+    "id": 100,
+    "category": "terrasse",
+    "fact": "Chaque année, le premier rayon de soleil printanier déclenche l'invasion simultanée de toutes les terrasses de Paris. Les Parisiens appellent ça « le Grand Déploiement »."
+  }
+]
