@@ -657,6 +657,7 @@ export default function App() {
   const [showStreetView, setShowStreetView] = useState(false);
   const funFacts = funFactsByLang[i18n.language] ?? funFactsByLang[i18n.language.split("-")[0]] ?? funFacts_fr;
   const [funFactIndex, setFunFactIndex] = useState(() => Math.floor(Math.random() * funFacts_fr.length));
+  const safeFunFactIndex = funFactIndex % funFacts.length;
 
   // Favorites
   const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
@@ -1281,7 +1282,7 @@ export default function App() {
             style={{ marginTop: 16, padding: "14px 18px", background: th.bgCard, borderRadius: 14, border: `1px solid ${th.border}`, cursor: "pointer", textAlign: "center" }}
           >
             <div style={{ fontSize: 11, fontWeight: 600, color: th.accent, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("home.didYouKnow")}</div>
-            <div style={{ fontSize: 13, color: th.textSoft, lineHeight: 1.5, fontFamily: F }}>{funFacts[funFactIndex].fact}</div>
+            <div style={{ fontSize: 13, color: th.textSoft, lineHeight: 1.5, fontFamily: F }}>{funFacts[safeFunFactIndex].fact}</div>
             <div style={{ fontSize: 11, color: th.textMuted, marginTop: 8 }}>{t("home.tapForAnother")}</div>
           </div>
         </div>
