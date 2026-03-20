@@ -1195,15 +1195,6 @@ export default function App() {
           </div>
 
           {/* KPI */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, marginBottom: 10 }}>
-            <button onClick={() => setKpiStationIndex((i) => (i - 1 + KPI_STATIONS.length) % KPI_STATIONS.length)}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: th.textMuted, padding: "2px 4px", lineHeight: 1 }}>‹</button>
-            <span style={{ fontFamily: F, fontSize: 13, color: th.textSoft, fontWeight: 500 }}>
-              {t("home.at")} {kpi.station} · {kpi.hour}
-            </span>
-            <button onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: th.textMuted, padding: "2px 4px", lineHeight: 1 }}>›</button>
-          </div>
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
             <img src="/logo.png" alt="" aria-hidden="true" style={{
               position: "absolute", top: "50%", left: "50%",
@@ -1217,8 +1208,22 @@ export default function App() {
               background: mode === "sun" ? "rgba(180,83,9,0.18)" : "rgba(29,78,216,0.18)",
               mixBlendMode: "multiply",
             }} />
+            {/* Station selector centered over the KPI block */}
+            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", padding: "12px 0 4px" }}>
+              <button onClick={() => setKpiStationIndex((i) => (i - 1 + KPI_STATIONS.length) % KPI_STATIONS.length)}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 8px", lineHeight: 1 }}>
+                <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 7L7 1L13 7" stroke={th.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+              <span style={{ fontFamily: F, fontSize: 13, color: th.textSoft, fontWeight: 500, padding: "2px 0" }}>
+                {t("home.at")} {kpi.station} · {kpi.hour}
+              </span>
+              <button onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 8px", lineHeight: 1 }}>
+                <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke={th.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+            </div>
             <div style={{ display: "flex", position: "relative", zIndex: 1 }}>
-              <div style={{ flex: 1, padding: "20px 32px 20px 16px", textAlign: "left", background: "rgba(254, 243, 199, 0.65)" }}>
+              <div style={{ flex: 1, padding: "16px 32px 24px 16px", textAlign: "left", background: "rgba(254, 243, 199, 0.65)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: 6, marginBottom: 4 }}>
                   <SunIcon size={18} color="#D97706" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#92400E", fontFamily: F }}>{kpi.sunCount}</span>
@@ -1226,7 +1231,7 @@ export default function App() {
                 <div style={{ fontSize: 12, color: "#92400E", fontFamily: F }}>{kpi.sunCount !== "..." && Number(kpi.sunCount) > 1 ? t("home.terrasse_other") : t("home.terrasse_one")}</div>
                 <div style={{ fontSize: 12, color: "#92400E", fontWeight: 600, fontFamily: F }}>{t("home.terrasseSun")}</div>
               </div>
-              <div style={{ flex: 1, padding: "20px 16px 20px 32px", textAlign: "right", background: "rgba(243, 244, 246, 0.65)" }}>
+              <div style={{ flex: 1, padding: "16px 16px 24px 32px", textAlign: "right", background: "rgba(243, 244, 246, 0.65)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6, marginBottom: 4 }}>
                   <ShadeIcon size={18} color="#6B7280" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#374151", fontFamily: F }}>{kpi.shadeCount}</span>
