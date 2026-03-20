@@ -14,7 +14,7 @@ import argparse
 import asyncio
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import create_engine, text
 
@@ -95,7 +95,7 @@ async def enrich_from_osm(engine, pois: list[OsmPoi], force: bool = False) -> in
 
         # Track enrichment
         updates["enrichment_source"] = "osm"
-        updates["enrichment_date"] = datetime.utcnow()
+        updates["enrichment_date"] = datetime.now(timezone.utc)
         set_clauses.append("enrichment_source = COALESCE(enrichment_source, '') || CASE WHEN enrichment_source IS NULL THEN 'osm' ELSE ',osm' END")
         set_clauses.append("enrichment_date = :enrichment_date")
 
@@ -176,7 +176,7 @@ async def enrich_from_sirene(engine, force: bool = False, limit: int | None = No
             continue
 
         # Track enrichment
-        updates["enrichment_date"] = datetime.utcnow()
+        updates["enrichment_date"] = datetime.now(timezone.utc)
         set_clauses.append("enrichment_source = COALESCE(enrichment_source, '') || CASE WHEN enrichment_source IS NULL THEN 'sirene' WHEN enrichment_source NOT LIKE '%sirene%' THEN enrichment_source || ',sirene' ELSE enrichment_source END")
         set_clauses.append("enrichment_date = :enrichment_date")
 
@@ -214,7 +214,17 @@ async def import_osm_bars(engine, pois: list[OsmPoi]) -> int:
 
     from app.services.osm import _haversine_m
 
-    # Filter: OSM POIs not already matched AND not too close to existing terrasses
+    # Build name set for dedup by name+proximity
+    existing_names = {}
+    with engine.connect() as conn:
+        name_rows = conn.execute(text("""
+            SELECT nom_commercial, ST_X(geometry) AS lon, ST_Y(geometry) AS lat
+            FROM terrasses WHERE nom_commercial IS NOT NULL
+        """)).fetchall()
+    for row in name_rows:
+        existing_names.setdefault(row.nom_commercial.lower(), []).append((row.lon, row.lat))
+
+    # Filter: OSM POIs not already matched AND not a duplicate of existing terrasse
     new_pois = []
     for poi in pois:
         if poi.osm_id in existing_osm_ids:
@@ -222,13 +232,21 @@ async def import_osm_bars(engine, pois: list[OsmPoi]) -> int:
         # Only import if outdoor_seating is confirmed or amenity is bar/pub
         if poi.outdoor_seating is not True and poi.amenity not in ("bar", "pub"):
             continue
-        # Check not too close to existing terrasse (within 15m = likely same place)
-        too_close = False
-        for elon, elat in existing_points:
-            if _haversine_m(poi.lat, poi.lon, elat, elon) < 15:
-                too_close = True
-                break
-        if too_close:
+        # Check not a duplicate: same name within 5m = same place
+        is_duplicate = False
+        if poi.name:
+            same_name_locations = existing_names.get(poi.name.lower(), [])
+            for elon, elat in same_name_locations:
+                if _haversine_m(poi.lat, poi.lon, elat, elon) < 5:
+                    is_duplicate = True
+                    break
+        # No name match: check pure proximity (<5m = almost certainly same place)
+        if not is_duplicate:
+            for elon, elat in existing_points:
+                if _haversine_m(poi.lat, poi.lon, elat, elon) < 5:
+                    is_duplicate = True
+                    break
+        if is_duplicate:
             continue
         new_pois.append(poi)
 
@@ -241,7 +259,7 @@ async def import_osm_bars(engine, pois: list[OsmPoi]) -> int:
     insert_sql = text("""
         INSERT INTO terrasses (nom, adresse, geometry, source, osm_id,
                                opening_hours, cuisine, outdoor_seating, place_type,
-                               phone, website, nom_commercial,
+                               phone, website, nom_commercial, siret,
                                enrichment_source, enrichment_date)
         VALUES (
             :nom,
@@ -256,12 +274,13 @@ async def import_osm_bars(engine, pois: list[OsmPoi]) -> int:
             :phone,
             :website,
             :nom_commercial,
+            :siret,
             'osm',
             :enrichment_date
         )
     """)
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     batch = []
     for poi in new_pois:
         addr_parts = []
@@ -285,6 +304,7 @@ async def import_osm_bars(engine, pois: list[OsmPoi]) -> int:
             "phone": poi.phone,
             "website": poi.website,
             "nom_commercial": poi.name,
+            "siret": poi.siret,
             "enrichment_date": now,
         })
 

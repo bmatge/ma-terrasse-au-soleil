@@ -214,6 +214,12 @@ async def run_pipeline(
     logger.info("=== Step 6: Import OSM bars without declared terrasse ===")
     osm_import = await import_osm_bars(engine, pois)
 
+    # Step 6b: Enrich newly imported bars with SIRENE (those with SIRET from OSM)
+    if osm_import > 0:
+        logger.info("=== Step 6b: Enrich new OSM bars with SIRENE ===")
+        sirene_count_2 = await enrich_from_sirene(engine)
+        sirene_count += sirene_count_2
+
     # Step 7: Compute horizons
     if not skip_horizons:
         step_compute_horizons()
