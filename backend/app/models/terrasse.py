@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Float, Integer, String, DateTime, Text
+from sqlalchemy import BigInteger, Boolean, Float, Integer, String, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -21,6 +21,9 @@ class Terrasse(Base):
     longueur: Mapped[float | None] = mapped_column(Float, nullable=True)
     largeur: Mapped[float | None] = mapped_column(Float, nullable=True)
     source: Mapped[str] = mapped_column(String(30), default="paris_opendata")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    # Google Places enrichment (legacy, kept for existing data)
     price_level: Mapped[int | None] = mapped_column(Integer, nullable=True)
     google_place_id: Mapped[str | None] = mapped_column(String(300), nullable=True)
     place_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
@@ -30,7 +33,21 @@ class Terrasse(Base):
     website: Mapped[str | None] = mapped_column(String(500), nullable=True)
     google_maps_uri: Mapped[str | None] = mapped_column(String(500), nullable=True)
     nom_commercial: Mapped[str | None] = mapped_column(String(300), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    # OSM enrichment
+    osm_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, index=True)
+    opening_hours: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cuisine: Mapped[str | None] = mapped_column(Text, nullable=True)
+    outdoor_seating: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+
+    # SIRENE enrichment
+    enseigne_sirene: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    etat_administratif: Mapped[str | None] = mapped_column(String(2), nullable=True)
+    code_naf: Mapped[str | None] = mapped_column(String(10), nullable=True)
+
+    # Enrichment tracking
+    enrichment_source: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    enrichment_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     horizon_profile: Mapped["HorizonProfile | None"] = relationship(
         back_populates="terrasse", uselist=False

@@ -37,6 +37,19 @@ validate:
 compute:
 	docker compose exec backend python /app/data/compute_horizon_profiles.py
 
+# Enrichment (OSM + SIRENE, free APIs)
+enrich:
+	docker compose exec backend python -m data.enrich_osm_sirene
+
+# Full update pipeline (download + sync + enrich + horizons)
+update:
+	docker compose exec backend python -m data.update_pipeline
+
+# Database backup
+db-backup:
+	docker compose exec db pg_dump -U terrasse -Fc terrasse_soleil > backup_terrasses_$$(date +%Y%m%d_%H%M).dump
+	@ls -lh backup_terrasses_*.dump | tail -1
+
 # Database shell
 db-shell:
 	docker compose exec db psql -U terrasse -d terrasse_soleil
