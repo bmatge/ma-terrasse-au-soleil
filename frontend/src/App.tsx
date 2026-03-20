@@ -1738,23 +1738,19 @@ export default function App() {
         {/* Hero card */}
         <div style={{ margin: "0 20px 20px", padding: "24px 24px 20px", borderRadius: 20, background: th.gradient, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
-          <div style={{ position: "relative" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              {terrasse.place_type && (
-                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: "rgba(255,255,255,0.95)", background: "rgba(255,255,255,0.22)", borderRadius: 100, padding: "5px 12px", fontFamily: F, fontWeight: 500, whiteSpace: "nowrap" }}>
-                  <PlaceTypeIcon type={normalizePlaceType(terrasse.place_type) ?? "autre"} size={15} color="rgba(255,255,255,0.95)" />
-                  {t(PLACE_TYPE_KEYS[normalizePlaceType(terrasse.place_type) ?? "autre"])}
-                </span>
-              )}
-              <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", lineHeight: 1.2 }}>{terrasse.nom_commercial || terrasse.nom}</div>
-            </div>
-            {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)" }}>{terrasse.adresse}{terrasse.arrondissement ? ` · ${terrasse.arrondissement}` : ""}</div>}
+          <div style={{ position: "relative", display: "flex", gap: 16, alignItems: "flex-start" }}>
+            {/* Left: text info */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", lineHeight: 1.2, marginBottom: 4 }}>{terrasse.nom_commercial || terrasse.nom}</div>
+              {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginBottom: 12 }}>{terrasse.adresse}{terrasse.arrondissement ? ` · ${terrasse.arrondissement}` : ""}</div>}
 
-            {/* Meta row: price/rating left, action icons right */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, gap: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                {terrasse.price_level != null && terrasse.price_level > 0 && (
-                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", borderRadius: 100, padding: "3px 10px", fontFamily: F, fontWeight: 600 }}>{"€".repeat(terrasse.price_level)}</span>
+              {/* Meta: type, price, rating + small action icons */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                {terrasse.place_type && (
+                  <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: "rgba(255,255,255,0.95)", background: "rgba(255,255,255,0.18)", borderRadius: 100, padding: "4px 10px", fontFamily: F, fontWeight: 500, whiteSpace: "nowrap" }}>
+                    <PlaceTypeIcon type={normalizePlaceType(terrasse.place_type) ?? "autre"} size={13} color="rgba(255,255,255,0.95)" />
+                    {t(PLACE_TYPE_KEYS[normalizePlaceType(terrasse.place_type) ?? "autre"])}
+                  </span>
                 )}
                 {terrasse.rating != null && (
                   <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "rgba(255,255,255,0.9)", fontFamily: F }}>
@@ -1762,31 +1758,29 @@ export default function App() {
                     {terrasse.rating.toFixed(1)}{terrasse.user_rating_count ? ` (${terrasse.user_rating_count})` : ""}
                   </span>
                 )}
-              </div>
-              {/* Icon buttons */}
-              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                 {terrasse.phone && (
-                  <a href={`tel:${terrasse.phone}`} title={terrasse.phone} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <a href={`tel:${terrasse.phone}`} title={terrasse.phone} style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.16 6.16l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
                     </svg>
                   </a>
                 )}
                 {terrasse.website && (
-                  <a href={terrasse.website} target="_blank" rel="noopener noreferrer" title={t("detail.website")} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <a href={terrasse.website} target="_blank" rel="noopener noreferrer" title={t("detail.website")} style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
                       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                     </svg>
                   </a>
                 )}
-                {terrasse.google_maps_uri && (
-                  <a href={terrasse.google_maps_uri} target="_blank" rel="noopener noreferrer" title="Google Maps" style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <MapPinIcon size={22} color="#FFF" />
-                  </a>
-                )}
               </div>
             </div>
+
+            {/* Right: big location button */}
+            <a href={`https://maps.apple.com/?q=${terrasse.lat},${terrasse.lon}&ll=${terrasse.lat},${terrasse.lon}`} target="_blank" rel="noopener noreferrer" title="Itinéraire"
+              style={{ width: 62, height: 62, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <MapPinIcon size={30} color="#FFF" />
+            </a>
           </div>
         </div>
 
