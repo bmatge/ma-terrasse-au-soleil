@@ -96,7 +96,7 @@ async def enrich_from_osm(engine, pois: list[OsmPoi], force: bool = False) -> in
         # Track enrichment
         updates["enrichment_source"] = "osm"
         updates["enrichment_date"] = datetime.now(timezone.utc)
-        set_clauses.append("enrichment_source = COALESCE(enrichment_source, '') || CASE WHEN enrichment_source IS NULL THEN 'osm' ELSE ',osm' END")
+        set_clauses.append("enrichment_source = CASE WHEN enrichment_source IS NULL THEN 'osm' WHEN enrichment_source NOT LIKE '%osm%' THEN enrichment_source || ',osm' ELSE enrichment_source END")
         set_clauses.append("enrichment_date = :enrichment_date")
 
         with engine.connect() as conn:
@@ -177,7 +177,7 @@ async def enrich_from_sirene(engine, force: bool = False, limit: int | None = No
 
         # Track enrichment
         updates["enrichment_date"] = datetime.now(timezone.utc)
-        set_clauses.append("enrichment_source = COALESCE(enrichment_source, '') || CASE WHEN enrichment_source IS NULL THEN 'sirene' WHEN enrichment_source NOT LIKE '%sirene%' THEN enrichment_source || ',sirene' ELSE enrichment_source END")
+        set_clauses.append("enrichment_source = CASE WHEN enrichment_source IS NULL THEN 'sirene' WHEN enrichment_source NOT LIKE '%sirene%' THEN enrichment_source || ',sirene' ELSE enrichment_source END")
         set_clauses.append("enrichment_date = :enrichment_date")
 
         with engine.connect() as conn:
