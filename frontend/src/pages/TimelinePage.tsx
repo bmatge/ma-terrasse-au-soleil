@@ -72,14 +72,16 @@ export default function TimelinePage() {
         <Link to="/" className="text-amber-600 hover:underline text-sm">
           &larr; Retour
         </Link>
-        <h2 className="text-2xl font-bold text-gray-800 mt-2">
-          {data.terrasse.nom_commercial || data.terrasse.nom}
-        </h2>
+        <div className="flex items-center gap-3 mt-2">
+          {data.terrasse.place_type && (
+            <PlaceTypeBadge type={data.terrasse.place_type} className="text-sm px-2.5 py-1" />
+          )}
+          <h2 className="text-2xl font-bold text-gray-800">
+            {data.terrasse.nom_commercial || data.terrasse.nom}
+          </h2>
+        </div>
         <p className="text-gray-500">{data.terrasse.adresse}</p>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
-          {data.terrasse.place_type && (
-            <PlaceTypeBadge type={data.terrasse.place_type} />
-          )}
           {data.terrasse.price_level != null && data.terrasse.price_level > 0 && (
             <PriceLevel level={data.terrasse.price_level} />
           )}

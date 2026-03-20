@@ -1,4 +1,4 @@
-const TYPE_CONFIG: Record<string, { label: string; icon: string }> = {
+export const TYPE_CONFIG: Record<string, { label: string; icon: string }> = {
   bar: { label: "Bar", icon: "\uD83C\uDF7A" },
   restaurant: { label: "Restaurant", icon: "\uD83C\uDF7D\uFE0F" },
   cafe: { label: "Café", icon: "\u2615" },

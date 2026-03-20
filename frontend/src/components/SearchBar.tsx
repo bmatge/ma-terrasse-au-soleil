@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../hooks/useDebounce";
 import { searchTerrasses, geocode } from "../api/terrasses";
 import type { TerrasseSearchResult, GeocodeResult } from "../api/types";
+import { TYPE_CONFIG } from "./PlaceTypeBadge";
 import { track } from "../analytics";
 
 export default function SearchBar() {
@@ -87,16 +88,24 @@ export default function SearchBar() {
                 </div>
                 {terrasses && terrasses.length > 0 ? (
                   <div className="max-h-60 overflow-y-auto">
-                    {terrasses.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => selectTerrasse(t)}
-                        className="w-full text-left px-3 py-2 hover:bg-amber-50 cursor-pointer"
-                      >
-                        <div className="font-medium text-gray-800 text-sm">{t.nom_commercial || t.nom}</div>
-                        <div className="text-xs text-gray-500 truncate">{t.adresse}</div>
-                      </button>
-                    ))}
+                    {terrasses.map((t) => {
+                      const typeIcon = t.place_type
+                        ? (TYPE_CONFIG[t.place_type]?.icon ?? "🏠")
+                        : null;
+                      return (
+                        <button
+                          key={t.id}
+                          onClick={() => selectTerrasse(t)}
+                          className="w-full text-left px-3 py-2 hover:bg-amber-50 cursor-pointer flex items-center gap-2"
+                        >
+                          {typeIcon && <span className="text-lg shrink-0">{typeIcon}</span>}
+                          <div className="min-w-0">
+                            <div className="font-medium text-gray-800 text-sm">{t.nom_commercial || t.nom}</div>
+                            <div className="text-xs text-gray-500 truncate">{t.adresse}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="px-3 py-3 text-xs text-gray-300 text-center">

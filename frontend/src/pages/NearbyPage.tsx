@@ -6,6 +6,7 @@ import Map from "../components/Map";
 import TerrasseCard from "../components/TerrasseCard";
 import TimeSlider from "../components/TimeSlider";
 import UvBadge from "../components/UvBadge";
+import { TYPE_CONFIG } from "../components/PlaceTypeBadge";
 import { track } from "../analytics";
 
 function currentTime(): string {
@@ -35,6 +36,7 @@ export default function NearbyPage() {
   // mapCenter tracks the current map center (updated on pan/zoom)
   const [mapCenter, setMapCenter] = useState<[number, number]>([initialLon, initialLat]);
   const [time, setTime] = useState(currentTime);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   const lat = mapCenter[1];
   const lon = mapCenter[0];
@@ -49,6 +51,24 @@ export default function NearbyPage() {
     queryKey: ["nearby", queryLat, queryLon, datetimeStr],
     queryFn: () => getNearby(lat, lon, datetimeStr),
   });
+
+  // Derive available types from results for filter chips
+  const availableTypes = useMemo(() => {
+    if (!data?.terrasses) return [];
+    const counts: Record<string, number> = {};
+    for (const t of data.terrasses) {
+      if (t.place_type) counts[t.place_type] = (counts[t.place_type] || 0) + 1;
+    }
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([type, count]) => ({ type, count }));
+  }, [data?.terrasses]);
+
+  const filteredTerrasses = useMemo(() => {
+    if (!data?.terrasses) return [];
+    if (!typeFilter) return data.terrasses;
+    return data.terrasses.filter((t) => t.place_type === typeFilter);
+  }, [data?.terrasses, typeFilter]);
 
   const center = useMemo((): [number, number] => [initialLon, initialLat], [initialLon, initialLat]);
 
@@ -101,10 +121,42 @@ export default function NearbyPage() {
         </div>
       )}
 
+      {/* Type filter */}
+      {availableTypes.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+          <button
+            onClick={() => setTypeFilter(null)}
+            className={`shrink-0 text-sm px-3 py-1.5 rounded-full border transition ${
+              typeFilter === null
+                ? "bg-amber-500 text-white border-amber-500"
+                : "bg-white text-gray-600 border-gray-200 hover:border-amber-300"
+            }`}
+          >
+            Tous
+          </button>
+          {availableTypes.map(({ type, count }) => {
+            const config = TYPE_CONFIG[type] || { label: type.replace(/_/g, " "), icon: "🏠" };
+            return (
+              <button
+                key={type}
+                onClick={() => setTypeFilter(typeFilter === type ? null : type)}
+                className={`shrink-0 text-sm px-3 py-1.5 rounded-full border transition ${
+                  typeFilter === type
+                    ? "bg-amber-500 text-white border-amber-500"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-amber-300"
+                }`}
+              >
+                {config.icon} {config.label} ({count})
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* Map */}
       <Map
         center={center}
-        terrasses={data?.terrasses || []}
+        terrasses={filteredTerrasses}
         onTerrasseClick={handleTerrasseClick}
         onMoveEnd={handleMapMoveEnd}
       />
@@ -118,10 +170,10 @@ export default function NearbyPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {data?.terrasses.map((t) => (
+          {filteredTerrasses.map((t) => (
             <TerrasseCard key={t.id} terrasse={t} />
           ))}
-          {data?.terrasses.length === 0 && (
+          {filteredTerrasses.length === 0 && (
             <p className="text-center text-gray-400 py-8">
               Aucune terrasse trouv&eacute;e dans ce p&eacute;rim&egrave;tre
             </p>
