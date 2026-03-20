@@ -1,12 +1,14 @@
 import { useState, useMemo, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { getNearby } from "../api/terrasses";
 import Map from "../components/Map";
 import TerrasseCard from "../components/TerrasseCard";
 import TimeSlider from "../components/TimeSlider";
 import UvBadge from "../components/UvBadge";
 import { TYPE_CONFIG } from "../components/PlaceTypeBadge";
+import { normalizePlaceType } from "../utils/placeType";
 import { track } from "../analytics";
 
 function currentTime(): string {
@@ -29,6 +31,7 @@ function todayDate(): string {
 export default function NearbyPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const initialLat = Number(searchParams.get("lat") || "48.8566");
   const initialLon = Number(searchParams.get("lon") || "2.3522");
@@ -57,7 +60,8 @@ export default function NearbyPage() {
     if (!data?.terrasses) return [];
     const counts: Record<string, number> = {};
     for (const t of data.terrasses) {
-      if (t.place_type) counts[t.place_type] = (counts[t.place_type] || 0) + 1;
+      const cat = normalizePlaceType(t.place_type);
+      if (cat) counts[cat] = (counts[cat] || 0) + 1;
     }
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
@@ -67,7 +71,7 @@ export default function NearbyPage() {
   const filteredTerrasses = useMemo(() => {
     if (!data?.terrasses) return [];
     if (!typeFilter) return data.terrasses;
-    return data.terrasses.filter((t) => t.place_type === typeFilter);
+    return data.terrasses.filter((t) => normalizePlaceType(t.place_type) === typeFilter);
   }, [data?.terrasses, typeFilter]);
 
   const center = useMemo((): [number, number] => [initialLon, initialLat], [initialLon, initialLat]);
@@ -94,19 +98,19 @@ export default function NearbyPage() {
       {/* Header */}
       <div>
         <a href="/" className="text-amber-600 hover:underline text-sm">
-          &larr; Retour
+          &larr; {t("common.back")}
         </a>
         <h2 className="text-xl font-bold text-gray-800 mt-1">
-          Terrasses au soleil
+          {t("results.sunTerraces")}
         </h2>
         {data?.meteo && (
           <p className="text-sm text-gray-500">
             {data.meteo.status === "degage"
-              ? "Ciel d\u00e9gag\u00e9"
+              ? t("weather.clearSky")
               : data.meteo.status === "mitige"
-                ? "\u00c9claircies"
-                : "Ciel couvert"}{" "}
-            &mdash; {data.meteo.cloud_cover}% de nuages
+                ? t("weather.partlyCloudy")
+                : t("weather.overcast")}{" "}
+            &mdash; {data.meteo.cloud_cover}% {t("weather.clouds")}
           </p>
         )}
       </div>
@@ -132,10 +136,12 @@ export default function NearbyPage() {
                 : "bg-white text-gray-600 border-gray-200 hover:border-amber-300"
             }`}
           >
-            Tous
+            {t("results.all")}
           </button>
           {availableTypes.map(({ type, count }) => {
-            const config = TYPE_CONFIG[type] || { label: type.replace(/_/g, " "), icon: "🏠" };
+            const config = TYPE_CONFIG[type];
+            const label = config ? t(config.labelKey) : type.replace(/_/g, " ");
+            const icon = config?.icon ?? "\uD83C\uDFE0";
             return (
               <button
                 key={type}
@@ -146,7 +152,7 @@ export default function NearbyPage() {
                     : "bg-white text-gray-600 border-gray-200 hover:border-amber-300"
                 }`}
               >
-                {config.icon} {config.label} ({count})
+                {icon} {label} ({count})
               </button>
             );
           })}
@@ -175,7 +181,7 @@ export default function NearbyPage() {
           ))}
           {filteredTerrasses.length === 0 && (
             <p className="text-center text-gray-400 py-8">
-              Aucune terrasse trouv&eacute;e dans ce p&eacute;rim&egrave;tre
+              {t("weather.noTerraces")}
             </p>
           )}
         </div>

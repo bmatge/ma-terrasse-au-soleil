@@ -1,15 +1,16 @@
 """Open Graph preview endpoint for social media bots."""
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy import select
 
 from app.database import async_session
+from app.i18n import get_lang, tr
 
 router = APIRouter(tags=["og"])
 
 
 @router.get("/api/og/terrasse/{terrasse_id}", response_class=HTMLResponse)
-async def og_terrasse(terrasse_id: int) -> HTMLResponse:
+async def og_terrasse(terrasse_id: int, request: Request) -> HTMLResponse:
     from app.models.terrasse import Terrasse
 
     async with async_session() as session:
@@ -19,9 +20,11 @@ async def og_terrasse(terrasse_id: int) -> HTMLResponse:
     if not terrasse:
         raise HTTPException(status_code=404)
 
+    lang = get_lang(request)
     title = terrasse.nom
     adresse = terrasse.adresse or "Paris"
-    description = f"{terrasse.nom} — {adresse}. Consulte les créneaux ensoleillés sur Au Soleil."
+    description = tr("og_description", lang, name=terrasse.nom, address=adresse)
+    redirect_text = tr("og_redirect", lang)
     url = f"https://ausoleil.app/terrasse/{terrasse_id}"
     image = "https://ausoleil.app/android-chrome-512x512.png"
 
@@ -44,7 +47,7 @@ async def og_terrasse(terrasse_id: int) -> HTMLResponse:
   <meta http-equiv="refresh" content="0;url={url}" />
 </head>
 <body>
-  <p>Redirection vers <a href="{url}">{title}</a>…</p>
+  <p>{redirect_text} <a href="{url}">{title}</a>…</p>
 </body>
 </html>"""
     return HTMLResponse(content=html)

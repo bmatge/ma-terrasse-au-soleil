@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 interface GeolocationState {
   lat: number | null;
@@ -8,6 +9,7 @@ interface GeolocationState {
 }
 
 export function useGeolocation() {
+  const { t } = useTranslation();
   const [state, setState] = useState<GeolocationState>({
     lat: null,
     lon: null,
@@ -17,7 +19,7 @@ export function useGeolocation() {
 
   const locate = useCallback(() => {
     if (!navigator.geolocation) {
-      setState((s) => ({ ...s, error: "Géolocalisation non supportée" }));
+      setState((s) => ({ ...s, error: t("geo.notSupportedShort") }));
       return;
     }
 
@@ -38,13 +40,13 @@ export function useGeolocation() {
           loading: false,
           error:
             err.code === 1
-              ? "Permission refusée"
-              : "Impossible d'obtenir la position",
+              ? t("geo.deniedShort")
+              : t("geo.unavailableShort"),
         }));
       },
       { enableHighAccuracy: true, timeout: 10000 },
     );
-  }, []);
+  }, [t]);
 
   return { ...state, locate };
 }

@@ -2,12 +2,13 @@
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies import get_redis
+from app.i18n import get_lang
 from app.schemas.nearby import NearbyResponse
 from app.schemas.terrasse import TerrasseSearchResult
 from app.schemas.timeline import TimelineResponse
@@ -79,6 +80,7 @@ async def search_terrasses(
 @router.get("/{terrasse_id}/timeline", response_model=TimelineResponse)
 async def get_timeline(
     terrasse_id: int,
+    request: Request,
     date_str: str = Query(None, alias="date", description="ISO date (default: today)"),
     db: AsyncSession = Depends(get_db),
     redis=Depends(get_redis),
@@ -106,9 +108,10 @@ async def get_timeline(
     profile = row.profile if row.profile else [0.0] * 360
     target_date = date.fromisoformat(date_str) if date_str else date.today()
 
+    lang = get_lang(request)
     timeline = await build_timeline(
         profile=profile, lat=row.lat, lon=row.lon,
-        target_date=target_date, redis=redis,
+        target_date=target_date, redis=redis, lang=lang,
     )
 
     return TimelineResponse(

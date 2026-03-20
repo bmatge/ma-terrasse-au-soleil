@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import SearchBar from "../components/SearchBar";
 import { track } from "../analytics";
 
@@ -7,10 +8,11 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   function handleGeolocate() {
     if (!navigator.geolocation) {
-      setGeoError("Géolocalisation non supportée par votre navigateur");
+      setGeoError(t("geo.notSupported"));
       return;
     }
 
@@ -29,8 +31,8 @@ export default function HomePage() {
         setGeoLoading(false);
         setGeoError(
           err.code === 1
-            ? "Permission de géolocalisation refusée"
-            : "Impossible d'obtenir votre position",
+            ? t("geo.denied")
+            : t("geo.unavailable"),
         );
       },
       { enableHighAccuracy: true, timeout: 10000 },
@@ -41,10 +43,10 @@ export default function HomePage() {
     <div className="max-w-2xl mx-auto p-6">
       <div className="text-center mt-12 mb-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-2">
-          Trouve ta terrasse au soleil
+          {t("home.subtitleSun")}
         </h2>
         <p className="text-gray-500">
-          Paris intra-muros &mdash; ensoleillement + m&eacute;t&eacute;o en temps r&eacute;el
+          {t("app.tagline")}
         </p>
       </div>
       <div className="bg-white rounded-xl shadow p-4">
@@ -54,7 +56,7 @@ export default function HomePage() {
           disabled={geoLoading}
           className="mt-3 w-full bg-amber-500 text-white py-3 rounded-lg font-medium hover:bg-amber-600 transition disabled:opacity-50"
         >
-          {geoLoading ? "Localisation..." : "Autour de moi"}
+          {geoLoading ? t("home.locating") : t("home.aroundMe")}
         </button>
         {geoError && <p className="mt-2 text-sm text-red-500">{geoError}</p>}
       </div>

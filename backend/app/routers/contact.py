@@ -4,10 +4,11 @@ from email.message import EmailMessage
 from email.utils import make_msgid
 
 import aiosmtplib
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from app.config import settings
+from app.i18n import get_lang, tr
 
 router = APIRouter(prefix="/api", tags=["contact"])
 
@@ -27,15 +28,16 @@ def _check_rate(ip: str) -> None:
     now = time.time()
     timestamps = [t for t in _rate.get(ip, []) if now - t < _RATE_WINDOW]
     if len(timestamps) >= _RATE_LIMIT:
-        raise HTTPException(status_code=429, detail="Trop de messages, réessaie plus tard.")
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
     timestamps.append(now)
     _rate[ip] = timestamps
 
 
 @router.post("/contact")
-async def contact(body: ContactRequest) -> dict:
+async def contact(body: ContactRequest, request: Request) -> dict:
+    lang = get_lang(request)
     if not body.name.strip() or not body.message.strip():
-        raise HTTPException(status_code=422, detail="Nom et message requis.")
+        raise HTTPException(status_code=422, detail=tr("name_message_required", lang))
 
     msg = EmailMessage()
     msg["Message-ID"] = make_msgid(domain="ecosysteme.matge.com")
@@ -57,6 +59,6 @@ async def contact(body: ContactRequest) -> dict:
             start_tls=False,
         )
     except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Erreur d'envoi : {e}")
+        raise HTTPException(status_code=503, detail=tr("send_error", lang, error=str(e)))
 
     return {"ok": True}

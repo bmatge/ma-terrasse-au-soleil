@@ -1,0 +1,196 @@
+{
+  "app": {
+    "title": "Terrace in the Sun",
+    "tagline": "Find a sunny terrace in Paris — real-time sunshine and weather."
+  },
+  "home": {
+    "terrasse": "Terrace",
+    "auSoleil": "in the sun",
+    "aLombre": "in the shade",
+    "subtitleSun": "Find the perfect terrace to enjoy the Parisian sunshine",
+    "subtitleShade": "Find a cool shady spot to take a breather",
+    "locating": "Locating...",
+    "aroundMe": "Around me",
+    "choosePlace": "Choose a place",
+    "myFavorites": "My favorites",
+    "viewAll": "View all →",
+    "linkCopied": "Link copied!",
+    "share": "Share",
+    "installApp": "Install app",
+    "didYouKnow": "Did you know?",
+    "tapForAnother": "Tap for another fun fact",
+    "terrasseSun": "in the sun",
+    "terrasseShade": "in the shade",
+    "terrasse_one": "terrace",
+    "terrasse_other": "terraces",
+    "at": "At",
+    "installTitle": "Install Au Soleil",
+    "installDescription": "Add Au Soleil to your home screen to access it in one tap, like a native app!",
+    "iosSteps1": "Open ausoleil.app in Safari",
+    "iosSteps2": "Tap the Share button",
+    "iosSteps3": "Choose 'Add to Home Screen'",
+    "androidSteps1": "Open ausoleil.app in Chrome",
+    "androidSteps2": "Tap the ⋮ menu (top right)",
+    "androidSteps3": "Choose 'Install app' or 'Add to Home Screen'"
+  },
+  "search": {
+    "title": "Search",
+    "address": "Address",
+    "terrasse": "Terrace",
+    "metro": "Metro",
+    "placeholderAddress": "Street, boulevard, square...",
+    "placeholderTerrasse": "Name of a bar, restaurant...",
+    "placeholderMetro": "Metro station...",
+    "establishment": "Establishment",
+    "station": "Station",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "dayAfter": "Day after tomorrow",
+    "hour": "Time",
+    "date": "Date",
+    "viewTimeline": "View timeline",
+    "findSun": "☀️  Find sunshine",
+    "findShade": "🌤️  Find shade"
+  },
+  "results": {
+    "sunTerraces": "Sunny terraces",
+    "shadeTerraces": "Shady terraces",
+    "serviceUnavailable": "Service temporarily unavailable — try again shortly.",
+    "noSunTerraces": "No sunny terraces found",
+    "noShadeTerraces": "No shady terraces found",
+    "tryAnother": "Try a different time slot or location.",
+    "editSearch": "Edit search",
+    "all": "All",
+    "list": "List",
+    "map": "Map"
+  },
+  "detail": {
+    "loadingTimeline": "Loading timeline...",
+    "sunnyAt": "Sunny at {{time}}",
+    "shadedAt": "Shaded at {{time}}",
+    "noSunAt": "No sun at {{time}}",
+    "noShadeAt": "No shade at {{time}}",
+    "bestSlot": "Best time slot",
+    "sunUntil": "Sun until {{time}}",
+    "estimated": "Estimated",
+    "website": "Website",
+    "yesterday": "Previous day",
+    "nextDay": "Next day",
+    "streetView": "Street view",
+    "shareCopied": "Link copied!",
+    "shareButton": "Share",
+    "timeline": "Timeline"
+  },
+  "favorites": {
+    "title": "Favorites",
+    "empty": "No favorites yet.",
+    "emptyHint": "Explore terraces and add your favorites!",
+    "explore": "Explore"
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "A suggestion, a bug, or a kind word?",
+    "sent": "✅ Message sent, thank you!",
+    "namePlaceholder": "Your first name",
+    "emailPlaceholder": "Your email",
+    "messagePlaceholder": "Your message...",
+    "error": "Oops, an error occurred. Try again!",
+    "sending": "Sending...",
+    "send": "Send 📨"
+  },
+  "about": {
+    "title": "About",
+    "description": "Au Soleil helps you find the ideal terrace — sunny or shady — in Paris, in real time.",
+    "howTitle": "How does it work?",
+    "how1": "📍 We geolocate Parisian terraces",
+    "how2": "☀️ We calculate the sun's position and building shadows",
+    "how3": "🌤️ We cross-reference with real-time weather",
+    "how4": "✨ You get the sun/shade status of each terrace",
+    "dataTitle": "Data sources",
+    "data1": "Sunshine: astronomical calculation (SunCalc)",
+    "data2": "Shadows: 3D model of Paris buildings (IGN)",
+    "data3": "Weather: Open-Meteo (cloud cover, UV)",
+    "data4": "Terraces: City of Paris open data + Google Places",
+    "madeWith": "Made with ☀️ in Paris"
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "favorites": "Favorites",
+    "contact": "Contact",
+    "about": "About"
+  },
+  "status": {
+    "soleil": "Sunny",
+    "mitige": "Mixed",
+    "couvert": "Overcast",
+    "ombre": "Shaded",
+    "ombre_batiment": "Shaded",
+    "nuit": "Night"
+  },
+  "weather": {
+    "clearSky": "Clear sky",
+    "partlyCloudy": "Partly cloudy",
+    "overcast": "Overcast",
+    "clouds": "clouds",
+    "noTerraces": "No terraces found in this area"
+  },
+  "uv": {
+    "low": "Low",
+    "moderate": "Moderate",
+    "high": "High",
+    "veryHigh": "Very high",
+    "extreme": "Extreme",
+    "index": "UV Index",
+    "peakAt": "peak at {{time}}",
+    "uvLow": "UV low",
+    "uvModerate": "UV moderate",
+    "uvHigh": "UV high",
+    "uvVeryHigh": "UV very high"
+  },
+  "timeline": {
+    "bestSlot": "Best time slot: {{start}} – {{end}}",
+    "sunMinutes": "{{minutes}} min of sun + clear sky",
+    "sun": "Sun",
+    "mixed": "Mixed",
+    "overcast": "Overcast",
+    "shadow": "Shadow",
+    "night": "Night"
+  },
+  "placeType": {
+    "restaurant": "Restaurant",
+    "cafe": "Café",
+    "autre": "Other"
+  },
+  "pwa": {
+    "newVersion": "New version available",
+    "offlineReady": "App ready offline",
+    "update": "Update",
+    "close": "Close"
+  },
+  "geo": {
+    "notSupported": "Geolocation is not supported by your browser",
+    "denied": "Geolocation permission denied",
+    "unavailable": "Unable to get your position",
+    "notSupportedShort": "Geolocation not supported",
+    "deniedShort": "Permission denied",
+    "unavailableShort": "Unable to get position"
+  },
+  "searchBar": {
+    "placeholder": "Name of a bar, restaurant or address...",
+    "searching": "Searching...",
+    "terraces": "☀️ Terraces",
+    "noEstablishment": "No establishment",
+    "addresses": "📍 Addresses",
+    "noAddress": "No address",
+    "noResults": "No results for \"{{query}}\""
+  },
+  "mode": {
+    "sun": "Sun",
+    "shade": "Shade"
+  },
+  "common": {
+    "back": "Back",
+    "myPosition": "My location"
+  }
+}
