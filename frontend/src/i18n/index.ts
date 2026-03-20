@@ -18,7 +18,7 @@ export const LANGUAGES = [
   { code: "zh", label: "中文", flag: "🇨🇳" },
 ] as const;
 
-i18n
+export const i18nReady = i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
@@ -33,7 +33,6 @@ i18n
     supportedLngs: ["fr", "en", "es", "de", "ja", "zh"],
     load: "languageOnly",
     fallbackLng: "en",
-    initImmediate: false,
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     detection: {
