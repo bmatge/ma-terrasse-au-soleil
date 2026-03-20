@@ -655,7 +655,7 @@ export default function App() {
   const [showInstall, setShowInstall] = useState(false);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
   const [showStreetView, setShowStreetView] = useState(false);
-  const funFacts = funFactsByLang[i18n.language] ?? funFacts_fr;
+  const funFacts = funFactsByLang[i18n.language] ?? funFactsByLang[i18n.language.split("-")[0]] ?? funFacts_fr;
   const [funFactIndex, setFunFactIndex] = useState(() => Math.floor(Math.random() * funFacts_fr.length));
 
   // Favorites
