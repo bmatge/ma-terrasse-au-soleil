@@ -29,7 +29,7 @@ class Terrasse(Base):
     place_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
     rating: Mapped[float | None] = mapped_column(Float, nullable=True)
     user_rating_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    phone: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    phone: Mapped[str | None] = mapped_column(String(100), nullable=True)
     website: Mapped[str | None] = mapped_column(String(500), nullable=True)
     google_maps_uri: Mapped[str | None] = mapped_column(String(500), nullable=True)
     nom_commercial: Mapped[str | None] = mapped_column(String(300), nullable=True)

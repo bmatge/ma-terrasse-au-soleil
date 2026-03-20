@@ -301,7 +301,7 @@ async def import_osm_bars(engine, pois: list[OsmPoi]) -> int:
             "cuisine": poi.cuisine,
             "outdoor_seating": poi.outdoor_seating,
             "place_type": poi.amenity,
-            "phone": poi.phone,
+            "phone": (poi.phone or "")[:100] or None,
             "website": poi.website,
             "nom_commercial": poi.name,
             "siret": poi.siret,
