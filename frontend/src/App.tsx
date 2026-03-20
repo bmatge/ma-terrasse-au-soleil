@@ -1000,7 +1000,7 @@ export default function App() {
         <span style={{ fontSize: 22, lineHeight: 1 }}>{mode === "sun" ? "☀️" : "☁️"}</span>
         {title && <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: th.text }}>{title}</span>}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
         <ModeToggle />
         <LanguageSelector />
       </div>
@@ -1157,7 +1157,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
               <ModeToggle />
               <LanguageSelector />
             </div>
