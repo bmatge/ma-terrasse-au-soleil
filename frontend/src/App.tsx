@@ -654,7 +654,6 @@ export default function App() {
   const [shared, setShared] = useState(false);
   const [showInstall, setShowInstall] = useState(false);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
-  const [showStreetView, setShowStreetView] = useState(false);
   const funFacts = funFactsByLang[i18n.language] ?? funFactsByLang[i18n.language.split("-")[0]] ?? funFacts_fr;
   const [funFactIndex, setFunFactIndex] = useState(() => Math.floor(Math.random() * funFacts_fr.length));
   const safeFunFactIndex = funFactIndex % funFacts.length;
@@ -662,7 +661,6 @@ export default function App() {
   // Favorites
   const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
   useEffect(() => localStorage.setItem("fav-terrasses", JSON.stringify(favorites)), [favorites]);
-  useEffect(() => setShowStreetView(false), [selectedTerrasseId]);
 
   const th = themes[mode];
   const debouncedQuery = useDebounce(searchQuery, 300);
@@ -1783,8 +1781,8 @@ export default function App() {
                   </a>
                 )}
                 {terrasse.google_maps_uri && (
-                  <a href={terrasse.google_maps_uri} target="_blank" rel="noopener noreferrer" title="Google Maps" style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <MapPinIcon size={16} color="#FFF" />
+                  <a href={terrasse.google_maps_uri} target="_blank" rel="noopener noreferrer" title="Google Maps" style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <MapPinIcon size={22} color="#FFF" />
                   </a>
                 )}
               </div>
@@ -1840,36 +1838,9 @@ export default function App() {
             )}
           </div>
 
-          {/* Sun map / Street View toggle */}
+          {/* Sun map */}
           <div style={{ marginBottom: 20 }}>
-            <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
-              {(["map", "photo"] as const).map((v) => {
-                const active = (v === "photo") === showStreetView;
-                return (
-                  <button key={v} onClick={() => setShowStreetView(v === "photo")} style={{
-                    padding: "5px 14px", borderRadius: 20, cursor: "pointer", fontFamily: F,
-                    fontSize: 12, fontWeight: active ? 600 : 400,
-                    border: `1.5px solid ${active ? th.accent : th.border}`,
-                    background: active ? th.accentLight : "transparent",
-                    color: active ? th.accentDark : th.textMuted,
-                  }}>
-                    {v === "map" ? "📍 Ensoleillement" : "📷 Street View"}
-                  </button>
-                );
-              })}
-            </div>
-            {showStreetView ? (
-              <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${th.border}`, background: th.border, minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img
-                  src={`/api/streetview?lat=${terrasse.lat}&lon=${terrasse.lon}`}
-                  alt={`Vue Street View de ${terrasse.nom_commercial || terrasse.nom}`}
-                  style={{ width: "100%", display: "block" }}
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                />
-              </div>
-            ) : (
-              <SunMap lat={terrasse.lat} lon={terrasse.lon} date={timelineData.date} selectedTime={selectedHour} theme={th} />
-            )}
+            <SunMap lat={terrasse.lat} lon={terrasse.lon} date={timelineData.date} selectedTime={selectedHour} theme={th} />
           </div>
 
           {/* Hourly slider */}
