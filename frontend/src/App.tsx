@@ -242,12 +242,6 @@ const MapPinIcon = ({ size = 18, color = "currentColor" }: { size?: number; colo
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
   </svg>
 );
-const CoffeeIcon = ({ size = 16, color = "currentColor" }: { size?: number; color?: string; }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 8h1a4 4 0 1 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" /><line x1="6" y1="2" x2="6" y2="4" /><line x1="10" y1="2" x2="10" y2="4" /><line x1="14" y1="2" x2="14" y2="4" />
-  </svg>
-);
-
 // ─── Helpers ───
 function currentHourKey(): string {
   const h = Math.max(9, Math.min(19, new Date().getHours()));
@@ -642,7 +636,7 @@ export default function App() {
   const [searchHour, setSearchHour] = useState(currentHourKey);
   const [searchDate, setSearchDate] = useState(todayISO()); // YYYY-MM-DD
   const [searchRadius, setSearchRadius] = useState(200);
-  const [resultFilter, setResultFilter] = useState<"all" | "sun" | "shade">("all");
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
   const [shared, setShared] = useState(false);
@@ -715,6 +709,17 @@ export default function App() {
       return a.distance_m - b.distance_m;
     });
   }, [nearbyData, mode]);
+
+  const availableTypes = useMemo(() => {
+    if (!results.length) return [];
+    const counts: Record<string, number> = {};
+    for (const t of results) {
+      if (t.place_type) counts[t.place_type] = (counts[t.place_type] || 0) + 1;
+    }
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([type, count]) => ({ type, count }));
+  }, [results]);
 
   const kpi = useMemo(() => {
     const hour = currentHourKey();
@@ -1403,7 +1408,7 @@ export default function App() {
                         <div key={tr.id} onClick={() => selectTerrasse(tr)}
                           style={{ display: "flex", flexDirection: "column", padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${t.border}` }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <CoffeeIcon size={14} color={t.textMuted} />
+                            <PlaceTypeIcon type={tr.place_type || ""} size={14} color={t.textMuted} />
                             <span style={{ fontSize: 14, fontWeight: 500, color: t.text, fontFamily: F }}>{tr.nom_commercial || tr.nom}</span>
                           </div>
                           <span style={{ fontSize: 12, color: t.textMuted, fontFamily: F, marginLeft: 22 }}>{tr.adresse}</span>
@@ -1630,30 +1635,41 @@ export default function App() {
             </div>
           ) : (
             <div>
-              {/* Filter pills row */}
-              <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
-                {(["all", "sun", "shade"] as const).map((f) => {
-                  const sunN = results.filter(r => isSunnyStatus(r.status)).length;
-                  const shadeN = results.filter(r => !isSunnyStatus(r.status)).length;
-                  const label = f === "all" ? `Tous (${results.length})` : f === "sun" ? `☀️ ${sunN} au soleil` : `🌙 ${shadeN} à l'ombre`;
-                  const active = resultFilter === f;
-                  return (
-                    <button key={f} onClick={() => setResultFilter(f)} style={{
-                      padding: "6px 12px", borderRadius: 20, cursor: "pointer", fontFamily: F,
-                      fontSize: 13, fontWeight: active ? 600 : 400,
-                      border: `1.5px solid ${active ? t.accent : t.border}`,
-                      background: active ? t.accentLight : "transparent",
-                      color: active ? t.accentDark : t.textMuted,
-                    }}>{label}</button>
-                  );
-                })}
-              </div>
+              {/* Type filter pills */}
+              {availableTypes.length > 1 && (
+                <div style={{ display: "flex", gap: 6, marginBottom: 14, overflowX: "auto", paddingBottom: 2 }}>
+                  <button onClick={() => setTypeFilter(null)} style={{
+                    padding: "6px 12px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                    fontSize: 13, fontWeight: typeFilter === null ? 600 : 400, whiteSpace: "nowrap",
+                    border: `1.5px solid ${typeFilter === null ? t.accent : t.border}`,
+                    background: typeFilter === null ? t.accentLight : "transparent",
+                    color: typeFilter === null ? t.accentDark : t.textMuted,
+                  }}>Tous ({results.length})</button>
+                  {availableTypes.map(({ type, count }) => {
+                    const cfg = PLACE_TYPE_CONFIG[type] || { label: type.replace(/_/g, " ") };
+                    const active = typeFilter === type;
+                    return (
+                      <button key={type} onClick={() => setTypeFilter(active ? null : type)} style={{
+                        display: "flex", alignItems: "center", gap: 4,
+                        padding: "6px 12px", borderRadius: 20, cursor: "pointer", fontFamily: F,
+                        fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: "nowrap",
+                        border: `1.5px solid ${active ? t.accent : t.border}`,
+                        background: active ? t.accentLight : "transparent",
+                        color: active ? t.accentDark : t.textMuted,
+                      }}>
+                        <PlaceTypeIcon type={type} size={13} color={active ? t.accentDark : t.textMuted} />
+                        {cfg.label} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
               {viewMode === "map" ? (
-                <ResultsMap terrasses={results.filter(r => resultFilter === "all" || (resultFilter === "sun" ? isSunnyStatus(r.status) : !isSunnyStatus(r.status)))} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
+                <ResultsMap terrasses={results.filter(r => !typeFilter || r.place_type === typeFilter)} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
               ) : (
                 <div className="terrasse-grid">
-                  {results.filter(r => resultFilter === "all" || (resultFilter === "sun" ? isSunnyStatus(r.status) : !isSunnyStatus(r.status))).map((tr) => <TerrasseCard key={tr.id} terrasse={tr} />)}
+                  {results.filter(r => !typeFilter || r.place_type === typeFilter).map((tr) => <TerrasseCard key={tr.id} terrasse={tr} />)}
                 </div>
               )}
             </div>
@@ -1695,18 +1711,20 @@ export default function App() {
         <div style={{ margin: "0 20px 20px", padding: "24px 24px 20px", borderRadius: 20, background: t.gradient, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
           <div style={{ position: "relative" }}>
-            <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", marginBottom: 4, lineHeight: 1.2 }}>{terrasse.nom_commercial || terrasse.nom}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+              {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
+                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: "rgba(255,255,255,0.95)", background: "rgba(255,255,255,0.22)", borderRadius: 100, padding: "5px 12px", fontFamily: F, fontWeight: 500, whiteSpace: "nowrap" }}>
+                  <PlaceTypeIcon type={terrasse.place_type} size={15} color="rgba(255,255,255,0.95)" />
+                  {PLACE_TYPE_CONFIG[terrasse.place_type].label}
+                </span>
+              )}
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", lineHeight: 1.2 }}>{terrasse.nom_commercial || terrasse.nom}</div>
+            </div>
             {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)" }}>{terrasse.adresse}{terrasse.arrondissement ? ` · ${terrasse.arrondissement}` : ""}</div>}
 
-            {/* Meta row: type/price/rating left, action icons right */}
+            {/* Meta row: price/rating left, action icons right */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, gap: 8 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
-                  <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", borderRadius: 100, padding: "3px 10px", fontFamily: F }}>
-                    <PlaceTypeIcon type={terrasse.place_type} size={13} color="rgba(255,255,255,0.9)" />
-                    {PLACE_TYPE_CONFIG[terrasse.place_type].label}
-                  </span>
-                )}
                 {terrasse.price_level != null && terrasse.price_level > 0 && (
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", borderRadius: 100, padding: "3px 10px", fontFamily: F, fontWeight: 600 }}>{"€".repeat(terrasse.price_level)}</span>
                 )}
