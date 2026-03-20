@@ -158,13 +158,9 @@
     "night": "夜晚"
   },
   "placeType": {
-    "bar": "酒吧",
     "restaurant": "餐厅",
     "cafe": "咖啡馆",
-    "bakery": "面包店",
-    "night_club": "夜店",
-    "ice_cream_shop": "冰淇淋",
-    "meal_takeaway": "外卖"
+    "autre": "其他"
   },
   "pwa": {
     "newVersion": "有新版本可用",

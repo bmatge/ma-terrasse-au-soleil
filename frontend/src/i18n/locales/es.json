@@ -158,13 +158,9 @@
     "night": "Noche"
   },
   "placeType": {
-    "bar": "Bar",
     "restaurant": "Restaurante",
     "cafe": "Café",
-    "bakery": "Panadería",
-    "night_club": "Club",
-    "ice_cream_shop": "Heladería",
-    "meal_takeaway": "Para llevar"
+    "autre": "Otro"
   },
   "pwa": {
     "newVersion": "Nueva versión disponible",

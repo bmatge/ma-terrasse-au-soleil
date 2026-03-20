@@ -6,6 +6,7 @@ import { useDebounce } from "../hooks/useDebounce";
 import { searchTerrasses, geocode } from "../api/terrasses";
 import type { TerrasseSearchResult, GeocodeResult } from "../api/types";
 import { TYPE_CONFIG } from "./PlaceTypeBadge";
+import { normalizePlaceType } from "../utils/placeType";
 import { track } from "../analytics";
 
 export default function SearchBar() {
@@ -91,8 +92,9 @@ export default function SearchBar() {
                 {terrasses && terrasses.length > 0 ? (
                   <div className="max-h-60 overflow-y-auto">
                     {terrasses.map((tr) => {
-                      const typeConfig = tr.place_type
-                        ? (TYPE_CONFIG[tr.place_type]?.icon ?? "\uD83C\uDFE0")
+                      const normalized = normalizePlaceType(tr.place_type);
+                      const typeConfig = normalized
+                        ? (TYPE_CONFIG[normalized]?.icon ?? "🏠")
                         : null;
                       return (
                         <button

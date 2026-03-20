@@ -17,6 +17,7 @@ import type {
   TimelineSlot,
 } from "./api/types";
 import { useDebounce } from "./hooks/useDebounce";
+import { normalizePlaceType } from "./utils/placeType";
 import { useTranslation } from "react-i18next";
 import funFacts_fr from "./data/funFacts.json";
 import funFacts_en from "./data/funFacts_en.json";
@@ -181,13 +182,9 @@ const themes = {
 
 // ─── Status config ───
 const PLACE_TYPE_KEYS: Record<string, string> = {
-  bar: "placeType.bar",
   restaurant: "placeType.restaurant",
   cafe: "placeType.cafe",
-  bakery: "placeType.bakery",
-  night_club: "placeType.night_club",
-  ice_cream_shop: "placeType.ice_cream_shop",
-  meal_takeaway: "placeType.meal_takeaway",
+  autre: "placeType.autre",
 };
 
 const STATUS_CONFIG: Record<string, { labelKey: string; color: string; icon: string }> = {
@@ -231,11 +228,8 @@ const StarIcon = ({ size = 14, color = "#F59E0B", filled = true }: { size?: numb
 const PlaceTypeIcon = ({ type, size = 14, color = "currentColor" }: { type: string; size?: number; color?: string }) => {
   const p = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   switch (type) {
-    case "bar":       return <svg {...p}><path d="M8 22V12m8 10V12M5 2h14l-2 10H7L5 2z"/></svg>;
     case "restaurant":return <svg {...p}><line x1="8" y1="2" x2="8" y2="22"/><path d="M5 2v4a3 3 0 0 0 6 0V2"/><line x1="17" y1="2" x2="17" y2="22"/></svg>;
     case "cafe":      return <svg {...p}><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>;
-    case "bakery":    return <svg {...p}><path d="M12 2a8 8 0 0 0-8 8c0 3 1.5 5.5 4 7v5h8v-5c2.5-1.5 4-4 4-7a8 8 0 0 0-8-8z"/></svg>;
-    case "night_club":return <svg {...p}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
     default:          return <svg {...p}><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>;
   }
 };
@@ -733,7 +727,8 @@ export default function App() {
     if (!results.length) return [];
     const counts: Record<string, number> = {};
     for (const t of results) {
-      if (t.place_type) counts[t.place_type] = (counts[t.place_type] || 0) + 1;
+      const cat = normalizePlaceType(t.place_type);
+      if (cat) counts[cat] = (counts[cat] || 0) + 1;
     }
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
@@ -1112,10 +1107,10 @@ export default function App() {
             </div>
             {terrasse.adresse && <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>}
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
-              {terrasse.place_type && PLACE_TYPE_KEYS[terrasse.place_type] && (
+              {terrasse.place_type && (
                 <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: th.textSoft, fontFamily: F }}>
-                  <PlaceTypeIcon type={terrasse.place_type} size={12} color={th.textSoft} />
-                  {t(PLACE_TYPE_KEYS[terrasse.place_type])}
+                  <PlaceTypeIcon type={normalizePlaceType(terrasse.place_type) ?? "autre"} size={12} color={th.textSoft} />
+                  {t(PLACE_TYPE_KEYS[normalizePlaceType(terrasse.place_type) ?? "autre"])}
                 </span>
               )}
               {terrasse.price_level != null && terrasse.price_level > 0 && (
@@ -1433,7 +1428,7 @@ export default function App() {
                         <div key={tr.id} onClick={() => selectTerrasse(tr)}
                           style={{ display: "flex", flexDirection: "column", padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${th.border}` }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <PlaceTypeIcon type={tr.place_type || ""} size={14} color={th.textMuted} />
+                            <PlaceTypeIcon type={normalizePlaceType(tr.place_type) ?? "autre"} size={14} color={th.textMuted} />
                             <span style={{ fontSize: 14, fontWeight: 500, color: th.text, fontFamily: F }}>{tr.nom_commercial || tr.nom}</span>
                           </div>
                           <span style={{ fontSize: 12, color: th.textMuted, fontFamily: F, marginLeft: 22 }}>{tr.adresse}</span>
@@ -1692,10 +1687,10 @@ export default function App() {
               )}
 
               {viewMode === "map" ? (
-                <ResultsMap terrasses={results.filter(r => !typeFilter || r.place_type === typeFilter)} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
+                <ResultsMap terrasses={results.filter(r => !typeFilter || normalizePlaceType(r.place_type) === typeFilter)} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
               ) : (
                 <div className="terrasse-grid">
-                  {results.filter(r => !typeFilter || r.place_type === typeFilter).map((tr) => <TerrasseCard key={tr.id} terrasse={tr} />)}
+                  {results.filter(r => !typeFilter || normalizePlaceType(r.place_type) === typeFilter).map((tr) => <TerrasseCard key={tr.id} terrasse={tr} />)}
                 </div>
               )}
             </div>
@@ -1738,10 +1733,10 @@ export default function App() {
           <div style={{ position: "absolute", top: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
           <div style={{ position: "relative" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              {terrasse.place_type && PLACE_TYPE_KEYS[terrasse.place_type] && (
+              {terrasse.place_type && (
                 <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: "rgba(255,255,255,0.95)", background: "rgba(255,255,255,0.22)", borderRadius: 100, padding: "5px 12px", fontFamily: F, fontWeight: 500, whiteSpace: "nowrap" }}>
-                  <PlaceTypeIcon type={terrasse.place_type} size={15} color="rgba(255,255,255,0.95)" />
-                  {t(PLACE_TYPE_KEYS[terrasse.place_type])}
+                  <PlaceTypeIcon type={normalizePlaceType(terrasse.place_type) ?? "autre"} size={15} color="rgba(255,255,255,0.95)" />
+                  {t(PLACE_TYPE_KEYS[normalizePlaceType(terrasse.place_type) ?? "autre"])}
                 </span>
               )}
               <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", lineHeight: 1.2 }}>{terrasse.nom_commercial || terrasse.nom}</div>

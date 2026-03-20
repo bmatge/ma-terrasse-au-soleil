@@ -158,13 +158,9 @@
     "night": "夜"
   },
   "placeType": {
-    "bar": "バー",
     "restaurant": "レストラン",
     "cafe": "カフェ",
-    "bakery": "パン屋",
-    "night_club": "クラブ",
-    "ice_cream_shop": "アイス",
-    "meal_takeaway": "テイクアウト"
+    "autre": "その他"
   },
   "pwa": {
     "newVersion": "新しいバージョンがあります",

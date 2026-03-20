@@ -25,17 +25,21 @@ export default function LanguageSelector() {
         onClick={() => setOpen(!open)}
         style={{
           background: "none",
-          border: "none",
+          border: "1px solid #D6D3D1",
           cursor: "pointer",
-          fontSize: 18,
-          padding: "4px 8px",
+          fontSize: 13,
+          fontWeight: 600,
+          padding: "4px 10px",
           borderRadius: 8,
-          lineHeight: 1,
+          lineHeight: 1.4,
+          fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+          color: "#44403C",
+          letterSpacing: "0.5px",
         }}
         aria-label="Language"
         title={current.label}
       >
-        {current.flag}
+        {current.code.toUpperCase()}
       </button>
       {open && (
         <div
@@ -75,7 +79,7 @@ export default function LanguageSelector() {
                 textAlign: "left",
               }}
             >
-              <span style={{ fontSize: 18 }}>{lang.flag}</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#78716C", minWidth: 24 }}>{lang.code.toUpperCase()}</span>
               <span>{lang.label}</span>
             </button>
           ))}

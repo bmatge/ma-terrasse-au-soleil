@@ -30,7 +30,7 @@ i18n
       ja: { translation: ja },
       zh: { translation: zh },
     },
-    fallbackLng: "fr",
+    fallbackLng: "en",
     interpolation: { escapeValue: false },
     detection: {
       order: ["localStorage", "navigator"],

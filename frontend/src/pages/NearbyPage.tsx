@@ -8,6 +8,7 @@ import TerrasseCard from "../components/TerrasseCard";
 import TimeSlider from "../components/TimeSlider";
 import UvBadge from "../components/UvBadge";
 import { TYPE_CONFIG } from "../components/PlaceTypeBadge";
+import { normalizePlaceType } from "../utils/placeType";
 import { track } from "../analytics";
 
 function currentTime(): string {
@@ -59,7 +60,8 @@ export default function NearbyPage() {
     if (!data?.terrasses) return [];
     const counts: Record<string, number> = {};
     for (const t of data.terrasses) {
-      if (t.place_type) counts[t.place_type] = (counts[t.place_type] || 0) + 1;
+      const cat = normalizePlaceType(t.place_type);
+      if (cat) counts[cat] = (counts[cat] || 0) + 1;
     }
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
@@ -69,7 +71,7 @@ export default function NearbyPage() {
   const filteredTerrasses = useMemo(() => {
     if (!data?.terrasses) return [];
     if (!typeFilter) return data.terrasses;
-    return data.terrasses.filter((t) => t.place_type === typeFilter);
+    return data.terrasses.filter((t) => normalizePlaceType(t.place_type) === typeFilter);
   }, [data?.terrasses, typeFilter]);
 
   const center = useMemo((): [number, number] => [initialLon, initialLat], [initialLon, initialLat]);
