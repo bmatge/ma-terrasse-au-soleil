@@ -1145,8 +1145,8 @@ export default function App() {
   if (page === "home") {
     return (
       <div style={{ ...wrap, position: "relative", overflow: "hidden" }}>
-        <div style={{ padding: "56px 24px 24px", position: "relative" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
+        <div style={{ padding: "20px 24px 24px", position: "relative" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               {mode === "sun"
                 ? <SunIcon size={32} color={th.accent} />
@@ -1164,7 +1164,7 @@ export default function App() {
             </div>
           </div>
 
-          <p style={{ fontSize: 16, color: th.textSoft, fontWeight: 300, fontStyle: "italic", lineHeight: 1.5, marginBottom: 20, maxWidth: 300 }}>
+          <p style={{ fontSize: 15, color: th.textSoft, fontWeight: 300, fontStyle: "italic", lineHeight: 1.4, marginBottom: 16, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {mode === "sun" ? t("home.subtitleSun") : t("home.subtitleShade")}
           </p>
 
