@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { getTimeline } from "../api/terrasses";
 import Timeline from "../components/Timeline";
 import SunMap from "../components/SunMap";
@@ -23,6 +24,7 @@ export default function TimelinePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const dateParam = searchParams.get("date") || undefined;
   const [selectedTime, setSelectedTime] = useState<string>(currentTimeRounded);
+  const { t, i18n } = useTranslation();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["timeline", id, dateParam],
@@ -53,13 +55,14 @@ export default function TimelinePage() {
   if (error || !data) {
     return (
       <div className="max-w-2xl mx-auto p-6">
-        <p className="text-red-500">Erreur lors du chargement de la timeline.</p>
-        <Link to="/" className="text-amber-600 underline">Retour</Link>
+        <p className="text-red-500">{t("detail.loadingTimeline")}</p>
+        <Link to="/" className="text-amber-600 underline">{t("common.back")}</Link>
       </div>
     );
   }
 
-  const displayDate = new Date(data.date).toLocaleDateString("fr-FR", {
+  const locale = i18n.language === "fr" ? "fr-FR" : i18n.language === "de" ? "de-DE" : i18n.language === "es" ? "es-ES" : i18n.language === "ja" ? "ja-JP" : i18n.language === "zh" ? "zh-CN" : "en-US";
+  const displayDate = new Date(data.date).toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -70,7 +73,7 @@ export default function TimelinePage() {
       {/* Header */}
       <div className="mb-6">
         <Link to="/" className="text-amber-600 hover:underline text-sm">
-          &larr; Retour
+          &larr; {t("common.back")}
         </Link>
         <div className="flex items-center gap-3 mt-2">
           {data.terrasse.place_type && (
@@ -98,7 +101,7 @@ export default function TimelinePage() {
             )}
             {data.terrasse.website && (
               <a href={data.terrasse.website} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline">
-                Site web
+                {t("detail.website")}
               </a>
             )}
             {data.terrasse.google_maps_uri && (
@@ -116,14 +119,14 @@ export default function TimelinePage() {
           onClick={() => changeDate(-1)}
           className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
         >
-          &larr; Veille
+          &larr; {t("detail.yesterday")}
         </button>
         <span className="font-medium text-gray-700 capitalize">{displayDate}</span>
         <button
           onClick={() => changeDate(1)}
           className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
         >
-          Lendemain &rarr;
+          {t("detail.nextDay")} &rarr;
         </button>
       </div>
 

@@ -1,8 +1,10 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { usePWAUpdate } from "../hooks/usePWAUpdate";
 
 export default function UpdatePrompt() {
   const { needRefresh, offlineReady, updateSW, dismiss } = usePWAUpdate();
+  const { t } = useTranslation();
 
   // Auto-dismiss "offline ready" after 3s
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function UpdatePrompt() {
         maxWidth: "calc(100vw - 32px)",
       }}
     >
-      <span>{needRefresh ? "Nouvelle version disponible" : "App prête hors-ligne"}</span>
+      <span>{needRefresh ? t("pwa.newVersion") : t("pwa.offlineReady")}</span>
       {needRefresh && (
         <button
           onClick={updateSW}
@@ -51,7 +53,7 @@ export default function UpdatePrompt() {
             whiteSpace: "nowrap",
           }}
         >
-          Mettre à jour
+          {t("pwa.update")}
         </button>
       )}
       <button
@@ -65,7 +67,7 @@ export default function UpdatePrompt() {
           lineHeight: 1,
           padding: 0,
         }}
-        aria-label="Fermer"
+        aria-label={t("pwa.close")}
       >
         ×
       </button>

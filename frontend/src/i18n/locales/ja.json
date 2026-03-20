@@ -1,0 +1,200 @@
+{
+  "app": {
+    "title": "テラス・オ・ソレイユ",
+    "tagline": "パリで日当たりの良いテラスを見つけよう — リアルタイムの日照と天気情報。"
+  },
+  "home": {
+    "terrasse": "テラス",
+    "auSoleil": "日なたの",
+    "aLombre": "日陰の",
+    "subtitleSun": "パリの太陽を楽しめる最高のテラスを見つけよう",
+    "subtitleShade": "涼しい日陰でひと息つける場所を見つけよう",
+    "locating": "位置情報取得中...",
+    "aroundMe": "周辺を探す",
+    "choosePlace": "場所を選ぶ",
+    "myFavorites": "お気に入り",
+    "viewAll": "すべて表示 →",
+    "linkCopied": "リンクをコピーしました！",
+    "share": "共有",
+    "installApp": "アプリをインストール",
+    "didYouKnow": "豆知識",
+    "tapForAnother": "タップして次の豆知識へ",
+    "terrasseSun": "日なた",
+    "terrasseShade": "日陰",
+    "terrasse_one": "テラス",
+    "terrasse_other": "テラス",
+    "at": "",
+    "installTitle": "Au Soleilをインストール",
+    "installDescription": "Au Soleilをホーム画面に追加して、ネイティブアプリのようにワンタップでアクセス！",
+    "iosSteps1": "Safariでausoleil.appを開く",
+    "iosSteps2": "共有ボタンをタップ",
+    "iosSteps3": "「ホーム画面に追加」を選択",
+    "androidSteps1": "Chromeでausoleil.appを開く",
+    "androidSteps2": "右上の⋮メニューをタップ",
+    "androidSteps3": "「アプリをインストール」または「ホーム画面に追加」を選択"
+  },
+  "search": {
+    "title": "検索",
+    "address": "住所",
+    "terrasse": "テラス",
+    "metro": "メトロ",
+    "placeholderAddress": "通り、大通り、広場...",
+    "placeholderTerrasse": "バー、レストランの名前...",
+    "placeholderMetro": "メトロ駅...",
+    "establishment": "店舗",
+    "station": "駅",
+    "today": "今日",
+    "tomorrow": "明日",
+    "dayAfter": "明後日",
+    "hour": "時間",
+    "date": "日付",
+    "viewTimeline": "タイムラインを見る",
+    "findSun": "☀️ 日なたを探す",
+    "findShade": "🌤️ 日陰を探す"
+  },
+  "results": {
+    "sunTerraces": "日なたのテラス",
+    "shadeTerraces": "日陰のテラス",
+    "serviceUnavailable": "サービスが一時的に利用できません — しばらくしてからお試しください。",
+    "noSunTerraces": "日なたのテラスが見つかりませんでした",
+    "noShadeTerraces": "日陰のテラスが見つかりませんでした",
+    "tryAnother": "別の時間帯や場所を試してみてください。",
+    "editSearch": "検索を変更",
+    "all": "すべて",
+    "list": "リスト",
+    "map": "地図"
+  },
+  "detail": {
+    "loadingTimeline": "タイムライン読み込み中...",
+    "sunnyAt": "{{time}}に日なた",
+    "shadedAt": "{{time}}に日陰",
+    "noSunAt": "{{time}}は日が当たりません",
+    "noShadeAt": "{{time}}は日陰がありません",
+    "bestSlot": "ベストタイム",
+    "sunUntil": "{{time}}まで日なた",
+    "estimated": "推定",
+    "website": "ウェブサイト",
+    "yesterday": "前日",
+    "nextDay": "翌日",
+    "streetView": "ストリートビュー",
+    "shareCopied": "リンクをコピーしました！",
+    "shareButton": "共有",
+    "timeline": "タイムライン"
+  },
+  "favorites": {
+    "title": "お気に入り",
+    "empty": "お気に入りはまだありません。",
+    "emptyHint": "テラスを探索してお気に入りを追加しよう！",
+    "explore": "探索する"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "intro": "ご提案、バグ報告、または応援メッセージ？",
+    "sent": "✅ メッセージを送信しました、ありがとうございます！",
+    "namePlaceholder": "お名前",
+    "emailPlaceholder": "メールアドレス",
+    "messagePlaceholder": "メッセージ...",
+    "error": "エラーが発生しました。もう一度お試しください！",
+    "sending": "送信中...",
+    "send": "送信 📨"
+  },
+  "about": {
+    "title": "このアプリについて",
+    "description": "Au Soleilは、パリで理想的なテラス（日なた・日陰）をリアルタイムで見つけるお手伝いをします。",
+    "howTitle": "仕組み",
+    "how1": "📍 パリのテラスを位置情報で特定",
+    "how2": "☀️ 太陽の位置と建物の影を計算",
+    "how3": "🌤️ リアルタイムの天気情報と照合",
+    "how4": "✨ 各テラスの日なた／日陰状態を表示",
+    "dataTitle": "データソース",
+    "data1": "日照：天文計算（SunCalc）",
+    "data2": "影：パリ建築物3Dモデル（IGN）",
+    "data3": "天気：Open-Meteo（雲量、UV）",
+    "data4": "テラス：パリ市オープンデータ + Google Places",
+    "madeWith": "パリで☀️と共に制作"
+  },
+  "nav": {
+    "home": "ホーム",
+    "search": "検索",
+    "favorites": "お気に入り",
+    "contact": "連絡",
+    "about": "情報"
+  },
+  "status": {
+    "soleil": "日なた",
+    "mitige": "まだら",
+    "couvert": "曇り",
+    "ombre": "日陰",
+    "ombre_batiment": "日陰",
+    "nuit": "夜"
+  },
+  "weather": {
+    "clearSky": "快晴",
+    "partlyCloudy": "晴れ時々曇り",
+    "overcast": "曇り",
+    "clouds": "雲",
+    "noTerraces": "このエリアにテラスが見つかりませんでした"
+  },
+  "uv": {
+    "low": "弱い",
+    "moderate": "中程度",
+    "high": "強い",
+    "veryHigh": "非常に強い",
+    "extreme": "極端",
+    "index": "UV指数",
+    "peakAt": "ピーク {{time}}",
+    "uvLow": "UV弱い",
+    "uvModerate": "UV中程度",
+    "uvHigh": "UV強い",
+    "uvVeryHigh": "UV非常に強い"
+  },
+  "timeline": {
+    "bestSlot": "ベストタイム：{{start}} – {{end}}",
+    "sunMinutes": "{{minutes}}分の日照 + 快晴",
+    "sun": "日なた",
+    "mixed": "まだら",
+    "overcast": "曇り",
+    "shadow": "日陰",
+    "night": "夜"
+  },
+  "placeType": {
+    "bar": "バー",
+    "restaurant": "レストラン",
+    "cafe": "カフェ",
+    "bakery": "パン屋",
+    "night_club": "クラブ",
+    "ice_cream_shop": "アイス",
+    "meal_takeaway": "テイクアウト"
+  },
+  "pwa": {
+    "newVersion": "新しいバージョンがあります",
+    "offlineReady": "オフライン対応完了",
+    "update": "更新する",
+    "close": "閉じる"
+  },
+  "geo": {
+    "notSupported": "お使いのブラウザは位置情報に対応していません",
+    "denied": "位置情報の許可が拒否されました",
+    "unavailable": "位置情報を取得できませんでした",
+    "notSupportedShort": "位置情報非対応",
+    "deniedShort": "許可が拒否されました",
+    "unavailableShort": "位置情報取得不可"
+  },
+  "searchBar": {
+    "placeholder": "バー、レストラン、住所の名前...",
+    "searching": "検索中...",
+    "terraces": "☀️ テラス",
+    "noEstablishment": "該当なし",
+    "addresses": "📍 住所",
+    "noAddress": "該当なし",
+    "noResults": "「{{query}}」の検索結果なし"
+  },
+  "mode": {
+    "sun": "日なた",
+    "shade": "日陰"
+  },
+  "common": {
+    "back": "戻る",
+    "myPosition": "現在地"
+  }
+}

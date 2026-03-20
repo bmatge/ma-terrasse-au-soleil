@@ -1,0 +1,200 @@
+{
+  "app": {
+    "title": "阳光露台",
+    "tagline": "在巴黎找到阳光露台 — 实时日照和天气信息。"
+  },
+  "home": {
+    "terrasse": "露台",
+    "auSoleil": "阳光下",
+    "aLombre": "阴凉处",
+    "subtitleSun": "找到享受巴黎阳光的完美露台",
+    "subtitleShade": "找到一个凉爽的阴凉处休息片刻",
+    "locating": "定位中...",
+    "aroundMe": "我附近",
+    "choosePlace": "选择地点",
+    "myFavorites": "我的收藏",
+    "viewAll": "查看全部 →",
+    "linkCopied": "链接已复制！",
+    "share": "分享",
+    "installApp": "安装应用",
+    "didYouKnow": "你知道吗？",
+    "tapForAnother": "点击查看下一个趣闻",
+    "terrasseSun": "阳光下",
+    "terrasseShade": "阴凉处",
+    "terrasse_one": "个露台",
+    "terrasse_other": "个露台",
+    "at": "在",
+    "installTitle": "安装 Au Soleil",
+    "installDescription": "将 Au Soleil 添加到主屏幕，像原生应用一样一键访问！",
+    "iosSteps1": "在Safari中打开ausoleil.app",
+    "iosSteps2": "点击分享按钮",
+    "iosSteps3": "选择'添加到主屏幕'",
+    "androidSteps1": "在Chrome中打开ausoleil.app",
+    "androidSteps2": "点击右上角的⋮菜单",
+    "androidSteps3": "选择'安装应用'或'添加到主屏幕'"
+  },
+  "search": {
+    "title": "搜索",
+    "address": "地址",
+    "terrasse": "露台",
+    "metro": "地铁",
+    "placeholderAddress": "街道、大道、广场...",
+    "placeholderTerrasse": "酒吧、餐厅名称...",
+    "placeholderMetro": "地铁站...",
+    "establishment": "店铺",
+    "station": "车站",
+    "today": "今天",
+    "tomorrow": "明天",
+    "dayAfter": "后天",
+    "hour": "时间",
+    "date": "日期",
+    "viewTimeline": "查看时间线",
+    "findSun": "☀️ 寻找阳光",
+    "findShade": "🌤️ 寻找阴凉"
+  },
+  "results": {
+    "sunTerraces": "阳光露台",
+    "shadeTerraces": "阴凉露台",
+    "serviceUnavailable": "服务暂时不可用 — 请稍后再试。",
+    "noSunTerraces": "未找到阳光露台",
+    "noShadeTerraces": "未找到阴凉露台",
+    "tryAnother": "请尝试其他时间段或地点。",
+    "editSearch": "修改搜索",
+    "all": "全部",
+    "list": "列表",
+    "map": "地图"
+  },
+  "detail": {
+    "loadingTimeline": "加载时间线...",
+    "sunnyAt": "{{time}}时有阳光",
+    "shadedAt": "{{time}}时有阴凉",
+    "noSunAt": "{{time}}时无阳光",
+    "noShadeAt": "{{time}}时无阴凉",
+    "bestSlot": "最佳时段",
+    "sunUntil": "阳光持续到{{time}}",
+    "estimated": "预估",
+    "website": "网站",
+    "yesterday": "前一天",
+    "nextDay": "后一天",
+    "streetView": "街景",
+    "shareCopied": "链接已复制！",
+    "shareButton": "分享",
+    "timeline": "时间线"
+  },
+  "favorites": {
+    "title": "收藏",
+    "empty": "暂无收藏。",
+    "emptyHint": "探索露台并添加你的最爱！",
+    "explore": "探索"
+  },
+  "contact": {
+    "title": "联系我们",
+    "intro": "有建议、发现了bug，或想说声你好？",
+    "sent": "✅ 消息已发送，谢谢！",
+    "namePlaceholder": "你的名字",
+    "emailPlaceholder": "你的邮箱",
+    "messagePlaceholder": "你的消息...",
+    "error": "出错了，请重试！",
+    "sending": "发送中...",
+    "send": "发送 📨"
+  },
+  "about": {
+    "title": "关于",
+    "description": "Au Soleil 帮助你在巴黎实时找到理想的露台 — 阳光下或阴凉处。",
+    "howTitle": "如何运作？",
+    "how1": "📍 我们定位巴黎的露台",
+    "how2": "☀️ 我们计算太阳位置和建筑物阴影",
+    "how3": "🌤️ 我们结合实时天气数据",
+    "how4": "✨ 你可以获取每个露台的日照/阴凉状态",
+    "dataTitle": "数据来源",
+    "data1": "日照：天文计算（SunCalc）",
+    "data2": "阴影：巴黎建筑3D模型（IGN）",
+    "data3": "天气：Open-Meteo（云量、UV）",
+    "data4": "露台：巴黎市开放数据 + Google Places",
+    "madeWith": "在巴黎用☀️制作"
+  },
+  "nav": {
+    "home": "首页",
+    "search": "搜索",
+    "favorites": "收藏",
+    "contact": "联系",
+    "about": "关于"
+  },
+  "status": {
+    "soleil": "阳光",
+    "mitige": "多云",
+    "couvert": "阴天",
+    "ombre": "阴凉",
+    "ombre_batiment": "阴凉",
+    "nuit": "夜晚"
+  },
+  "weather": {
+    "clearSky": "晴空",
+    "partlyCloudy": "多云转晴",
+    "overcast": "阴天",
+    "clouds": "云",
+    "noTerraces": "该区域未找到露台"
+  },
+  "uv": {
+    "low": "低",
+    "moderate": "中等",
+    "high": "高",
+    "veryHigh": "很高",
+    "extreme": "极端",
+    "index": "UV指数",
+    "peakAt": "峰值 {{time}}",
+    "uvLow": "UV低",
+    "uvModerate": "UV中等",
+    "uvHigh": "UV高",
+    "uvVeryHigh": "UV很高"
+  },
+  "timeline": {
+    "bestSlot": "最佳时段：{{start}} – {{end}}",
+    "sunMinutes": "{{minutes}}分钟阳光 + 晴空",
+    "sun": "阳光",
+    "mixed": "多云",
+    "overcast": "阴天",
+    "shadow": "阴凉",
+    "night": "夜晚"
+  },
+  "placeType": {
+    "bar": "酒吧",
+    "restaurant": "餐厅",
+    "cafe": "咖啡馆",
+    "bakery": "面包店",
+    "night_club": "夜店",
+    "ice_cream_shop": "冰淇淋",
+    "meal_takeaway": "外卖"
+  },
+  "pwa": {
+    "newVersion": "有新版本可用",
+    "offlineReady": "应用已支持离线",
+    "update": "更新",
+    "close": "关闭"
+  },
+  "geo": {
+    "notSupported": "您的浏览器不支持地理定位",
+    "denied": "地理定位权限被拒绝",
+    "unavailable": "无法获取您的位置",
+    "notSupportedShort": "不支持地理定位",
+    "deniedShort": "权限被拒绝",
+    "unavailableShort": "无法获取位置"
+  },
+  "searchBar": {
+    "placeholder": "酒吧、餐厅或地址名称...",
+    "searching": "搜索中...",
+    "terraces": "☀️ 露台",
+    "noEstablishment": "无结果",
+    "addresses": "📍 地址",
+    "noAddress": "无地址",
+    "noResults": "未找到'{{query}}'的结果"
+  },
+  "mode": {
+    "sun": "阳光",
+    "shade": "阴凉"
+  },
+  "common": {
+    "back": "返回",
+    "myPosition": "我的位置"
+  }
+}

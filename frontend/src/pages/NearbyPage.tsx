@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { getNearby } from "../api/terrasses";
 import Map from "../components/Map";
 import TerrasseCard from "../components/TerrasseCard";
@@ -29,6 +30,7 @@ function todayDate(): string {
 export default function NearbyPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const initialLat = Number(searchParams.get("lat") || "48.8566");
   const initialLon = Number(searchParams.get("lon") || "2.3522");
@@ -94,19 +96,19 @@ export default function NearbyPage() {
       {/* Header */}
       <div>
         <a href="/" className="text-amber-600 hover:underline text-sm">
-          &larr; Retour
+          &larr; {t("common.back")}
         </a>
         <h2 className="text-xl font-bold text-gray-800 mt-1">
-          Terrasses au soleil
+          {t("results.sunTerraces")}
         </h2>
         {data?.meteo && (
           <p className="text-sm text-gray-500">
             {data.meteo.status === "degage"
-              ? "Ciel d\u00e9gag\u00e9"
+              ? t("weather.clearSky")
               : data.meteo.status === "mitige"
-                ? "\u00c9claircies"
-                : "Ciel couvert"}{" "}
-            &mdash; {data.meteo.cloud_cover}% de nuages
+                ? t("weather.partlyCloudy")
+                : t("weather.overcast")}{" "}
+            &mdash; {data.meteo.cloud_cover}% {t("weather.clouds")}
           </p>
         )}
       </div>
@@ -132,10 +134,12 @@ export default function NearbyPage() {
                 : "bg-white text-gray-600 border-gray-200 hover:border-amber-300"
             }`}
           >
-            Tous
+            {t("results.all")}
           </button>
           {availableTypes.map(({ type, count }) => {
-            const config = TYPE_CONFIG[type] || { label: type.replace(/_/g, " "), icon: "🏠" };
+            const config = TYPE_CONFIG[type];
+            const label = config ? t(config.labelKey) : type.replace(/_/g, " ");
+            const icon = config?.icon ?? "\uD83C\uDFE0";
             return (
               <button
                 key={type}
@@ -146,7 +150,7 @@ export default function NearbyPage() {
                     : "bg-white text-gray-600 border-gray-200 hover:border-amber-300"
                 }`}
               >
-                {config.icon} {config.label} ({count})
+                {icon} {label} ({count})
               </button>
             );
           })}
@@ -175,7 +179,7 @@ export default function NearbyPage() {
           ))}
           {filteredTerrasses.length === 0 && (
             <p className="text-center text-gray-400 py-8">
-              Aucune terrasse trouv&eacute;e dans ce p&eacute;rim&egrave;tre
+              {t("weather.noTerraces")}
             </p>
           )}
         </div>

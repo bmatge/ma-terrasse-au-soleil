@@ -1,0 +1,152 @@
+[
+  {
+    "id": 1,
+    "category": "paris",
+    "fact": "París solo tiene 6 señales de STOP en toda la ciudad. ¡Aquí la prioridad es encontrar una buena terraza, no parar!"
+  },
+  {
+    "id": 2,
+    "category": "soleil",
+    "fact": "París recibe unas 1.662 horas de sol al año. Menos que Madrid (2.769 h), pero el encanto de un café au lait bajo el sol parisino no tiene rival."
+  },
+  {
+    "id": 3,
+    "category": "terrasse",
+    "fact": "Hay más de 12.000 terrazas de cafés y restaurantes en París: la mayor concentración del mundo. ¡Ni la Plaza Mayor tiene tantas!"
+  },
+  {
+    "id": 4,
+    "category": "paris",
+    "fact": "La Torre Eiffel crece unos 15 cm en verano por la dilatación térmica. Hasta los monumentos se estiran al sol."
+  },
+  {
+    "id": 5,
+    "category": "ombre",
+    "fact": "Los plátanos de sombra de los bulevares parisinos fueron plantados bajo Napoleón III para dar sombra. ¡El aire acondicionado del siglo XIX!"
+  },
+  {
+    "id": 6,
+    "category": "soleil",
+    "fact": "El 21 de junio, el día más largo en París, el sol sale a las 5:46 y se pone a las 21:58. ¡Más de 16 horas para disfrutar de una terraza!"
+  },
+  {
+    "id": 7,
+    "category": "terrasse",
+    "fact": "Las terrazas con calefacción fueron prohibidas en París en abril de 2022 por motivos ecológicos. Ahora toca arrimarse más al vecino."
+  },
+  {
+    "id": 8,
+    "category": "café",
+    "fact": "El Café de Flore abrió en 1887. Su terraza orientada al sur fue el salón favorito de Sartre, Beauvoir y medio existencialismo francés."
+  },
+  {
+    "id": 9,
+    "category": "soleil",
+    "fact": "La luz del sol tarda 8 minutos y 20 segundos en llegar a tu terraza parisina. Tu café probablemente tarde más."
+  },
+  {
+    "id": 10,
+    "category": "ombre",
+    "fact": "La sombra de la Torre Eiffel recorre más de 300 metros a lo largo de un día de verano. Un reloj de sol gigante."
+  },
+  {
+    "id": 11,
+    "category": "terrasse",
+    "fact": "Durante la pandemia, París permitió a los cafés expandir sus terrazas a las aceras y calles. Muchas extensiones se convirtieron en permanentes."
+  },
+  {
+    "id": 12,
+    "category": "paris",
+    "fact": "El Jardín de Luxemburgo tiene exactamente 106 estatuas. Es como un museo al aire libre donde puedes tomar un café a la sombra de una reina."
+  },
+  {
+    "id": 13,
+    "category": "café",
+    "fact": "Le Procope, fundado en 1686, es el café más antiguo de París. Voltaire supuestamente bebía 40 tazas de café al día allí. ¡Ni un español con su cortado!"
+  },
+  {
+    "id": 14,
+    "category": "printemps",
+    "fact": "Los cerezos en flor de París florecen entre finales de marzo y mediados de abril. Los jardines del Trocadéro son el mejor mirador."
+  },
+  {
+    "id": 15,
+    "category": "soleil",
+    "fact": "En pleno verano, la superficie de una terraza parisina puede alcanzar los 60°C. ¡Como las aceras de Sevilla en agosto!"
+  },
+  {
+    "id": 16,
+    "category": "paris",
+    "fact": "Montmartre es el punto más alto de París con 130 metros. Las terrazas cerca del Sacré-Cœur ofrecen las mejores puestas de sol de la ciudad."
+  },
+  {
+    "id": 17,
+    "category": "terrasse",
+    "fact": "En París, sentarse en la terraza cuesta lo mismo que dentro del local, a diferencia de muchas ciudades europeas donde hay recargo por exterior."
+  },
+  {
+    "id": 18,
+    "category": "ombre",
+    "fact": "La calle más estrecha de París, la Rue du Chat-qui-Pêche, mide solo 1,8 metros de ancho. Sombra asegurada, pero no cabe ni una mesa."
+  },
+  {
+    "id": 19,
+    "category": "café",
+    "fact": "Los franceses consumen unos 5,4 kg de café por persona al año. Eso son unos 2 expresos diarios, la mayoría en terraza, naturalmente."
+  },
+  {
+    "id": 20,
+    "category": "printemps",
+    "fact": "Los parisinos tienen una regla no escrita: el primer día soleado de más de 15°C en primavera, todas las terrazas se llenan al instante."
+  },
+  {
+    "id": 21,
+    "category": "paris",
+    "fact": "El Sena atraviesa París de este a oeste, así que las terrazas de la orilla derecha (norte) reciben el sol de la tarde. ¡Ubicación estratégica!"
+  },
+  {
+    "id": 22,
+    "category": "soleil",
+    "fact": "París está a 48,8° de latitud norte, casi la misma que Vancouver. Pero con bastante más glamour bajo el sol."
+  },
+  {
+    "id": 23,
+    "category": "terrasse",
+    "fact": "La palabra «terrasse» viene del latín «terra». Lo que empezó como un montón de tierra aplanada hoy es el corazón de la vida social parisina."
+  },
+  {
+    "id": 24,
+    "category": "café",
+    "fact": "El parisino medio pasa unas 2 horas a la semana en una terraza de café. Son más de 100 horas al año observando pasar la vida."
+  },
+  {
+    "id": 25,
+    "category": "ombre",
+    "fact": "Un toldo de terraza bien orientado puede reducir la temperatura percibida entre 10 y 15°C. Ingeniería de sombra de primera."
+  },
+  {
+    "id": 26,
+    "category": "printemps",
+    "fact": "El Jardín de las Tullerías planta más de 40.000 flores cada primavera. Es la manera parisina de decir: «Se abre la temporada de terrazas»."
+  },
+  {
+    "id": 27,
+    "category": "paris",
+    "fact": "El bulevar Haussmann va de este a oeste, convirtiéndolo en una de las calles más soleadas de París por la tarde. ¡Compras al sol!"
+  },
+  {
+    "id": 28,
+    "category": "soleil",
+    "fact": "Los rayos UV en París alcanzan su máximo entre las 12 y las 16 h de mayo a agosto. Los parisinos lo combaten con sombreros y sombrillas bien colocadas."
+  },
+  {
+    "id": 29,
+    "category": "café",
+    "fact": "Hemingway escribió gran parte de sus obras en terrazas parisinas. Decía: «Si tienes la suerte de vivir en París, te acompaña el resto de tu vida»."
+  },
+  {
+    "id": 30,
+    "category": "terrasse",
+    "fact": "Los cafés parisinos están obligados por ley a mostrar sus precios. Un café en barra siempre es más barato que uno servido en terraza."
+  }
+]

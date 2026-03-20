@@ -88,8 +88,10 @@ def weather_status(cloud_cover: int) -> str:
     return "degage"
 
 
-def weather_summary(hourly: dict[str, dict]) -> str:
+def weather_summary(hourly: dict[str, dict], lang: str = "fr") -> str:
     """Generate a short weather summary for the day."""
+    from app.i18n import tr
+
     morning = [hourly.get(f"{h:02d}:00", {}).get("cloud_cover", 50) for h in range(8, 12)]
     afternoon = [hourly.get(f"{h:02d}:00", {}).get("cloud_cover", 50) for h in range(12, 18)]
 
@@ -98,17 +100,17 @@ def weather_summary(hourly: dict[str, dict]) -> str:
 
     parts = []
     if avg_morning < 30:
-        parts.append("Matin ensoleillé")
+        parts.append(tr("weather_morning_sunny", lang))
     elif avg_morning < 60:
-        parts.append("Éclaircies le matin")
+        parts.append(tr("weather_morning_mixed", lang))
     else:
-        parts.append("Matin nuageux")
+        parts.append(tr("weather_morning_cloudy", lang))
 
     if avg_afternoon < 30:
-        parts.append("après-midi dégagé")
+        parts.append(tr("weather_afternoon_clear", lang))
     elif avg_afternoon < 60:
-        parts.append("éclaircies l'après-midi")
+        parts.append(tr("weather_afternoon_mixed", lang))
     else:
-        parts.append("après-midi couvert")
+        parts.append(tr("weather_afternoon_cloudy", lang))
 
     return ", ".join(parts)

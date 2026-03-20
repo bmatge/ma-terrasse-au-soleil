@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useDebounce } from "../hooks/useDebounce";
 import { searchTerrasses, geocode } from "../api/terrasses";
 import type { TerrasseSearchResult, GeocodeResult } from "../api/types";
@@ -13,6 +14,7 @@ export default function SearchBar() {
   const debouncedQuery = useDebounce(query, 300);
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -67,7 +69,7 @@ export default function SearchBar() {
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        placeholder="Nom d'un bar, restaurant ou adresse..."
+        placeholder={t("searchBar.placeholder")}
         className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
       />
 
@@ -75,7 +77,7 @@ export default function SearchBar() {
         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto">
           {isSearching && (
             <div className="px-3 py-3 text-sm text-gray-400 text-center">
-              Recherche...
+              {t("searchBar.searching")}
             </div>
           )}
 
@@ -84,24 +86,24 @@ export default function SearchBar() {
               {/* Terrasses column */}
               <div className={`${terrasses && terrasses.length > 0 ? "" : "hidden sm:block"}`}>
                 <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase bg-gray-50">
-                  ☀️ Terrasses
+                  {t("searchBar.terraces")}
                 </div>
                 {terrasses && terrasses.length > 0 ? (
                   <div className="max-h-60 overflow-y-auto">
-                    {terrasses.map((t) => {
-                      const typeIcon = t.place_type
-                        ? (TYPE_CONFIG[t.place_type]?.icon ?? "🏠")
+                    {terrasses.map((tr) => {
+                      const typeConfig = tr.place_type
+                        ? (TYPE_CONFIG[tr.place_type]?.icon ?? "\uD83C\uDFE0")
                         : null;
                       return (
                         <button
-                          key={t.id}
-                          onClick={() => selectTerrasse(t)}
+                          key={tr.id}
+                          onClick={() => selectTerrasse(tr)}
                           className="w-full text-left px-3 py-2 hover:bg-amber-50 cursor-pointer flex items-center gap-2"
                         >
-                          {typeIcon && <span className="text-lg shrink-0">{typeIcon}</span>}
+                          {typeConfig && <span className="text-lg shrink-0">{typeConfig}</span>}
                           <div className="min-w-0">
-                            <div className="font-medium text-gray-800 text-sm">{t.nom_commercial || t.nom}</div>
-                            <div className="text-xs text-gray-500 truncate">{t.adresse}</div>
+                            <div className="font-medium text-gray-800 text-sm">{tr.nom_commercial || tr.nom}</div>
+                            <div className="text-xs text-gray-500 truncate">{tr.adresse}</div>
                           </div>
                         </button>
                       );
@@ -109,7 +111,7 @@ export default function SearchBar() {
                   </div>
                 ) : (
                   <div className="px-3 py-3 text-xs text-gray-300 text-center">
-                    Aucun établissement
+                    {t("searchBar.noEstablishment")}
                   </div>
                 )}
               </div>
@@ -117,7 +119,7 @@ export default function SearchBar() {
               {/* Adresses column */}
               <div className={`${addresses && addresses.length > 0 ? "" : "hidden sm:block"} border-t sm:border-t-0`}>
                 <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase bg-gray-50">
-                  📍 Adresses
+                  {t("searchBar.addresses")}
                 </div>
                 {addresses && addresses.length > 0 ? (
                   <div className="max-h-60 overflow-y-auto">
@@ -133,7 +135,7 @@ export default function SearchBar() {
                   </div>
                 ) : (
                   <div className="px-3 py-3 text-xs text-gray-300 text-center">
-                    Aucune adresse
+                    {t("searchBar.noAddress")}
                   </div>
                 )}
               </div>
@@ -142,7 +144,7 @@ export default function SearchBar() {
 
           {!isSearching && !hasResults && (
             <div className="px-3 py-3 text-sm text-gray-400 text-center">
-              Aucun résultat pour &laquo; {debouncedQuery} &raquo;
+              {t("searchBar.noResults", { query: debouncedQuery })}
             </div>
           )}
         </div>

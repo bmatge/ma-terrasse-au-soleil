@@ -1,0 +1,200 @@
+{
+  "app": {
+    "title": "Terrasse au Soleil",
+    "tagline": "Trouve une terrasse au soleil à Paris — ensoleillement et météo en temps réel."
+  },
+  "home": {
+    "terrasse": "Terrasse",
+    "auSoleil": "au soleil",
+    "aLombre": "à l'ombre",
+    "subtitleSun": "Trouve la terrasse parfaite pour profiter du soleil parisien",
+    "subtitleShade": "Trouve un coin d'ombre frais pour souffler un peu",
+    "locating": "Localisation...",
+    "aroundMe": "Autour de moi",
+    "choosePlace": "Choisir un lieu",
+    "myFavorites": "Mes favoris",
+    "viewAll": "Voir tout →",
+    "linkCopied": "Lien copié !",
+    "share": "Partager",
+    "installApp": "Installer l'app",
+    "didYouKnow": "Le saviez-vous ?",
+    "tapForAnother": "Tap pour une autre anecdote",
+    "terrasseSun": "au soleil",
+    "terrasseShade": "à l'ombre",
+    "terrasse_one": "terrasse",
+    "terrasse_other": "terrasses",
+    "at": "À",
+    "installTitle": "Installer Au Soleil",
+    "installDescription": "Ajoute Au Soleil sur ton écran d'accueil pour y accéder en un tap, comme une app native !",
+    "iosSteps1": "Ouvrir ausoleil.app dans Safari",
+    "iosSteps2": "Appuyer sur le bouton Partager",
+    "iosSteps3": "Choisir « Sur l'écran d'accueil »",
+    "androidSteps1": "Ouvrir ausoleil.app dans Chrome",
+    "androidSteps2": "Appuyer sur le menu ⋮ (en haut à droite)",
+    "androidSteps3": "Choisir « Installer l'application » ou « Ajouter à l'écran d'accueil »"
+  },
+  "search": {
+    "title": "Recherche",
+    "address": "Adresse",
+    "terrasse": "Terrasse",
+    "metro": "Métro",
+    "placeholderAddress": "Rue, boulevard, place...",
+    "placeholderTerrasse": "Nom d'un bar, restaurant...",
+    "placeholderMetro": "Station de métro...",
+    "establishment": "Établissement",
+    "station": "Station",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "dayAfter": "Après-demain",
+    "hour": "Heure",
+    "date": "Date",
+    "viewTimeline": "Voir la timeline",
+    "findSun": "☀️  Trouver du soleil",
+    "findShade": "🌤️  Trouver de l'ombre"
+  },
+  "results": {
+    "sunTerraces": "Terrasses au soleil",
+    "shadeTerraces": "Terrasses à l'ombre",
+    "serviceUnavailable": "Service temporairement indisponible — réessaie dans quelques instants.",
+    "noSunTerraces": "Aucune terrasse ensoleillée trouvée",
+    "noShadeTerraces": "Aucune terrasse ombragée trouvée",
+    "tryAnother": "Essaye un autre créneau ou un autre lieu.",
+    "editSearch": "Modifier la recherche",
+    "all": "Tous",
+    "list": "Liste",
+    "map": "Carte"
+  },
+  "detail": {
+    "loadingTimeline": "Chargement de la timeline...",
+    "sunnyAt": "Ensoleillée à {{time}}",
+    "shadedAt": "Ombragée à {{time}}",
+    "noSunAt": "Pas de soleil à {{time}}",
+    "noShadeAt": "Pas d'ombre à {{time}}",
+    "bestSlot": "Meilleur créneau",
+    "sunUntil": "Soleil jusqu'à {{time}}",
+    "estimated": "Estimé",
+    "website": "Site web",
+    "yesterday": "Veille",
+    "nextDay": "Lendemain",
+    "streetView": "Vue de la rue",
+    "shareCopied": "Lien copié !",
+    "shareButton": "Partager",
+    "timeline": "Timeline"
+  },
+  "favorites": {
+    "title": "Favoris",
+    "empty": "Aucun favori pour le moment.",
+    "emptyHint": "Explore les terrasses et ajoute tes préférées !",
+    "explore": "Explorer"
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "Une suggestion, un bug, un mot sympa ?",
+    "sent": "✅ Message envoyé, merci !",
+    "namePlaceholder": "Ton prénom",
+    "emailPlaceholder": "Ton email",
+    "messagePlaceholder": "Ton message...",
+    "error": "Oups, une erreur s'est produite. Réessaie !",
+    "sending": "Envoi...",
+    "send": "Envoyer 📨"
+  },
+  "about": {
+    "title": "À propos",
+    "description": "Au Soleil t'aide à trouver la terrasse idéale — au soleil ou à l'ombre — à Paris, en temps réel.",
+    "howTitle": "Comment ça marche ?",
+    "how1": "📍 On géolocalise les terrasses parisiennes",
+    "how2": "☀️ On calcule la position du soleil et les ombres des bâtiments",
+    "how3": "🌤️ On croise avec la météo en temps réel",
+    "how4": "✨ Tu obtiens le statut soleil / ombre de chaque terrasse",
+    "dataTitle": "Données",
+    "data1": "Ensoleillement : calcul astronomique (SunCalc)",
+    "data2": "Ombres : modèle 3D bâtiments parisiens (IGN)",
+    "data3": "Météo : Open-Meteo (couverture nuageuse, UV)",
+    "data4": "Terrasses : base ouverte Ville de Paris + Google Places",
+    "madeWith": "Fait avec ☀️ à Paris"
+  },
+  "nav": {
+    "home": "Accueil",
+    "search": "Chercher",
+    "favorites": "Favoris",
+    "contact": "Contact",
+    "about": "Infos"
+  },
+  "status": {
+    "soleil": "Au soleil",
+    "mitige": "Mitigé",
+    "couvert": "Couvert",
+    "ombre": "À l'ombre",
+    "ombre_batiment": "À l'ombre",
+    "nuit": "Nuit"
+  },
+  "weather": {
+    "clearSky": "Ciel dégagé",
+    "partlyCloudy": "Éclaircies",
+    "overcast": "Ciel couvert",
+    "clouds": "nuages",
+    "noTerraces": "Aucune terrasse trouvée dans ce périmètre"
+  },
+  "uv": {
+    "low": "Faible",
+    "moderate": "Modéré",
+    "high": "Fort",
+    "veryHigh": "Très fort",
+    "extreme": "Extrême",
+    "index": "Indice UV",
+    "peakAt": "pic à {{time}}",
+    "uvLow": "UV faible",
+    "uvModerate": "UV modéré",
+    "uvHigh": "UV fort",
+    "uvVeryHigh": "UV très fort"
+  },
+  "timeline": {
+    "bestSlot": "Meilleur créneau : {{start}} – {{end}}",
+    "sunMinutes": "{{minutes}} min de soleil + ciel dégagé",
+    "sun": "Soleil",
+    "mixed": "Mitigé",
+    "overcast": "Couvert",
+    "shadow": "Ombre",
+    "night": "Nuit"
+  },
+  "placeType": {
+    "bar": "Bar",
+    "restaurant": "Restaurant",
+    "cafe": "Café",
+    "bakery": "Boulangerie",
+    "night_club": "Club",
+    "ice_cream_shop": "Glacier",
+    "meal_takeaway": "À emporter"
+  },
+  "pwa": {
+    "newVersion": "Nouvelle version disponible",
+    "offlineReady": "App prête hors-ligne",
+    "update": "Mettre à jour",
+    "close": "Fermer"
+  },
+  "geo": {
+    "notSupported": "Géolocalisation non supportée par votre navigateur",
+    "denied": "Permission de géolocalisation refusée",
+    "unavailable": "Impossible d'obtenir votre position",
+    "notSupportedShort": "Géolocalisation non supportée",
+    "deniedShort": "Permission refusée",
+    "unavailableShort": "Impossible d'obtenir la position"
+  },
+  "searchBar": {
+    "placeholder": "Nom d'un bar, restaurant ou adresse...",
+    "searching": "Recherche...",
+    "terraces": "☀️ Terrasses",
+    "noEstablishment": "Aucun établissement",
+    "addresses": "📍 Adresses",
+    "noAddress": "Aucune adresse",
+    "noResults": "Aucun résultat pour « {{query}} »"
+  },
+  "mode": {
+    "sun": "Soleil",
+    "shade": "Ombre"
+  },
+  "common": {
+    "back": "Retour",
+    "myPosition": "Ma position"
+  }
+}

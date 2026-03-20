@@ -17,8 +17,24 @@ import type {
   TimelineSlot,
 } from "./api/types";
 import { useDebounce } from "./hooks/useDebounce";
-import funFacts from "./data/funFacts.json";
+import { useTranslation } from "react-i18next";
+import funFacts_fr from "./data/funFacts.json";
+import funFacts_en from "./data/funFacts_en.json";
+import funFacts_es from "./data/funFacts_es.json";
+import funFacts_de from "./data/funFacts_de.json";
+import funFacts_ja from "./data/funFacts_ja.json";
+import funFacts_zh from "./data/funFacts_zh.json";
+
+const funFactsByLang: Record<string, typeof funFacts_fr> = {
+  fr: funFacts_fr,
+  en: funFacts_en,
+  es: funFacts_es,
+  de: funFacts_de,
+  ja: funFacts_ja,
+  zh: funFacts_zh,
+};
 import UpdatePrompt from "./components/UpdatePrompt";
+import LanguageSelector from "./components/LanguageSelector";
 
 setWorkerUrl(cspWorkerUrl);
 
@@ -164,23 +180,23 @@ const themes = {
 };
 
 // ─── Status config ───
-const PLACE_TYPE_CONFIG: Record<string, { label: string }> = {
-  bar: { label: "Bar" },
-  restaurant: { label: "Restaurant" },
-  cafe: { label: "Café" },
-  bakery: { label: "Boulangerie" },
-  night_club: { label: "Club" },
-  ice_cream_shop: { label: "Glacier" },
-  meal_takeaway: { label: "À emporter" },
+const PLACE_TYPE_KEYS: Record<string, string> = {
+  bar: "placeType.bar",
+  restaurant: "placeType.restaurant",
+  cafe: "placeType.cafe",
+  bakery: "placeType.bakery",
+  night_club: "placeType.night_club",
+  ice_cream_shop: "placeType.ice_cream_shop",
+  meal_takeaway: "placeType.meal_takeaway",
 };
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-  soleil: { label: "Au soleil", color: "#92400E", icon: "sun" },        // 8.0:1 on #FEF3C7 ✅
-  mitige: { label: "Mitigé", color: "#78350F", icon: "sun" },           // 9.8:1 on #FEF3C7 ✅
-  couvert: { label: "Couvert", color: "#4B5563", icon: "shade" },       // 6.6:1 on #F3F4F6 ✅
-  ombre: { label: "À l'ombre", color: "#374151", icon: "shade" },       // 9.5:1 on #F3F4F6 ✅
-  ombre_batiment: { label: "À l'ombre", color: "#374151", icon: "shade" },
-  nuit: { label: "Nuit", color: "#334155", icon: "shade" },
+const STATUS_CONFIG: Record<string, { labelKey: string; color: string; icon: string }> = {
+  soleil: { labelKey: "status.soleil", color: "#92400E", icon: "sun" },        // 8.0:1 on #FEF3C7 ✅
+  mitige: { labelKey: "status.mitige", color: "#78350F", icon: "sun" },           // 9.8:1 on #FEF3C7 ✅
+  couvert: { labelKey: "status.couvert", color: "#4B5563", icon: "shade" },       // 6.6:1 on #F3F4F6 ✅
+  ombre: { labelKey: "status.ombre", color: "#374151", icon: "shade" },       // 9.5:1 on #F3F4F6 ✅
+  ombre_batiment: { labelKey: "status.ombre_batiment", color: "#374151", icon: "shade" },
+  nuit: { labelKey: "status.nuit", color: "#334155", icon: "shade" },
 };
 
 // ─── Icons ───
@@ -496,7 +512,7 @@ function ResultsMap({
         <div style="font-size:13px;font-family:${F}">
           <strong>${terrasse.nom_commercial || terrasse.nom}</strong><br/>
           <span style="color:#78716C">${terrasse.distance_m}m</span>
-          ${terrasse.soleil_jusqua ? `<br/><span style="color:#D97706">Soleil jusqu'à ${terrasse.soleil_jusqua}</span>` : ""}
+          ${terrasse.soleil_jusqua ? `<br/><span style="color:#D97706">☀️ ${terrasse.soleil_jusqua}</span>` : ""}
         </div>
       `);
       const marker = new maplibregl.Marker({ element: el }).setLngLat([terrasse.lon, terrasse.lat]).setPopup(popup).addTo(map);
@@ -547,17 +563,17 @@ function ResultsMap({
     }
   }, [is3D]);
 
-  const t = themes[mode];
+  const th = themes[mode];
   return (
-    <div style={{ position: "relative", width: "100%", height: "min(50vh, 500px)", borderRadius: 14, overflow: "hidden", border: `1px solid ${t.border}` }}>
+    <div style={{ position: "relative", width: "100%", height: "min(50vh, 500px)", borderRadius: 14, overflow: "hidden", border: `1px solid ${th.border}` }}>
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
       <button
         onClick={toggle3D}
         style={{
           position: "absolute", bottom: 10, left: 10, zIndex: 1,
           padding: "5px 10px", borderRadius: 6, border: "none", cursor: "pointer",
-          background: is3D ? t.accent : "rgba(255,255,255,0.92)",
-          color: is3D ? "#FFF" : t.textSoft,
+          background: is3D ? th.accent : "rgba(255,255,255,0.92)",
+          color: is3D ? "#FFF" : th.textSoft,
           fontSize: 12, fontWeight: 700, fontFamily: F,
           boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
         }}
@@ -567,7 +583,8 @@ function ResultsMap({
 }
 
 // ─── Contact Form ───
-function ContactForm({ theme: t, fontFamily: F }: { theme: typeof themes.sun; fontFamily: string }) {
+function ContactForm({ theme: th, fontFamily: F }: { theme: typeof themes.sun; fontFamily: string }) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -592,30 +609,30 @@ function ContactForm({ theme: t, fontFamily: F }: { theme: typeof themes.sun; fo
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "10px 12px", borderRadius: 10,
-    border: `1.5px solid ${t.border}`, background: t.bg,
-    fontFamily: F, fontSize: 16, color: t.text,
+    border: `1.5px solid ${th.border}`, background: th.bg,
+    fontFamily: F, fontSize: 16, color: th.text,
     outline: "none", boxSizing: "border-box",
   };
 
   if (status === "sent") return (
-    <div style={{ textAlign: "center", padding: "16px 0", color: t.accentDark, fontFamily: F }}>
-      ✅ Message envoyé, merci !
+    <div style={{ textAlign: "center", padding: "16px 0", color: th.accentDark, fontFamily: F }}>
+      {t("contact.sent")}
     </div>
   );
 
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <input required placeholder="Ton prénom" value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
-      <input required type="email" placeholder="Ton email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
-      <textarea required placeholder="Ton message..." value={message} onChange={e => setMessage(e.target.value)}
+      <input required placeholder={t("contact.namePlaceholder")} value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
+      <input required type="email" placeholder={t("contact.emailPlaceholder")} value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
+      <textarea required placeholder={t("contact.messagePlaceholder")} value={message} onChange={e => setMessage(e.target.value)}
         rows={4} style={{ ...inputStyle, resize: "vertical" }} />
-      {status === "error" && <p style={{ fontFamily: F, fontSize: 13, color: "#EF4444", margin: 0 }}>Oups, une erreur s'est produite. Réessaie !</p>}
+      {status === "error" && <p style={{ fontFamily: F, fontSize: 13, color: "#EF4444", margin: 0 }}>{t("contact.error")}</p>}
       <button type="submit" disabled={status === "sending"} style={{
         padding: "12px", borderRadius: 12, border: "none", cursor: status === "sending" ? "wait" : "pointer",
-        background: t.gradient, color: "#FFF", fontSize: 15, fontWeight: 600, fontFamily: F,
+        background: th.gradient, color: "#FFF", fontSize: 15, fontWeight: 600, fontFamily: F,
         opacity: status === "sending" ? 0.7 : 1,
       }}>
-        {status === "sending" ? "Envoi..." : "Envoyer 📨"}
+        {status === "sending" ? t("contact.sending") : t("contact.send")}
       </button>
     </form>
   );
@@ -623,6 +640,7 @@ function ContactForm({ theme: t, fontFamily: F }: { theme: typeof themes.sun; fo
 
 // ─── Main App ───
 export default function App() {
+  const { t, i18n } = useTranslation();
   const [mode, setMode] = useState<Mode>("sun");
   const [page, setPage] = useState<Page>("home");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
@@ -643,14 +661,15 @@ export default function App() {
   const [showInstall, setShowInstall] = useState(false);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
   const [showStreetView, setShowStreetView] = useState(false);
-  const [funFactIndex, setFunFactIndex] = useState(() => Math.floor(Math.random() * funFacts.length));
+  const funFacts = funFactsByLang[i18n.language] ?? funFacts_fr;
+  const [funFactIndex, setFunFactIndex] = useState(() => Math.floor(Math.random() * funFacts_fr.length));
 
   // Favorites
   const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
   useEffect(() => localStorage.setItem("fav-terrasses", JSON.stringify(favorites)), [favorites]);
   useEffect(() => setShowStreetView(false), [selectedTerrasseId]);
 
-  const t = themes[mode];
+  const th = themes[mode];
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   // ─── API queries ───
@@ -889,10 +908,10 @@ export default function App() {
         const h = Math.max(9, Math.min(19, new Date().getHours()));
         const hour = `${h.toString().padStart(2, "0")}:00`;
         setSearchCoords({ lat, lon });
-        setSearchQuery("Ma position");
+        setSearchQuery(t("common.myPosition"));
         setGeoLocating(false);
         setSearchHour(hour);
-        navigate("results", { lat, lon, q: "Ma position", hour });
+        navigate("results", { lat, lon, q: t("common.myPosition"), hour });
       },
       () => setGeoLocating(false),
       { enableHighAccuracy: true, timeout: 10000 },
@@ -905,7 +924,7 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setSearchCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        setSearchQuery("Ma position");
+        setSearchQuery(t("common.myPosition"));
         setGeoLocating(false);
       },
       () => setGeoLocating(false),
@@ -964,29 +983,32 @@ export default function App() {
   const pillStyle = (active: boolean): React.CSSProperties => ({
     padding: "8px 18px", borderRadius: 100, border: "none", fontSize: 13,
     fontWeight: active ? 600 : 400, fontFamily: F, cursor: "pointer",
-    background: active ? t.accent : t.border, color: active ? "#FFF" : t.textSoft,
+    background: active ? th.accent : th.border, color: active ? "#FFF" : th.textSoft,
     transition: "all 0.2s", whiteSpace: "nowrap",
   });
 
   const ModeToggle = () => (
-    <div style={{ display: "flex", gap: 3, background: t.border, borderRadius: 100, padding: 3 }}>
+    <div style={{ display: "flex", gap: 3, background: th.border, borderRadius: 100, padding: 3 }}>
       <button onClick={() => setMode("sun")} style={{ ...pillStyle(mode === "sun"), display: "flex", alignItems: "center", gap: 6, background: mode === "sun" ? themes.sun.gradient : "transparent" }}>
-        <SunIcon size={14} color={mode === "sun" ? "#FFF" : themes.sun.textMuted} /> Soleil
+        <SunIcon size={14} color={mode === "sun" ? "#FFF" : themes.sun.textMuted} /> {t("mode.sun")}
       </button>
       <button onClick={() => setMode("shade")} style={{ ...pillStyle(mode === "shade"), display: "flex", alignItems: "center", gap: 6, background: mode === "shade" ? themes.shade.gradient : "transparent" }}>
-        <ShadeIcon size={14} color={mode === "shade" ? "#FFF" : themes.shade.textMuted} /> Ombre
+        <ShadeIcon size={14} color={mode === "shade" ? "#FFF" : themes.shade.textMuted} /> {t("mode.shade")}
       </button>
     </div>
   );
 
   const Nav = ({ back, title }: { back?: boolean; title: string }) => (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", position: "sticky", top: 0, zIndex: 10, background: t.bg, borderBottom: `1px solid ${t.border}` }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", position: "sticky", top: 0, zIndex: 10, background: th.bg, borderBottom: `1px solid ${th.border}` }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        {back && <button onClick={goBack} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: t.accent }}><BackIcon /></button>}
+        {back && <button onClick={goBack} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: th.accent }}><BackIcon /></button>}
         <span style={{ fontSize: 22, lineHeight: 1 }}>{mode === "sun" ? "☀️" : "☁️"}</span>
-        {title && <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: t.text }}>{title}</span>}
+        {title && <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: th.text }}>{title}</span>}
       </div>
-      <ModeToggle />
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <ModeToggle />
+        <LanguageSelector />
+      </div>
     </div>
   );
 
@@ -1027,20 +1049,20 @@ export default function App() {
   const BottomNav = () => (
     <div style={{
       position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
-      background: t.bgCard, borderTop: `1px solid ${t.border}`,
-      boxShadow: `0 -2px 12px ${t.shadow}`,
+      background: th.bgCard, borderTop: `1px solid ${th.border}`,
+      boxShadow: `0 -2px 12px ${th.shadow}`,
       display: "flex", justifyContent: "center",
     }}>
       <div style={{ display: "flex", maxWidth: 860, width: "100%" }}>
         {([
-          { key: "home" as Page, label: "Accueil" },
-          { key: "search" as Page, label: "Chercher" },
-          { key: "favorites" as Page, label: "Favoris" },
-          { key: "contact" as Page, label: "Contact" },
-          { key: "about" as Page, label: "Infos" },
+          { key: "home" as Page, label: t("nav.home") },
+          { key: "search" as Page, label: t("nav.search") },
+          { key: "favorites" as Page, label: t("nav.favorites") },
+          { key: "contact" as Page, label: t("nav.contact") },
+          { key: "about" as Page, label: t("nav.about") },
         ]).map(({ key, label }) => {
           const active = page === key;
-          const color = active ? t.accent : t.textMuted;
+          const color = active ? th.accent : th.textMuted;
           return (
             <button
               key={key}
@@ -1069,7 +1091,7 @@ export default function App() {
         fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100, fontFamily: F,
         color: cfg.color, background: cfg.icon === "sun" ? "#FEF3C7" : "#F3F4F6",
       }}>
-        {cfg.label}
+        {t(cfg.labelKey)}
       </span>
     );
   };
@@ -1078,42 +1100,42 @@ export default function App() {
     const modeMatch = mode === "sun" ? isSunnyStatus(terrasse.status) : !isSunnyStatus(terrasse.status);
     return (
       <div onClick={() => openDetail(terrasse)} style={{
-        background: t.bgCard, borderRadius: 16, padding: 18, cursor: "pointer",
-        border: `1px solid ${modeMatch ? t.accent + "40" : t.border}`,
-        boxShadow: `0 2px 12px ${t.shadow}`,
+        background: th.bgCard, borderRadius: 16, padding: 18, cursor: "pointer",
+        border: `1px solid ${modeMatch ? th.accent + "40" : th.border}`,
+        boxShadow: `0 2px 12px ${th.shadow}`,
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <span style={{ fontFamily: F, fontWeight: 600, fontSize: 17, color: t.text }}>{terrasse.nom_commercial || terrasse.nom}</span>
+              <span style={{ fontFamily: F, fontWeight: 600, fontSize: 17, color: th.text }}>{terrasse.nom_commercial || terrasse.nom}</span>
               <StatusBadge status={terrasse.status} />
             </div>
-            {terrasse.adresse && <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>}
+            {terrasse.adresse && <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>}
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
-              {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
-                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: t.textSoft, fontFamily: F }}>
-                  <PlaceTypeIcon type={terrasse.place_type} size={12} color={t.textSoft} />
-                  {PLACE_TYPE_CONFIG[terrasse.place_type].label}
+              {terrasse.place_type && PLACE_TYPE_KEYS[terrasse.place_type] && (
+                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: th.textSoft, fontFamily: F }}>
+                  <PlaceTypeIcon type={terrasse.place_type} size={12} color={th.textSoft} />
+                  {t(PLACE_TYPE_KEYS[terrasse.place_type])}
                 </span>
               )}
               {terrasse.price_level != null && terrasse.price_level > 0 && (
-                <span style={{ fontSize: 11, color: t.textSoft, fontFamily: F }}>{"€".repeat(terrasse.price_level)}</span>
+                <span style={{ fontSize: 11, color: th.textSoft, fontFamily: F }}>{"€".repeat(terrasse.price_level)}</span>
               )}
               {terrasse.rating != null && (
-                <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 11, color: t.textSoft, fontFamily: F }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 11, color: th.textSoft, fontFamily: F }}>
                   <StarIcon size={11} />
                   {terrasse.rating.toFixed(1)}{terrasse.user_rating_count ? ` (${terrasse.user_rating_count})` : ""}
                 </span>
               )}
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12, fontFamily: F, color: t.textSoft }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12, fontFamily: F, color: th.textSoft }}>
               <span>{terrasse.distance_m}m</span>
-              {terrasse.soleil_jusqua && <span style={{ color: themes.sun.accentDark }}>Soleil jusqu'à {terrasse.soleil_jusqua}</span>}
-              {!terrasse.has_profile && <span style={{ color: t.textMuted, fontStyle: "italic" }}>Estimé</span>}
+              {terrasse.soleil_jusqua && <span style={{ color: themes.sun.accentDark }}>{t("detail.sunUntil", { time: terrasse.soleil_jusqua })}</span>}
+              {!terrasse.has_profile && <span style={{ color: th.textMuted, fontStyle: "italic" }}>{t("detail.estimated")}</span>}
             </div>
           </div>
           <button onClick={(e) => { e.stopPropagation(); toggleFav({ id: terrasse.id, nom: terrasse.nom, adresse: terrasse.adresse }); }}
-            style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: isFav(terrasse.id) ? "#EF4444" : t.textMuted }}>
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: isFav(terrasse.id) ? "#EF4444" : th.textMuted }}>
             <HeartIcon filled={isFav(terrasse.id)} size={18} />
           </button>
         </div>
@@ -1121,7 +1143,7 @@ export default function App() {
     );
   };
 
-  const wrap: React.CSSProperties = { minHeight: "100vh", background: t.bg, fontFamily: F, maxWidth: 860, margin: "0 auto", paddingBottom: 70 };
+  const wrap: React.CSSProperties = { minHeight: "100vh", background: th.bg, fontFamily: F, maxWidth: 860, margin: "0 auto", paddingBottom: 70 };
 
   // ─── HOME ───
   if (page === "home") {
@@ -1131,57 +1153,60 @@ export default function App() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               {mode === "sun"
-                ? <SunIcon size={32} color={t.accent} />
-                : <ShadeIcon size={32} color={t.accent} />}
+                ? <SunIcon size={32} color={th.accent} />
+                : <ShadeIcon size={32} color={th.accent} />}
               <div>
-                <div style={{ fontSize: 22, fontWeight: 300, color: t.text, letterSpacing: -0.5, lineHeight: 1.1 }}>Terrasse</div>
-                <div style={{ fontSize: 22, fontWeight: 700, color: t.accent, letterSpacing: -0.5 }}>
-                  {mode === "sun" ? "au soleil" : "à l'ombre"}
+                <div style={{ fontSize: 22, fontWeight: 300, color: th.text, letterSpacing: -0.5, lineHeight: 1.1 }}>{t("home.terrasse")}</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: th.accent, letterSpacing: -0.5 }}>
+                  {mode === "sun" ? t("home.auSoleil") : t("home.aLombre")}
                 </div>
               </div>
             </div>
-            <ModeToggle />
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <ModeToggle />
+              <LanguageSelector />
+            </div>
           </div>
 
-          <p style={{ fontSize: 16, color: t.textSoft, fontWeight: 300, fontStyle: "italic", lineHeight: 1.5, marginBottom: 20, maxWidth: 300 }}>
-            {mode === "sun" ? "Trouve la terrasse parfaite pour profiter du soleil parisien" : "Trouve un coin d'ombre frais pour souffler un peu"}
+          <p style={{ fontSize: 16, color: th.textSoft, fontWeight: 300, fontStyle: "italic", lineHeight: 1.5, marginBottom: 20, maxWidth: 300 }}>
+            {mode === "sun" ? t("home.subtitleSun") : t("home.subtitleShade")}
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
             <button onClick={handleGeoAndSearch} disabled={geoLocating} style={{
               display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
               padding: "16px 24px", borderRadius: 14, border: "none",
-              cursor: geoLocating ? "wait" : "pointer", background: t.gradient,
+              cursor: geoLocating ? "wait" : "pointer", background: th.gradient,
               color: "#FFF", fontSize: 16, fontWeight: 600, fontFamily: F,
-              boxShadow: `0 4px 20px ${t.shadow}`, opacity: geoLocating ? 0.7 : 1,
+              boxShadow: `0 4px 20px ${th.shadow}`, opacity: geoLocating ? 0.7 : 1,
             }}>
               {geoLocating
                 ? <div style={{ width: 18, height: 18, border: "2px solid #FFF", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
                 : <MapPinIcon size={18} color="#FFF" />}
-              {geoLocating ? "Localisation..." : "Autour de moi"}
+              {geoLocating ? t("home.locating") : t("home.aroundMe")}
             </button>
             <button onClick={() => navigate("search")} style={{
               display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-              padding: "16px 24px", borderRadius: 14, border: `2px solid ${t.accent}`,
-              cursor: "pointer", background: "transparent", color: t.accent,
+              padding: "16px 24px", borderRadius: 14, border: `2px solid ${th.accent}`,
+              cursor: "pointer", background: "transparent", color: th.accent,
               fontSize: 16, fontWeight: 600, fontFamily: F,
             }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" />
               </svg>
-              Choisir un lieu
+              {t("home.choosePlace")}
             </button>
           </div>
 
           {/* KPI */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, marginBottom: 10 }}>
             <button onClick={() => setKpiStationIndex((i) => (i - 1 + KPI_STATIONS.length) % KPI_STATIONS.length)}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: t.textMuted, padding: "2px 4px", lineHeight: 1 }}>‹</button>
-            <span style={{ fontFamily: F, fontSize: 13, color: t.textSoft, fontWeight: 500 }}>
-              À {kpi.station} · {kpi.hour}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: th.textMuted, padding: "2px 4px", lineHeight: 1 }}>‹</button>
+            <span style={{ fontFamily: F, fontSize: 13, color: th.textSoft, fontWeight: 500 }}>
+              {t("home.at")} {kpi.station} · {kpi.hour}
             </span>
             <button onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: t.textMuted, padding: "2px 4px", lineHeight: 1 }}>›</button>
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: th.textMuted, padding: "2px 4px", lineHeight: 1 }}>›</button>
           </div>
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
             <img src="/logo.png" alt="" aria-hidden="true" style={{
@@ -1202,16 +1227,16 @@ export default function App() {
                   <SunIcon size={18} color="#D97706" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#92400E", fontFamily: F }}>{kpi.sunCount}</span>
                 </div>
-                <div style={{ fontSize: 12, color: "#92400E", fontFamily: F }}>terrasse{kpi.sunCount !== "..." && Number(kpi.sunCount) > 1 ? "s" : ""}</div>
-                <div style={{ fontSize: 12, color: "#92400E", fontWeight: 600, fontFamily: F }}>au soleil</div>
+                <div style={{ fontSize: 12, color: "#92400E", fontFamily: F }}>{kpi.sunCount !== "..." && Number(kpi.sunCount) > 1 ? t("home.terrasse_other") : t("home.terrasse_one")}</div>
+                <div style={{ fontSize: 12, color: "#92400E", fontWeight: 600, fontFamily: F }}>{t("home.terrasseSun")}</div>
               </div>
               <div style={{ flex: 1, padding: "20px 16px 20px 32px", textAlign: "right", background: "rgba(243, 244, 246, 0.65)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6, marginBottom: 4 }}>
                   <ShadeIcon size={18} color="#6B7280" />
                   <span style={{ fontSize: 28, fontWeight: 700, color: "#374151", fontFamily: F }}>{kpi.shadeCount}</span>
                 </div>
-                <div style={{ fontSize: 12, color: "#6B7280", fontFamily: F }}>terrasse{kpi.shadeCount !== "..." && Number(kpi.shadeCount) > 1 ? "s" : ""}</div>
-                <div style={{ fontSize: 12, color: "#374151", fontWeight: 600, fontFamily: F }}>à l'ombre</div>
+                <div style={{ fontSize: 12, color: "#6B7280", fontFamily: F }}>{kpi.shadeCount !== "..." && Number(kpi.shadeCount) > 1 ? t("home.terrasse_other") : t("home.terrasse_one")}</div>
+                <div style={{ fontSize: 12, color: "#374151", fontWeight: 600, fontFamily: F }}>{t("home.terrasseShade")}</div>
               </div>
             </div>
           </div>
@@ -1219,15 +1244,15 @@ export default function App() {
           {favorites.length > 0 && (
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: t.text, letterSpacing: 0.5, textTransform: "uppercase" }}>Mes favoris</span>
-                <button onClick={() => navigate("favorites")} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.accent, fontWeight: 500 }}>Voir tout →</button>
+                <span style={{ fontSize: 13, fontWeight: 600, color: th.text, letterSpacing: 0.5, textTransform: "uppercase" }}>{t("home.myFavorites")}</span>
+                <button onClick={() => navigate("favorites")} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, color: th.accent, fontWeight: 500 }}>{t("home.viewAll")}</button>
               </div>
               <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8 }}>
                 {favorites.slice(0, 3).map((fav) => (
                   <div key={fav.id} onClick={() => navigate("detail", { terrasseId: fav.id })}
-                    style={{ minWidth: 155, background: t.bgCard, borderRadius: 12, padding: 14, border: `1px solid ${t.border}`, cursor: "pointer", boxShadow: `0 2px 8px ${t.shadow}` }}>
-                    <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: t.text, marginBottom: 4 }}>{fav.nom}</div>
-                    <div style={{ fontFamily: F, fontSize: 12, color: t.textMuted }}>{fav.adresse || ""}</div>
+                    style={{ minWidth: 155, background: th.bgCard, borderRadius: 12, padding: 14, border: `1px solid ${th.border}`, cursor: "pointer", boxShadow: `0 2px 8px ${th.shadow}` }}>
+                    <div style={{ fontFamily: F, fontWeight: 600, fontSize: 14, color: th.text, marginBottom: 4 }}>{fav.nom}</div>
+                    <div style={{ fontFamily: F, fontSize: 12, color: th.textMuted }}>{fav.adresse || ""}</div>
                   </div>
                 ))}
               </div>
@@ -1235,34 +1260,34 @@ export default function App() {
           )}
 
           <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 40 }}>
-            <button onClick={() => handleShare("Au Soleil", "Terrasses ensoleillées à Paris")} style={{
+            <button onClick={() => handleShare("Au Soleil", t("app.tagline"))} style={{
               display: "flex", alignItems: "center", gap: 6, background: "none", border: "none",
-              cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textMuted, padding: 0,
+              cursor: "pointer", fontFamily: F, fontSize: 13, color: th.textMuted, padding: 0,
             }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
                 <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
               </svg>
-              {shared ? "Lien copié !" : "Partager"}
+              {shared ? t("home.linkCopied") : t("home.share")}
             </button>
             <button onClick={() => setShowInstall(true)} style={{
               display: "flex", alignItems: "center", gap: 6, background: "none", border: "none",
-              cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textMuted, padding: 0,
+              cursor: "pointer", fontFamily: F, fontSize: 13, color: th.textMuted, padding: 0,
             }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
               </svg>
-              Installer l'app
+              {t("home.installApp")}
             </button>
           </div>
 
           <div
             onClick={() => setFunFactIndex((i) => (i + 1) % funFacts.length)}
-            style={{ marginTop: 16, padding: "14px 18px", background: t.bgCard, borderRadius: 14, border: `1px solid ${t.border}`, cursor: "pointer", textAlign: "center" }}
+            style={{ marginTop: 16, padding: "14px 18px", background: th.bgCard, borderRadius: 14, border: `1px solid ${th.border}`, cursor: "pointer", textAlign: "center" }}
           >
-            <div style={{ fontSize: 11, fontWeight: 600, color: t.accent, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>Le saviez-vous ?</div>
-            <div style={{ fontSize: 13, color: t.textSoft, lineHeight: 1.5, fontFamily: F }}>{funFacts[funFactIndex].fact}</div>
-            <div style={{ fontSize: 11, color: t.textMuted, marginTop: 8 }}>Tap pour une autre anecdote</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: th.accent, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("home.didYouKnow")}</div>
+            <div style={{ fontSize: 13, color: th.textSoft, lineHeight: 1.5, fontFamily: F }}>{funFacts[funFactIndex].fact}</div>
+            <div style={{ fontSize: 11, color: th.textMuted, marginTop: 8 }}>{t("home.tapForAnother")}</div>
           </div>
         </div>
 
@@ -1279,14 +1304,14 @@ export default function App() {
               boxShadow: "0 -4px 30px rgba(0,0,0,0.15)",
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                <span style={{ fontSize: 18, fontWeight: 700, fontFamily: F, color: "#1C1917" }}>Installer Au Soleil</span>
+                <span style={{ fontSize: 18, fontWeight: 700, fontFamily: F, color: "#1C1917" }}>{t("home.installTitle")}</span>
                 <button onClick={() => setShowInstall(false)} style={{
                   background: "#F5F5F4", border: "none", borderRadius: "50%", width: 32, height: 32,
                   cursor: "pointer", fontSize: 18, color: "#78716C", display: "flex", alignItems: "center", justifyContent: "center",
                 }}>×</button>
               </div>
               <p style={{ fontSize: 14, color: "#57534E", lineHeight: 1.5, fontFamily: F, margin: "0 0 20px" }}>
-                Ajoute Au Soleil sur ton écran d'accueil pour y accéder en un tap, comme une app native !
+                {t("home.installDescription")}
               </p>
 
               <div style={{ marginBottom: 20 }}>
@@ -1295,11 +1320,11 @@ export default function App() {
                   iPhone / iPad
                 </div>
                 <ol style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "#57534E", fontFamily: F, lineHeight: 1.8 }}>
-                  <li>Ouvrir <strong>ausoleil.app</strong> dans <strong>Safari</strong></li>
-                  <li>Appuyer sur le bouton <strong>Partager</strong> <span style={{ display: "inline-flex", alignItems: "center", verticalAlign: "middle", background: "#F5F5F4", borderRadius: 4, padding: "1px 4px" }}>
+                  <li>{t("home.iosSteps1")}</li>
+                  <li>{t("home.iosSteps2")} <span style={{ display: "inline-flex", alignItems: "center", verticalAlign: "middle", background: "#F5F5F4", borderRadius: 4, padding: "1px 4px" }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#57534E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                   </span></li>
-                  <li>Choisir <strong>« Sur l'écran d'accueil »</strong></li>
+                  <li>{t("home.iosSteps3")}</li>
                 </ol>
               </div>
 
@@ -1309,9 +1334,9 @@ export default function App() {
                   Android
                 </div>
                 <ol style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "#57534E", fontFamily: F, lineHeight: 1.8 }}>
-                  <li>Ouvrir <strong>ausoleil.app</strong> dans <strong>Chrome</strong></li>
-                  <li>Appuyer sur le menu <strong>⋮</strong> (en haut à droite)</li>
-                  <li>Choisir <strong>« Installer l'application »</strong> ou <strong>« Ajouter à l'écran d'accueil »</strong></li>
+                  <li>{t("home.androidSteps1")}</li>
+                  <li>{t("home.androidSteps2")}</li>
+                  <li>{t("home.androidSteps3")}</li>
                 </ol>
               </div>
             </div>
@@ -1332,20 +1357,20 @@ export default function App() {
     const canSearch = !!(selectedTerrasseId || searchCoords);
 
     const searchTypeTabs: { key: SearchType; label: string; emoji: string }[] = [
-      { key: "address", label: "Adresse", emoji: "📍" },
-      { key: "terrasse", label: "Terrasse", emoji: "🍺" },
-      { key: "metro", label: "Métro", emoji: "🚇" },
+      { key: "address", label: t("search.address"), emoji: "📍" },
+      { key: "terrasse", label: t("search.terrasse"), emoji: "🍺" },
+      { key: "metro", label: t("search.metro"), emoji: "🚇" },
     ];
 
     const placeholders: Record<SearchType, string> = {
-      address: "Rue, boulevard, place...",
-      terrasse: "Nom d'un bar, restaurant...",
-      metro: "Station de métro...",
+      address: t("search.placeholderAddress"),
+      terrasse: t("search.placeholderTerrasse"),
+      metro: t("search.placeholderMetro"),
     };
 
     return (
       <div style={wrap}>
-        <Nav back title="Recherche" />
+        <Nav back title={t("search.title")} />
         <div style={{ padding: "20px 24px" }}>
 
           {/* Search type tabs */}
@@ -1356,10 +1381,10 @@ export default function App() {
                 <button key={key} onClick={() => { setSearchType(key); setSearchQuery(""); setDropdownOpen(false); setSelectedTerrasseId(null); setSearchCoords(null); }}
                   style={{
                     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
-                    padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${active ? t.accent : t.border}`,
-                    background: active ? t.accentLight : t.bgCard, cursor: "pointer",
+                    padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${active ? th.accent : th.border}`,
+                    background: active ? th.accentLight : th.bgCard, cursor: "pointer",
                     fontFamily: F, fontSize: 13, fontWeight: active ? 600 : 400,
-                    color: active ? t.accentDark : t.textSoft, transition: "all 0.2s",
+                    color: active ? th.accentDark : th.textSoft, transition: "all 0.2s",
                   }}>
                   <span>{emoji}</span>
                   {label}
@@ -1370,8 +1395,8 @@ export default function App() {
 
           {/* Location input */}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
-              {searchType === "terrasse" ? "Établissement" : searchType === "metro" ? "Station" : "Adresse"}
+            <label style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
+              {searchType === "terrasse" ? t("search.establishment") : searchType === "metro" ? t("search.station") : t("search.address")}
             </label>
             <div style={{ display: "flex", gap: 8 }}>
               <div style={{ flex: 1, position: "relative" }}>
@@ -1391,27 +1416,27 @@ export default function App() {
                   placeholder={placeholders[searchType]}
                   style={{
                     width: "100%", padding: "14px 16px", borderRadius: 12,
-                    border: `1.5px solid ${t.border}`, fontFamily: F, fontSize: 16,
-                    color: t.text, background: t.bgCard, outline: "none", boxSizing: "border-box",
+                    border: `1.5px solid ${th.border}`, fontFamily: F, fontSize: 16,
+                    color: th.text, background: th.bgCard, outline: "none", boxSizing: "border-box",
                   }}
                 />
                 {dropdownOpen && hasDropdownResults && (
                   <div style={{
                     position: "absolute", top: "100%", left: 0, right: 0, zIndex: 20,
-                    background: t.bgCard, borderRadius: 12, marginTop: 4,
-                    border: `1px solid ${t.border}`, boxShadow: `0 8px 24px ${t.shadow}`,
+                    background: th.bgCard, borderRadius: 12, marginTop: 4,
+                    border: `1px solid ${th.border}`, boxShadow: `0 8px 24px ${th.shadow}`,
                     maxHeight: 300, overflowY: "auto",
                   }}>
                     {/* Terrasse results */}
                     {searchType === "terrasse" && terrasseResults && terrasseResults.length > 0 && (
                       terrasseResults.slice(0, 8).map((tr) => (
                         <div key={tr.id} onClick={() => selectTerrasse(tr)}
-                          style={{ display: "flex", flexDirection: "column", padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${t.border}` }}>
+                          style={{ display: "flex", flexDirection: "column", padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${th.border}` }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <PlaceTypeIcon type={tr.place_type || ""} size={14} color={t.textMuted} />
-                            <span style={{ fontSize: 14, fontWeight: 500, color: t.text, fontFamily: F }}>{tr.nom_commercial || tr.nom}</span>
+                            <PlaceTypeIcon type={tr.place_type || ""} size={14} color={th.textMuted} />
+                            <span style={{ fontSize: 14, fontWeight: 500, color: th.text, fontFamily: F }}>{tr.nom_commercial || tr.nom}</span>
                           </div>
-                          <span style={{ fontSize: 12, color: t.textMuted, fontFamily: F, marginLeft: 22 }}>{tr.adresse}</span>
+                          <span style={{ fontSize: 12, color: th.textMuted, fontFamily: F, marginLeft: 22 }}>{tr.adresse}</span>
                         </div>
                       ))
                     )}
@@ -1420,9 +1445,9 @@ export default function App() {
                     {searchType === "address" && addressResults && addressResults.length > 0 && (
                       addressResults.slice(0, 8).map((a, i) => (
                         <div key={i} onClick={() => selectAddress(a)}
-                          style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${t.border}` }}>
+                          style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${th.border}` }}>
                           <MapPinIcon size={14} />
-                          <span style={{ fontSize: 14, color: t.text, fontFamily: F }}>{a.label}</span>
+                          <span style={{ fontSize: 14, color: th.text, fontFamily: F }}>{a.label}</span>
                         </div>
                       ))
                     )}
@@ -1430,21 +1455,21 @@ export default function App() {
                     {/* Metro results */}
                     {searchType === "metro" && filteredMetro.map((station) => (
                       <div key={station} onClick={() => selectMetro(station)}
-                        style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${t.border}` }}>
-                        <span style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: t.textSoft, background: t.border, borderRadius: 4, padding: "1px 5px", lineHeight: "18px" }}>M</span>
-                        <span style={{ fontSize: 14, color: t.text, fontFamily: F }}>{station}</span>
+                        style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${th.border}` }}>
+                        <span style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: th.textSoft, background: th.border, borderRadius: 4, padding: "1px 5px", lineHeight: "18px" }}>M</span>
+                        <span style={{ fontSize: 14, color: th.text, fontFamily: F }}>{station}</span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
               <button onClick={handleGeo} style={{
-                width: 48, height: 48, borderRadius: 12, border: `1.5px solid ${t.border}`,
-                background: t.bgCard, cursor: "pointer", display: "flex", alignItems: "center",
-                justifyContent: "center", color: geoLocating ? t.accent : t.textSoft, flexShrink: 0,
+                width: 48, height: 48, borderRadius: 12, border: `1.5px solid ${th.border}`,
+                background: th.bgCard, cursor: "pointer", display: "flex", alignItems: "center",
+                justifyContent: "center", color: geoLocating ? th.accent : th.textSoft, flexShrink: 0,
               }}>
                 {geoLocating
-                  ? <div style={{ width: 18, height: 18, border: `2px solid ${t.accent}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                  ? <div style={{ width: 18, height: 18, border: `2px solid ${th.accent}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
                   : <CrosshairIcon size={20} />}
               </button>
             </div>
@@ -1452,7 +1477,7 @@ export default function App() {
 
           {/* Date */}
           <div style={{ marginTop: 24 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
               Date
             </label>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
@@ -1463,9 +1488,9 @@ export default function App() {
                 const d2 = new Date(); d2.setDate(d2.getDate() + 2);
                 const afterTomorrow = d2.toISOString().split("T")[0];
                 const dateOptions = [
-                  { value: today, label: "Aujourd'hui" },
-                  { value: tomorrow, label: "Demain" },
-                  { value: afterTomorrow, label: "Après-demain" },
+                  { value: today, label: t("search.today") },
+                  { value: tomorrow, label: t("search.tomorrow") },
+                  { value: afterTomorrow, label: t("search.dayAfter") },
                 ];
                 return (
                   <>
@@ -1478,8 +1503,8 @@ export default function App() {
                       min={today}
                       onChange={(e) => setSearchDate(e.target.value)}
                       style={{
-                        padding: "7px 12px", borderRadius: 100, border: `1.5px solid ${t.border}`,
-                        fontFamily: F, fontSize: 13, color: t.text, background: t.bgCard,
+                        padding: "7px 12px", borderRadius: 100, border: `1.5px solid ${th.border}`,
+                        fontFamily: F, fontSize: 13, color: th.text, background: th.bgCard,
                         cursor: "pointer", outline: "none",
                       }}
                     />
@@ -1491,8 +1516,8 @@ export default function App() {
 
           {/* Hour */}
           <div style={{ marginTop: 24 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
-              Heure
+            <label style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8, display: "block" }}>
+              {t("search.hour")}
             </label>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               {HOURS.map((h) => {
@@ -1507,13 +1532,13 @@ export default function App() {
           {/* Search button */}
           <button onClick={handleSearch} disabled={!canSearch} style={{
             width: "100%", marginTop: 36, padding: "16px", borderRadius: 14, border: "none",
-            background: canSearch ? t.gradient : t.border, color: canSearch ? "#FFF" : t.textMuted,
+            background: canSearch ? th.gradient : th.border, color: canSearch ? "#FFF" : th.textMuted,
             fontSize: 16, fontWeight: 600, fontFamily: F, cursor: canSearch ? "pointer" : "default",
-            boxShadow: canSearch ? `0 4px 20px ${t.shadow}` : "none",
+            boxShadow: canSearch ? `0 4px 20px ${th.shadow}` : "none",
           }}>
             {selectedTerrasseId
-              ? "Voir la timeline"
-              : mode === "sun" ? "☀️  Trouver du soleil" : "🌤️  Trouver de l'ombre"}
+              ? t("search.viewTimeline")
+              : mode === "sun" ? t("search.findSun") : t("search.findShade")}
           </button>
         </div>
         {playEasterEgg && <audio src="/ausoleil.mp3" autoPlay onEnded={() => setPlayEasterEgg(false)} style={{ display: "none" }} />}
@@ -1526,24 +1551,24 @@ export default function App() {
   if (page === "results") {
     return (
       <div style={wrap}>
-        <Nav back title={mode === "sun" ? "Terrasses au soleil" : "Terrasses à l'ombre"} />
+        <Nav back title={mode === "sun" ? t("results.sunTerraces") : t("results.shadeTerraces")} />
         <div style={{ padding: "12px 24px 24px" }}>
           {/* Erreur API */}
           {nearbyError && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: "#FEF2F2", borderRadius: 10, marginBottom: 12, border: "1px solid #FECACA" }}>
               <span>⚠️</span>
-              <span style={{ fontFamily: F, fontSize: 13, color: "#DC2626" }}>Service temporairement indisponible — réessaie dans quelques instants.</span>
+              <span style={{ fontFamily: F, fontSize: 13, color: "#DC2626" }}>{t("results.serviceUnavailable")}</span>
             </div>
           )}
 
           {/* Date picker */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
             <button onClick={() => { const d = new Date(searchDate + "T12:00:00"); d.setDate(d.getDate() - 1); setSearchDate(d.toISOString().split("T")[0]); }}
-              style={{ background: "none", border: `1.5px solid ${t.border}`, borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textSoft }}>
+              style={{ background: "none", border: `1.5px solid ${th.border}`, borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontFamily: F, fontSize: 13, color: th.textSoft }}>
               ←
             </button>
-            <span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: t.text, textTransform: "capitalize" }}>
-              {searchDate === todayISO() ? "Aujourd'hui" : searchDate === (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split("T")[0]; })() ? "Demain" : new Date(searchDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+            <span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: th.text, textTransform: "capitalize" }}>
+              {searchDate === todayISO() ? t("search.today") : searchDate === (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split("T")[0]; })() ? t("search.tomorrow") : new Date(searchDate + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}
               {nearbyData && ` · ${nearbyData.meteo.status === "degage" ? "☀️" : nearbyData.meteo.status === "mitige" ? "🌤️" : "☁️"}`}
               {nearbyData && nearbyData.meteo.uv_index > 0 && (() => {
                 const uv = nearbyData.meteo.uv_index;
@@ -1561,7 +1586,7 @@ export default function App() {
               })()}
             </span>
             <button onClick={() => { const d = new Date(searchDate + "T12:00:00"); d.setDate(d.getDate() + 1); setSearchDate(d.toISOString().split("T")[0]); }}
-              style={{ background: "none", border: `1.5px solid ${t.border}`, borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontFamily: F, fontSize: 13, color: t.textSoft }}>
+              style={{ background: "none", border: `1.5px solid ${th.border}`, borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontFamily: F, fontSize: 13, color: th.textSoft }}>
               →
             </button>
           </div>
@@ -1575,9 +1600,9 @@ export default function App() {
                   <button key={h} onClick={() => setSearchHour(h)} style={{
                     flexShrink: 0, padding: "6px 13px", borderRadius: 20, cursor: "pointer", fontFamily: F,
                     fontSize: 13, fontWeight: active ? 600 : 400,
-                    border: `1.5px solid ${active ? t.accent : t.border}`,
-                    background: active ? t.accent : t.bgCard,
-                    color: active ? "#FFF" : t.textSoft,
+                    border: `1.5px solid ${active ? th.accent : th.border}`,
+                    background: active ? th.accent : th.bgCard,
+                    color: active ? "#FFF" : th.textSoft,
                   }}>{h}</button>
                 );
               })}
@@ -1591,28 +1616,28 @@ export default function App() {
                     <button key={r} onClick={() => setSearchRadius(r)} style={{
                       padding: "6px 14px", borderRadius: 20, cursor: "pointer", fontFamily: F,
                       fontSize: 13, fontWeight: active ? 600 : 400,
-                      border: `1.5px solid ${active ? t.accent : t.border}`,
-                      background: active ? t.accent : t.bgCard,
-                      color: active ? "#FFF" : t.textSoft,
+                      border: `1.5px solid ${active ? th.accent : th.border}`,
+                      background: active ? th.accent : th.bgCard,
+                      color: active ? "#FFF" : th.textSoft,
                     }}>{r} m</button>
                   );
                 })}
               </div>
-              <div style={{ display: "flex", gap: 2, background: t.border, borderRadius: 10, padding: 3 }}>
+              <div style={{ display: "flex", gap: 2, background: th.border, borderRadius: 10, padding: 3 }}>
                 <button onClick={() => setViewMode("list")} style={{
                   display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
                   border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "list" ? 600 : 400,
-                  background: viewMode === "list" ? t.bgCard : "transparent",
-                  color: viewMode === "list" ? t.accent : t.textMuted,
-                  boxShadow: viewMode === "list" ? `0 1px 3px ${t.shadow}` : "none",
-                }}><ListIcon size={14} /> Liste</button>
+                  background: viewMode === "list" ? th.bgCard : "transparent",
+                  color: viewMode === "list" ? th.accent : th.textMuted,
+                  boxShadow: viewMode === "list" ? `0 1px 3px ${th.shadow}` : "none",
+                }}><ListIcon size={14} /> {t("results.list")}</button>
                 <button onClick={() => setViewMode("map")} style={{
                   display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 7,
                   border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, fontWeight: viewMode === "map" ? 600 : 400,
-                  background: viewMode === "map" ? t.bgCard : "transparent",
-                  color: viewMode === "map" ? t.accent : t.textMuted,
-                  boxShadow: viewMode === "map" ? `0 1px 3px ${t.shadow}` : "none",
-                }}><MapPinIcon size={14} /> Carte</button>
+                  background: viewMode === "map" ? th.bgCard : "transparent",
+                  color: viewMode === "map" ? th.accent : th.textMuted,
+                  boxShadow: viewMode === "map" ? `0 1px 3px ${th.shadow}` : "none",
+                }}><MapPinIcon size={14} /> {t("results.map")}</button>
               </div>
             </div>
           </div>
@@ -1620,17 +1645,17 @@ export default function App() {
           {nearbyLoading ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {[1, 2, 3].map((i) => (
-                <div key={i} style={{ height: 80, background: t.border, borderRadius: 16, animation: "pulse 1.5s ease-in-out infinite" }} />
+                <div key={i} style={{ height: 80, background: th.border, borderRadius: 16, animation: "pulse 1.5s ease-in-out infinite" }} />
               ))}
               <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }`}</style>
             </div>
           ) : results.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>{mode === "sun" ? "🌧️" : "☀️"}</div>
-              <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>Aucune terrasse {mode === "sun" ? "ensoleillée" : "ombragée"} trouvée</div>
-              <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>Essaye un autre créneau ou un autre lieu.</div>
-              <button onClick={() => navigate("search")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: t.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
-                Modifier la recherche
+              <div style={{ fontSize: 16, color: th.textSoft, fontWeight: 500 }}>{mode === "sun" ? t("results.noSunTerraces") : t("results.noShadeTerraces")}</div>
+              <div style={{ fontSize: 14, color: th.textMuted, marginTop: 8 }}>{t("results.tryAnother")}</div>
+              <button onClick={() => navigate("search")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: th.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
+                {t("results.editSearch")}
               </button>
             </div>
           ) : (
@@ -1641,23 +1666,24 @@ export default function App() {
                   <button onClick={() => setTypeFilter(null)} style={{
                     padding: "6px 12px", borderRadius: 20, cursor: "pointer", fontFamily: F,
                     fontSize: 13, fontWeight: typeFilter === null ? 600 : 400, whiteSpace: "nowrap",
-                    border: `1.5px solid ${typeFilter === null ? t.accent : t.border}`,
-                    background: typeFilter === null ? t.accentLight : "transparent",
-                    color: typeFilter === null ? t.accentDark : t.textMuted,
-                  }}>Tous ({results.length})</button>
+                    border: `1.5px solid ${typeFilter === null ? th.accent : th.border}`,
+                    background: typeFilter === null ? th.accentLight : "transparent",
+                    color: typeFilter === null ? th.accentDark : th.textMuted,
+                  }}>{t("results.all")} ({results.length})</button>
                   {availableTypes.map(({ type, count }) => {
-                    const cfg = PLACE_TYPE_CONFIG[type] || { label: type.replace(/_/g, " ") };
+                    const cfgKey = PLACE_TYPE_KEYS[type];
+                    const cfg = { label: cfgKey ? t(cfgKey) : type.replace(/_/g, " ") };
                     const active = typeFilter === type;
                     return (
                       <button key={type} onClick={() => setTypeFilter(active ? null : type)} style={{
                         display: "flex", alignItems: "center", gap: 4,
                         padding: "6px 12px", borderRadius: 20, cursor: "pointer", fontFamily: F,
                         fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: "nowrap",
-                        border: `1.5px solid ${active ? t.accent : t.border}`,
-                        background: active ? t.accentLight : "transparent",
-                        color: active ? t.accentDark : t.textMuted,
+                        border: `1.5px solid ${active ? th.accent : th.border}`,
+                        background: active ? th.accentLight : "transparent",
+                        color: active ? th.accentDark : th.textMuted,
                       }}>
-                        <PlaceTypeIcon type={type} size={13} color={active ? t.accentDark : t.textMuted} />
+                        <PlaceTypeIcon type={type} size={13} color={active ? th.accentDark : th.textMuted} />
                         {cfg.label} ({count})
                       </button>
                     );
@@ -1687,8 +1713,8 @@ export default function App() {
         <div style={wrap}>
           <Nav back title="" />
           <div style={{ padding: "40px 24px", textAlign: "center" }}>
-            <div style={{ width: 32, height: 32, border: `3px solid ${t.accent}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 16px" }} />
-            <span style={{ fontSize: 14, color: t.textMuted }}>Chargement de la timeline...</span>
+            <div style={{ width: 32, height: 32, border: `3px solid ${th.accent}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 16px" }} />
+            <span style={{ fontSize: 14, color: th.textMuted }}>{t("detail.loadingTimeline")}</span>
           </div>
           <BottomNav />
         </div>
@@ -1708,14 +1734,14 @@ export default function App() {
         <Nav back title="" />
 
         {/* Hero card */}
-        <div style={{ margin: "0 20px 20px", padding: "24px 24px 20px", borderRadius: 20, background: t.gradient, position: "relative", overflow: "hidden" }}>
+        <div style={{ margin: "0 20px 20px", padding: "24px 24px 20px", borderRadius: 20, background: th.gradient, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
           <div style={{ position: "relative" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              {terrasse.place_type && PLACE_TYPE_CONFIG[terrasse.place_type] && (
+              {terrasse.place_type && PLACE_TYPE_KEYS[terrasse.place_type] && (
                 <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: "rgba(255,255,255,0.95)", background: "rgba(255,255,255,0.22)", borderRadius: 100, padding: "5px 12px", fontFamily: F, fontWeight: 500, whiteSpace: "nowrap" }}>
                   <PlaceTypeIcon type={terrasse.place_type} size={15} color="rgba(255,255,255,0.95)" />
-                  {PLACE_TYPE_CONFIG[terrasse.place_type].label}
+                  {t(PLACE_TYPE_KEYS[terrasse.place_type])}
                 </span>
               )}
               <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", lineHeight: 1.2 }}>{terrasse.nom_commercial || terrasse.nom}</div>
@@ -1745,7 +1771,7 @@ export default function App() {
                   </a>
                 )}
                 {terrasse.website && (
-                  <a href={terrasse.website} target="_blank" rel="noopener noreferrer" title="Site web" style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <a href={terrasse.website} target="_blank" rel="noopener noreferrer" title={t("detail.website")} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
                       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -1764,11 +1790,13 @@ export default function App() {
 
         <div style={{ padding: "0 24px 24px" }}>
           {/* Current status */}
-          <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: good ? t.accentLight : "#FEE2E2", border: `1px solid ${good ? t.accentLight : "#FECACA"}` }}>
+          <div style={{ padding: "14px 18px", borderRadius: 14, marginBottom: 20, background: good ? th.accentLight : "#FEE2E2", border: `1px solid ${good ? th.accentLight : "#FECACA"}` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {mode === "sun" ? <SunIcon size={20} color={good ? t.accentDark : "#EF4444"} /> : <ShadeIcon size={20} color={good ? t.accentDark : "#EF4444"} />}
-              <span style={{ fontSize: 15, fontWeight: 600, color: good ? t.accentDark : "#DC2626" }}>
-                {good ? `${mode === "sun" ? "Ensoleillée" : "Ombragée"} à ${selectedHour}` : `Pas ${mode === "sun" ? "de soleil" : "d'ombre"} à ${selectedHour}`}
+              {mode === "sun" ? <SunIcon size={20} color={good ? th.accentDark : "#EF4444"} /> : <ShadeIcon size={20} color={good ? th.accentDark : "#EF4444"} />}
+              <span style={{ fontSize: 15, fontWeight: 600, color: good ? th.accentDark : "#DC2626" }}>
+                {good
+                  ? (mode === "sun" ? t("detail.sunnyAt", { time: selectedHour }) : t("detail.shadedAt", { time: selectedHour }))
+                  : (mode === "sun" ? t("detail.noSunAt", { time: selectedHour }) : t("detail.noShadeAt", { time: selectedHour }))}
               </span>
             </div>
           </div>
@@ -1784,10 +1812,10 @@ export default function App() {
                   </div>
                   {currentSlot && currentSlot.uv_index > 0 && (() => {
                     const uv = currentSlot.uv_index;
-                    const { label, color } = uv <= 2 ? { label: "UV faible", color: "#166534" }
-                      : uv <= 5 ? { label: "UV modéré", color: "#854D0E" }
-                      : uv <= 7 ? { label: "UV fort", color: "#9A3412" }
-                      : { label: "UV très fort", color: "#991B1B" };
+                    const { label, color } = uv <= 2 ? { label: t("uv.uvLow"), color: "#166534" }
+                      : uv <= 5 ? { label: t("uv.uvModerate"), color: "#854D0E" }
+                      : uv <= 7 ? { label: t("uv.uvHigh"), color: "#9A3412" }
+                      : { label: t("uv.uvVeryHigh"), color: "#991B1B" };
                     return <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: F }}>{uv} · {label}</span>;
                   })()}
                 </div>
@@ -1817,9 +1845,9 @@ export default function App() {
                   <button key={v} onClick={() => setShowStreetView(v === "photo")} style={{
                     padding: "5px 14px", borderRadius: 20, cursor: "pointer", fontFamily: F,
                     fontSize: 12, fontWeight: active ? 600 : 400,
-                    border: `1.5px solid ${active ? t.accent : t.border}`,
-                    background: active ? t.accentLight : "transparent",
-                    color: active ? t.accentDark : t.textMuted,
+                    border: `1.5px solid ${active ? th.accent : th.border}`,
+                    background: active ? th.accentLight : "transparent",
+                    color: active ? th.accentDark : th.textMuted,
                   }}>
                     {v === "map" ? "📍 Ensoleillement" : "📷 Street View"}
                   </button>
@@ -1827,7 +1855,7 @@ export default function App() {
               })}
             </div>
             {showStreetView ? (
-              <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${t.border}`, background: t.border, minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${th.border}`, background: th.border, minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <img
                   src={`/api/streetview?lat=${terrasse.lat}&lon=${terrasse.lon}`}
                   alt={`Vue Street View de ${terrasse.nom_commercial || terrasse.nom}`}
@@ -1836,13 +1864,13 @@ export default function App() {
                 />
               </div>
             ) : (
-              <SunMap lat={terrasse.lat} lon={terrasse.lon} date={timelineData.date} selectedTime={selectedHour} theme={t} />
+              <SunMap lat={terrasse.lat} lon={terrasse.lon} date={timelineData.date} selectedTime={selectedHour} theme={th} />
             )}
           </div>
 
           {/* Hourly slider */}
           <div style={{ marginBottom: 24 }}>
-            <span style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10, display: "block" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10, display: "block" }}>
               Ensoleillement
             </span>
             <div style={{ position: "relative" }}>
@@ -1856,14 +1884,14 @@ export default function App() {
                     <div key={h} style={{ flex: 1, textAlign: "center" }}>
                       <div style={{
                         height: 32, borderRadius: 6, marginBottom: 4,
-                        background: isSelected ? (sunny ? t.accent : "#EF4444") : (sunny ? t.accentLight : t.border),
+                        background: isSelected ? (sunny ? th.accent : "#EF4444") : (sunny ? th.accentLight : th.border),
                         display: "flex", alignItems: "center", justifyContent: "center",
-                        outline: isSelected ? `2px solid ${sunny ? t.accentDark : "#DC2626"}` : "none",
+                        outline: isSelected ? `2px solid ${sunny ? th.accentDark : "#DC2626"}` : "none",
                         outlineOffset: 1,
                       }}>
-                        {sunny ? <SunIcon size={11} color={isSelected ? "#FFF" : t.accentDark} /> : <ShadeIcon size={11} color={isSelected ? "#FFF" : t.textMuted} />}
+                        {sunny ? <SunIcon size={11} color={isSelected ? "#FFF" : th.accentDark} /> : <ShadeIcon size={11} color={isSelected ? "#FFF" : th.textMuted} />}
                       </div>
-                      <span style={{ fontSize: 9, color: isSelected ? t.accent : t.textMuted, fontWeight: isSelected ? 700 : 400 }}>{h.split(":")[0]}h</span>
+                      <span style={{ fontSize: 9, color: isSelected ? th.accent : th.textMuted, fontWeight: isSelected ? 700 : 400 }}>{h.split(":")[0]}h</span>
                     </div>
                   );
                 })}
@@ -1882,9 +1910,9 @@ export default function App() {
             <button onClick={() => toggleFav({ id: terrasse.id, nom: terrasse.nom, adresse: terrasse.adresse })}
               style={{
                 flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                padding: "14px", borderRadius: 12, border: `1.5px solid ${isFav(terrasse.id) ? "#EF4444" : t.border}`,
-                background: isFav(terrasse.id) ? "#FEF2F2" : t.bgCard, cursor: "pointer",
-                color: isFav(terrasse.id) ? "#EF4444" : t.text, fontFamily: F, fontSize: 14, fontWeight: 500,
+                padding: "14px", borderRadius: 12, border: `1.5px solid ${isFav(terrasse.id) ? "#EF4444" : th.border}`,
+                background: isFav(terrasse.id) ? "#FEF2F2" : th.bgCard, cursor: "pointer",
+                color: isFav(terrasse.id) ? "#EF4444" : th.text, fontFamily: F, fontSize: 14, fontWeight: 500,
               }}>
               <HeartIcon filled={isFav(terrasse.id)} size={17} />
               {isFav(terrasse.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
@@ -1892,8 +1920,8 @@ export default function App() {
             <button onClick={() => handleShare(terrasse.nom, terrasse.adresse, terrasse.id)}
               style={{
                 flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                padding: "14px", borderRadius: 12, border: `1.5px solid ${t.border}`,
-                background: t.bgCard, cursor: "pointer", color: t.text, fontFamily: F, fontSize: 14, fontWeight: 500,
+                padding: "14px", borderRadius: 12, border: `1.5px solid ${th.border}`,
+                background: th.bgCard, cursor: "pointer", color: th.text, fontFamily: F, fontSize: 14, fontWeight: 500,
               }}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
@@ -1904,8 +1932,8 @@ export default function App() {
           </div>
 
           {/* Sunny hours pills */}
-          <div style={{ marginTop: 24, padding: "16px 18px", background: t.bgCard, borderRadius: 14, border: `1px solid ${t.border}` }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: t.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10 }}>
+          <div style={{ marginTop: 24, padding: "16px 18px", background: th.bgCard, borderRadius: 14, border: `1px solid ${th.border}` }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10 }}>
               Créneaux {mode === "sun" ? "ensoleillés" : "ombragés"}
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -1917,10 +1945,10 @@ export default function App() {
                 });
                 return matchingHours.length > 0 ? (
                   matchingHours.map((h) => (
-                    <span key={h} onClick={() => setSearchHour(h)} style={{ padding: "6px 14px", borderRadius: 100, fontSize: 13, fontWeight: 500, background: h === selectedHour ? t.accent : t.accentLight, color: h === selectedHour ? "#FFF" : t.accentDark, fontFamily: F, cursor: "pointer" }}>{h}</span>
+                    <span key={h} onClick={() => setSearchHour(h)} style={{ padding: "6px 14px", borderRadius: 100, fontSize: 13, fontWeight: 500, background: h === selectedHour ? th.accent : th.accentLight, color: h === selectedHour ? "#FFF" : th.accentDark, fontFamily: F, cursor: "pointer" }}>{h}</span>
                   ))
                 ) : (
-                  <span style={{ fontSize: 13, color: t.textMuted }}>Aucun créneau disponible</span>
+                  <span style={{ fontSize: 13, color: th.textMuted }}>Aucun créneau disponible</span>
                 );
               })()}
             </div>
@@ -1935,15 +1963,15 @@ export default function App() {
   if (page === "favorites") {
     return (
       <div style={wrap}>
-        <Nav back title="Mes favoris" />
+        <Nav back title={t("favorites.title")} />
         <div style={{ padding: "12px 24px 24px" }}>
           {favorites.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>💛</div>
-              <div style={{ fontSize: 16, color: t.textSoft, fontWeight: 500 }}>Aucun favori pour le moment</div>
-              <div style={{ fontSize: 14, color: t.textMuted, marginTop: 8 }}>Ajoute tes terrasses préférées ici.</div>
-              <button onClick={() => navigate("home")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: t.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
-                Explorer
+              <div style={{ fontSize: 16, color: th.textSoft, fontWeight: 500 }}>{t("favorites.empty")}</div>
+              <div style={{ fontSize: 14, color: th.textMuted, marginTop: 8 }}>{t("favorites.emptyHint")}</div>
+              <button onClick={() => navigate("home")} style={{ marginTop: 20, padding: "12px 24px", borderRadius: 10, border: "none", background: th.accent, color: "#FFF", fontSize: 14, fontWeight: 600, fontFamily: F, cursor: "pointer" }}>
+                {t("favorites.explore")}
               </button>
             </div>
           ) : (
@@ -1951,13 +1979,13 @@ export default function App() {
               {favorites.map((fav) => (
                 <div key={fav.id} onClick={() => navigate("detail", { terrasseId: fav.id })}
                   style={{
-                    background: t.bgCard, borderRadius: 16, padding: 18, cursor: "pointer",
-                    border: `1px solid ${t.border}`, boxShadow: `0 2px 12px ${t.shadow}`,
+                    background: th.bgCard, borderRadius: 16, padding: 18, cursor: "pointer",
+                    border: `1px solid ${th.border}`, boxShadow: `0 2px 12px ${th.shadow}`,
                     display: "flex", justifyContent: "space-between", alignItems: "center",
                   }}>
                   <div>
-                    <div style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: t.text, marginBottom: 4 }}>{fav.nom}</div>
-                    <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted }}>{fav.adresse || ""}</div>
+                    <div style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: th.text, marginBottom: 4 }}>{fav.nom}</div>
+                    <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted }}>{fav.adresse || ""}</div>
                   </div>
                   <button onClick={(e) => { e.stopPropagation(); toggleFav(fav); }}
                     style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#EF4444" }}>
@@ -1977,50 +2005,42 @@ export default function App() {
   if (page === "about") {
     const section = (title: string, content: React.ReactNode) => (
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: F, fontWeight: 700, fontSize: 15, color: t.text, marginBottom: 8 }}>{title}</div>
-        <div style={{ fontFamily: F, fontSize: 14, color: t.textSoft, lineHeight: 1.6 }}>{content}</div>
+        <div style={{ fontFamily: F, fontWeight: 700, fontSize: 15, color: th.text, marginBottom: 8 }}>{title}</div>
+        <div style={{ fontFamily: F, fontSize: 14, color: th.textSoft, lineHeight: 1.6 }}>{content}</div>
       </div>
     );
     return (
       <div style={wrap}>
-        <Nav back title="À propos" />
+        <Nav back title={t("about.title")} />
         <div style={{ padding: "20px 24px 100px" }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div style={{ fontSize: 48, marginBottom: 8 }}>☀️</div>
-            <div style={{ fontFamily: F, fontWeight: 700, fontSize: 20, color: t.text }}>Au Soleil</div>
-            <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginTop: 4 }}>Trouve une terrasse ensoleillée à Paris</div>
+            <div style={{ fontFamily: F, fontWeight: 700, fontSize: 20, color: th.text }}>Au Soleil</div>
+            <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginTop: 4 }}>{t("about.description")}</div>
           </div>
 
-          {section("🍺 Le concept", <>
-            Tu sors du boulot, tu veux un verre au soleil — mais tu sais jamais si ta terrasse préférée est à l'ombre à cette heure-là. On a tous vécu la déception.<br /><br />
-            <em>Au Soleil</em> répond à cette question : <strong>est-ce que ma terrasse est au soleil en ce moment ?</strong> Et pour les jours de canicule, on gère aussi le mode ombre. ⛱️
+          {section(t("about.howTitle"), <>
+            {t("about.how1")}<br />
+            {t("about.how2")}<br />
+            {t("about.how3")}<br />
+            {t("about.how4")}
           </>)}
 
-          {section("🔭 Comment ça marche ?", <>
-            Pour chaque terrasse, on calcule un <strong>profil d'horizon</strong> à partir des bâtiments environnants (jusqu'à 200m de rayon). On combine ensuite la position du soleil — calculée à la minute près — avec ce profil pour déterminer si la terrasse est ensoleillée, à l'ombre ou entre les deux.<br /><br />
-            Les données de bâtiments viennent de la <strong>BD TOPO® IGN</strong> (bâtiments 3D sur Paris). La météo vient d'<strong>Open-Meteo</strong> (gratuit, sans clé).
+          {section(t("about.dataTitle"), <>
+            {t("about.data1")}<br />
+            {t("about.data2")}<br />
+            {t("about.data3")}<br />
+            {t("about.data4")}
           </>)}
 
-          {section("🗺️ Pourquoi seulement Paris ?", <>
-            Paris est couverte par la BD TOPO IGN avec une bonne précision 3D et par les données ouvertes de terrasses — c'est le combo parfait pour démarrer. D'autres villes pourraient suivre si le projet prend de l'ampleur. 📍
-          </>)}
+          <div style={{ textAlign: "center", fontFamily: F, fontSize: 13, color: th.textMuted, marginTop: 20 }}>
+            {t("about.madeWith")}
+          </div>
 
-          {section("🤔 Pourquoi mon bar préféré n'y est pas ?", <>
-            Les terrasses référencées viennent des <strong>données ouvertes de la Ville de Paris</strong> (autorisations de terrasses). Seules les « terrasses ouvertes » officiellement déclarées y figurent. Si ton bar n'est pas là, c'est probablement qu'il n'a pas d'autorisation enregistrée — pas qu'il est nul.
-          </>)}
-
-          {section("🛠️ Technologies", <>
-            <strong>Backend :</strong> Python · FastAPI · PostGIS<br />
-            <strong>Frontend :</strong> React · TypeScript · MapLibre GL<br />
-            <strong>Infra :</strong> Docker · Traefik · VPS OVH<br />
-            <strong>Données :</strong> BD TOPO IGN · Open Data Paris · Open-Meteo<br /><br />
-            Fait avec amour 🫶 par Virginie, Bertrand et Claude.
-          </>)}
-
-          <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20, textAlign: "center" }}>
+          <div style={{ borderTop: `1px solid ${th.border}`, paddingTop: 20, marginTop: 20, textAlign: "center" }}>
             <a href="https://github.com/bmatge/ma-terrasse-au-soleil" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: F, fontSize: 13, color: t.accent, textDecoration: "none" }}>
-              Code source sur GitHub →
+              style={{ fontFamily: F, fontSize: 13, color: th.accent, textDecoration: "none" }}>
+              GitHub →
             </a>
           </div>
         </div>
@@ -2032,16 +2052,16 @@ export default function App() {
   if (page === "contact") {
     return (
       <div style={wrap}>
-        <Nav back title="Contact" />
+        <Nav back title={t("contact.title")} />
         <div style={{ padding: "20px 24px 100px" }}>
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <div style={{ fontSize: 48, marginBottom: 8 }}>✉️</div>
-            <div style={{ fontFamily: F, fontWeight: 700, fontSize: 18, color: t.text }}>Écris-nous</div>
-            <div style={{ fontFamily: F, fontSize: 13, color: t.textMuted, marginTop: 4 }}>
-              Une idée, un bug, un bar à ajouter ?<br />On lit tout.
+            <div style={{ fontFamily: F, fontWeight: 700, fontSize: 18, color: th.text }}>{t("contact.title")}</div>
+            <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginTop: 4 }}>
+              {t("contact.intro")}
             </div>
           </div>
-          <ContactForm theme={t} fontFamily={F} />
+          <ContactForm theme={th} fontFamily={F} />
         </div>
         <BottomNav />
       </div>

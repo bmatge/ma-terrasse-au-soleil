@@ -77,6 +77,7 @@ async def build_timeline(
     lon: float,
     target_date: date,
     redis: Redis | None = None,
+    lang: str = "fr",
 ) -> dict:
     """Build the full timeline for a terrace on a given date.
 
@@ -131,5 +132,5 @@ async def build_timeline(
     return {
         "slots": slots,
         "meilleur_creneau": _find_best_window(slots),
-        "meteo_resume": weather_summary(weather),
+        "meteo_resume": weather_summary(weather, lang=lang),
     }
