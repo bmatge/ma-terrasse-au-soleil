@@ -30,7 +30,10 @@ i18n
       ja: { translation: ja },
       zh: { translation: zh },
     },
+    supportedLngs: ["fr", "en", "es", "de", "ja", "zh"],
+    load: "languageOnly",
     fallbackLng: "en",
+    initImmediate: false,
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     detection: {
