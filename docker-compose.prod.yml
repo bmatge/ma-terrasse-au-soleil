@@ -30,7 +30,6 @@ services:
       - "traefik.http.routers.terrasses.entrypoints=websecure"
       - "traefik.http.routers.terrasses.tls.certresolver=letsencrypt"
       - "traefik.http.services.terrasses.loadbalancer.server.port=80"
-      - "traefik.http.routers.terrasses.middlewares=security-headers-public@file,rate-limit@file"
       # Redirect ancien domaine → ausoleil.app
       - "traefik.http.routers.terrasses-old.rule=Host(`terrasses.paris.matge.com`)"
       - "traefik.http.routers.terrasses-old.entrypoints=websecure"
@@ -44,7 +43,6 @@ services:
       - "traefik.http.routers.matge.rule=Host(`matge.com`)"
       - "traefik.http.routers.matge.entrypoints=websecure"
       - "traefik.http.routers.matge.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.matge.middlewares=security-headers-public@file,rate-limit@file"
       - "traefik.http.routers.matge.service=terrasses"
 
   umami:
