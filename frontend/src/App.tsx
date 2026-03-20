@@ -1146,7 +1146,7 @@ export default function App() {
     return (
       <div style={{ ...wrap, position: "relative", overflow: "hidden" }}>
         <div style={{ padding: "20px 24px 24px", position: "relative" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               {mode === "sun"
                 ? <SunIcon size={32} color={th.accent} />
