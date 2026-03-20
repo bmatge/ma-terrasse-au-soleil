@@ -1737,7 +1737,6 @@ export default function App() {
 
         {/* Hero card */}
         <div style={{ margin: "0 20px 20px", padding: "24px 24px 20px", borderRadius: 20, background: th.gradient, position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
           <div style={{ position: "relative", display: "flex", gap: 16, alignItems: "flex-start" }}>
             {/* Left: text info */}
             <div style={{ flex: 1, minWidth: 0 }}>
