@@ -520,7 +520,7 @@ def _draw_qr(fig, qr_url: str):
     qr_arr = np.array(qr_img)
 
     # Create axes for QR block
-    ax_qr = fig.add_axes([0.82, 0.02, 0.16, 0.22], facecolor=WHITE)
+    ax_qr = fig.add_axes([0.82, 0.76, 0.16, 0.22], facecolor=WHITE)
     ax_qr.set_xlim(0, 1)
     ax_qr.set_ylim(0, 1)
     ax_qr.set_xticks([])
