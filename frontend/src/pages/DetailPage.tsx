@@ -81,7 +81,7 @@ export default function DetailPage() {
   const handleDownloadPoster = useCallback(async () => {
     setPosterLoading(true);
     try {
-      const resp = await fetch(`/api/terrasses/${terrasseId}/poster`);
+      const resp = await fetch(`/api/terrasses/${terrasseId}/poster?t=${Date.now()}`);
       if (!resp.ok) throw new Error("Poster generation failed");
       const blob = await resp.blob();
       const url = URL.createObjectURL(blob);
