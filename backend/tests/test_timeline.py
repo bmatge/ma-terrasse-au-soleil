@@ -82,7 +82,7 @@ class TestFindBestWindow:
 
     def test_no_sunny_slots(self):
         """No sunny slots at all → None."""
-        statuses = ["ombre_batiment", "couvert", "mitige", "nuit"]
+        statuses = ["ombre_batiment", "couvert", "ombre", "nuit"]
         assert _find_best_window(_make_slots(statuses)) is None
 
     def test_returns_longest_window(self):
