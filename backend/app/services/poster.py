@@ -385,15 +385,6 @@ def _draw_chart(ax, grid: np.ndarray, hours: list[float], summaries: list[dict])
     ax.pcolormesh(x_edges, y_edges, grid, cmap=cmap, vmin=-0.5, vmax=2.5,
                   shading="flat", rasterized=True)
 
-    # Sunrise/sunset curves overlay
-    days = np.arange(1, total_days + 1)
-    sunrise = _smooth(np.array([s["sunrise"] for s in summaries]))
-    sunset = _smooth(np.array([s["sunset"] for s in summaries]))
-    ax.plot(days, sunrise, color=SKY_BLUE_DASHED, linewidth=1.2,
-            linestyle="--", alpha=0.8)
-    ax.plot(days, sunset, color=SKY_BLUE_DASHED, linewidth=1.2,
-            linestyle="--", alpha=0.8)
-
     # Axis formatting
     ax.set_xlim(0.5, total_days + 0.5)
     ax.set_ylim(hours[0] - half_step, hours[-1] + half_step)
@@ -437,16 +428,11 @@ def _smooth(arr: np.ndarray, window: int = 5) -> np.ndarray:
 # ---------------------------------------------------------------------------
 
 def _draw_annotations(ax, summaries: list[dict]):
-    """Place sunshine-duration badges at key dates."""
-    key_dates = [
-        (15, "Jan"),    # mid-January
-        (75, "Mar"),    # mid-March
-        (172, "Jun"),   # summer solstice
-        (258, "Sep"),   # mid-September
-        (349, "Déc"),   # mid-December
-    ]
+    """Place sunshine-duration badge for each month."""
+    # Mid-month day-of-year for each of the 12 months
+    month_mids = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349]
 
-    for doy_target, _label in key_dates:
+    for doy_target in month_mids:
         day = next((d for d in summaries if d["doy"] == doy_target), None)
         if day is None or day["sunny_minutes"] == 0:
             continue
@@ -456,34 +442,22 @@ def _draw_annotations(ax, summaries: list[dict]):
         m = total_mins % 60
         txt = f"{h}h{m:02d}" if m > 0 else f"{h}h"
 
-        # Position badge at midpoint between sunrise and sunset
         y_pos = (day["sunrise"] + day["sunset"]) / 2
 
         ax.annotate(
             txt,
             xy=(doy_target, y_pos),
-            fontsize=8.5,
+            fontsize=7.5,
             fontweight="bold",
             color=WHITE,
             fontfamily="sans-serif",
             ha="center", va="center",
             bbox=dict(
-                boxstyle="round,pad=0.4",
+                boxstyle="round,pad=0.35",
                 facecolor=AMBER_DARK,
                 edgecolor="none",
                 alpha=0.9,
             ),
-        )
-
-    # Label "Terrasse au soleil" near summer solstice
-    solstice = next((d for d in summaries if d["doy"] == 172), None)
-    if solstice and solstice["sunny_minutes"] > 0:
-        mid_y = (solstice["sunrise"] + solstice["sunset"]) / 2
-        ax.text(
-            195, mid_y + 0.6, "Terrasse\nau soleil",
-            fontsize=10, fontweight="bold", color=AMBER_DARKER,
-            fontfamily="sans-serif", ha="center", va="top",
-            alpha=0.8,
         )
 
 
