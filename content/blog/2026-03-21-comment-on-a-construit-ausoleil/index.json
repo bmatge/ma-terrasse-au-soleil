@@ -1,0 +1,75 @@
+{
+  "slug": "comment-on-a-construit-ausoleil",
+  "title": "Comment on a construit ausoleil.app (en vibe codant comme des gros bourrins)",
+  "description": "De la frustration d'un demi à l'ombre jusqu'à une app déployée en quelques week-ends. Récit d'un side project parisien à base de vibe coding et de données 3D.",
+  "date": "2026-03-21",
+  "author": "Bertrand & Virginie",
+  "tags": ["paris", "terrasses", "vibe-coding", "side-project", "behind-the-scenes"],
+  "image": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "content": "Vous connaissez cette scène. Vendredi, 17h30, il fait beau, vous avez repéré une terrasse, commandé, et là — le soleil passe derrière l'immeuble d'en face. Le demi est tiède, l'ombre est froide, et vous ne pouvez vous en prendre qu'à vous-même. Classique."
+    },
+    {
+      "type": "heading",
+      "content": "L'idée (qui n'est pas la mienne)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Crédit où crédit est dû : l'idée vient de Virginie, mon associée UX. Un soir de février, elle m'a dit « hey, tu pourrais pas faire un truc qui dit si une terrasse est au soleil ? ». J'ai répondu « oui sûrement » en pensant que c'était un délire de fin de soirée. Deux semaines plus tard, on avait un prototype."
+    },
+    {
+      "type": "paragraph",
+      "content": "Faut dire que le timing était parfait. Je vibe code à fond depuis quelques mois — cette façon de coder où tu laisses l'IA faire le gros du boulot pendant que tu pilotes à vue. Le genre de truc qui fait hurler les puristes du clean code, mais qui permet de sortir un MVP en quelques week-ends au lieu de six mois. On n'est pas là pour écrire une thèse, on est là pour savoir si le Café de Flore est au soleil à 16h."
+    },
+    {
+      "type": "heading",
+      "content": "De la géométrie, pas de la météo"
+    },
+    {
+      "type": "paragraph",
+      "content": "Le truc contre-intuitif : savoir si une terrasse est au soleil, c'est pas un problème de météo. C'est un problème de géométrie. La position du soleil est parfaitement prévisible — c'est de l'astronomie. Ce qui est moins prévisible, c'est si l'immeuble haussmannien de 25 mètres en face va vous plonger dans l'ombre."
+    },
+    {
+      "type": "paragraph",
+      "content": "Du coup, pour chaque terrasse de Paris, on calcule un profil d'horizon à 360° en regardant les bâtiments autour (merci la BD TOPO de l'IGN et ses données 3D en open data). On sait alors à quel angle le soleil doit grimper pour passer au-dessus de chaque obstacle. Un lookup instantané, pas besoin de recalculer à chaque requête. Élégant ? Peut-être. Efficace ? Clairement."
+    },
+    {
+      "type": "heading",
+      "content": "Le vibe coding, pour de vrai"
+    },
+    {
+      "type": "paragraph",
+      "content": "Soyons honnêtes : 80% du code a été écrit par Claude. Le backend FastAPI + PostGIS, le frontend React + MapLibre, les scripts d'import de données, la CI/CD... J'ai surtout piloté, orienté, corrigé, et cassé des trucs que l'IA avait parfaitement codés parce que je voulais « juste changer un petit truc »."
+    },
+    {
+      "type": "paragraph",
+      "content": "C'est fascinant de voir ce qu'on peut produire en quelques week-ends avec cette approche. C'est aussi terrifiant quand tu réalises à 2h du matin que tu as 15 000 lignes de code dont tu comprends vaguement 60%. Mais ça marche. Et quand ça marche pas, tu demandes poliment à l'IA de fixer le bug qu'elle a elle-même introduit. Le cercle de la vie."
+    },
+    {
+      "type": "heading",
+      "content": "Les limites (qu'on assume)"
+    },
+    {
+      "type": "paragraph",
+      "content": "On ne gère pas les arbres. Si un platane centenaire fait de l'ombre sur votre terrasse préférée du canal Saint-Martin, on ne le sait pas. On ne gère pas non plus les parasols, les stores, ni le fait que votre voisin de table fait 1m95 et vous cache le soleil. Ce sera dans la v2. Ou pas."
+    },
+    {
+      "type": "paragraph",
+      "content": "On estime la précision des transitions soleil/ombre à ±15 minutes. Pour un apéro, c'est largement suffisant. Si vous avez besoin de plus de précision que ça, vous avez probablement des problèmes plus graves qu'un demi à l'ombre."
+    },
+    {
+      "type": "heading",
+      "content": "Et maintenant ?"
+    },
+    {
+      "type": "paragraph",
+      "content": "L'app est en ligne, les données couvrent tout Paris intra-muros, et on a même un mode ombre pour les jours de canicule (on n'est pas des monstres). Le printemps arrive, les terrasses rouvrent, et on est pile à l'heure pour la saison."
+    },
+    {
+      "type": "paragraph",
+      "content": "Si vous testez et que vous trouvez un bug, une terrasse manquante, ou juste pour nous dire que votre bar préféré est effectivement au soleil à 17h — faites-nous signe. On est deux et demi (Claude compte pour un demi) et on lit tout."
+    }
+  ]
+}

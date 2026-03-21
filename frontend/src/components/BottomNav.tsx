@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
 import { F } from "../lib/constants";
 
-type Page = "home" | "search" | "results" | "detail" | "favorites" | "about" | "contact";
+type Page = "home" | "search" | "results" | "detail" | "favorites" | "blog" | "contact";
 
 const NAV_ICONS: Record<string, (color: string) => React.ReactNode> = {
   home: (c) => (
@@ -28,11 +28,12 @@ const NAV_ICONS: Record<string, (color: string) => React.ReactNode> = {
       <polyline points="2,4 12,13 22,4" />
     </svg>
   ),
-  about: (c) => (
+  blog: (c) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <line x1="12" y1="8" x2="12" y2="8.5" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="12" y1="11" x2="12" y2="17" />
+      <path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+      <line x1="7" y1="8" x2="17" y2="8" />
+      <line x1="7" y1="12" x2="17" y2="12" />
+      <line x1="7" y1="16" x2="13" y2="16" />
     </svg>
   ),
 };
@@ -59,7 +60,7 @@ export default function BottomNav({ page, navigate }: BottomNavProps) {
           { key: "search" as Page, label: t("nav.search") },
           { key: "favorites" as Page, label: t("nav.favorites") },
           { key: "contact" as Page, label: t("nav.contact") },
-          { key: "about" as Page, label: t("nav.about") },
+          { key: "blog" as Page, label: t("nav.blog") },
         ]).map(({ key, label }) => {
           const active = page === key;
           const color = active ? th.accent : th.textMuted;

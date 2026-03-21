@@ -111,6 +111,13 @@
     "sending": "Enviando...",
     "send": "Enviar 📨"
   },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Novedades, tips y detrás de escena de Au Soleil",
+    "empty": "Aún no hay artículos.",
+    "notFound": "Artículo no encontrado.",
+    "backToList": "Todos los artículos"
+  },
   "about": {
     "title": "Acerca de",
     "description": "Encuentra una terraza soleada en París",
@@ -137,7 +144,8 @@
     "search": "Buscar",
     "favorites": "Favoritos",
     "contact": "Contacto",
-    "about": "Info"
+    "about": "Info",
+    "blog": "Blog"
   },
   "status": {
     "soleil": "Al sol",

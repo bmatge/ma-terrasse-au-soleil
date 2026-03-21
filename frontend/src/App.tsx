@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // Lazy-loaded pages for code splitting
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -7,7 +7,8 @@ const SearchPage = lazy(() => import("./pages/SearchPage"));
 const ResultsPage = lazy(() => import("./pages/ResultsPage"));
 const DetailPage = lazy(() => import("./pages/DetailPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 
 export default function App() {
@@ -27,7 +28,9 @@ export default function App() {
           <Route path="/results" element={<ResultsPage />} />
           <Route path="/terrasse/:terrasseId" element={<DetailPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
-          <Route path="/about" element={<AboutPage />} />
+          <Route path="/about" element={<Navigate to="/contact?tab=about" replace />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/contact" element={<ContactPage />} />
         </Routes>
       </main>

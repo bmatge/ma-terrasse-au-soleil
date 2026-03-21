@@ -111,6 +111,13 @@
     "sending": "Senden...",
     "send": "Senden 📨"
   },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Neuigkeiten, Tipps & Hinter den Kulissen von Au Soleil",
+    "empty": "Noch keine Artikel.",
+    "notFound": "Artikel nicht gefunden.",
+    "backToList": "Alle Artikel"
+  },
   "about": {
     "title": "Über uns",
     "description": "Finde eine sonnige Terrasse in Paris",
@@ -137,7 +144,8 @@
     "search": "Suche",
     "favorites": "Favoriten",
     "contact": "Kontakt",
-    "about": "Info"
+    "about": "Info",
+    "blog": "Blog"
   },
   "status": {
     "soleil": "Sonnig",

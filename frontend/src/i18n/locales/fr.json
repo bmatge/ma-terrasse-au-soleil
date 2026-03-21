@@ -111,6 +111,13 @@
     "sending": "Envoi...",
     "send": "Envoyer 📨"
   },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Actus, tips et coulisses de Au Soleil",
+    "empty": "Aucun article pour le moment.",
+    "notFound": "Article introuvable.",
+    "backToList": "Tous les articles"
+  },
   "about": {
     "title": "À propos",
     "description": "Trouve une terrasse ensoleillée à Paris",
@@ -137,7 +144,8 @@
     "search": "Chercher",
     "favorites": "Favoris",
     "contact": "Contact",
-    "about": "Infos"
+    "about": "Infos",
+    "blog": "Blog"
   },
   "status": {
     "soleil": "Au soleil",

@@ -111,6 +111,13 @@
     "sending": "送信中...",
     "send": "送信 📨"
   },
+  "blog": {
+    "title": "ブログ",
+    "subtitle": "Au Soleilの最新情報、ヒント、舞台裏",
+    "empty": "まだ記事がありません。",
+    "notFound": "記事が見つかりません。",
+    "backToList": "すべての記事"
+  },
   "about": {
     "title": "このアプリについて",
     "description": "パリで日当たりの良いテラスを見つけよう",
@@ -137,7 +144,8 @@
     "search": "検索",
     "favorites": "お気に入り",
     "contact": "連絡",
-    "about": "情報"
+    "about": "情報",
+    "blog": "ブログ"
   },
   "status": {
     "soleil": "日なた",

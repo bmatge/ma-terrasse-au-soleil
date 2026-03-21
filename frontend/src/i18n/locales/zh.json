@@ -111,6 +111,13 @@
     "sending": "发送中...",
     "send": "发送 📨"
   },
+  "blog": {
+    "title": "博客",
+    "subtitle": "Au Soleil 的新闻、技巧和幕后故事",
+    "empty": "暂无文章。",
+    "notFound": "未找到文章。",
+    "backToList": "所有文章"
+  },
   "about": {
     "title": "关于",
     "description": "在巴黎找一个阳光露台",
@@ -137,7 +144,8 @@
     "search": "搜索",
     "favorites": "收藏",
     "contact": "联系",
-    "about": "关于"
+    "about": "关于",
+    "blog": "博客"
   },
   "status": {
     "soleil": "阳光",

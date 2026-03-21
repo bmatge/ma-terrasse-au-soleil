@@ -111,6 +111,13 @@
     "sending": "Sending...",
     "send": "Send 📨"
   },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "News, tips & behind the scenes of Au Soleil",
+    "empty": "No articles yet.",
+    "notFound": "Article not found.",
+    "backToList": "All articles"
+  },
   "about": {
     "title": "About",
     "description": "Find a sunny terrace in Paris",
@@ -137,7 +144,8 @@
     "search": "Search",
     "favorites": "Favorites",
     "contact": "Contact",
-    "about": "About"
+    "about": "About",
+    "blog": "Blog"
   },
   "status": {
     "soleil": "Sunny",
