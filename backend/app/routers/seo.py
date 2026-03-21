@@ -110,9 +110,9 @@ async def sitemap_static() -> Response:
 
 # Blog posts — add new posts here when publishing
 BLOG_POSTS = [
-    {"slug": "comment-on-a-construit-ausoleil", "date": "2026-03-21"},
+    {"slug": "comment-on-a-construit-ausoleil", "date": "2026-03-19"},
+    {"slug": "ode-open-data", "date": "2026-03-20"},
     {"slug": "profil-ensoleillement-rorschach", "date": "2026-03-21"},
-    {"slug": "ode-open-data", "date": "2026-03-21"},
 ]
 
 
