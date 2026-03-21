@@ -62,14 +62,14 @@ case "${1:-deploy}" in
     log "Pulling latest code..."
     git pull --ff-only
 
+    log "Ensuring maintenance page is up..."
+    $COMPOSE up -d maintenance
+
     log "Building images..."
-    $COMPOSE build
+    $COMPOSE build frontend backend
 
-    log "Stopping services..."
-    $COMPOSE down
-
-    log "Starting services..."
-    $COMPOSE up -d
+    log "Restarting app services (maintenance page active)..."
+    $COMPOSE up -d --no-deps frontend backend db redis
 
     log "Waiting for database..."
     sleep 5
@@ -77,7 +77,7 @@ case "${1:-deploy}" in
     log "Running migrations..."
     $BACKEND_EXEC alembic upgrade head
 
-    log "Done! Site live at https://terrasses.paris.matge.com"
+    log "Done! Site live at https://ausoleil.app"
     ;;
 
   reimport)

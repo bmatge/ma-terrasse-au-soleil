@@ -29,7 +29,12 @@ services:
       - "traefik.http.routers.terrasses.rule=Host(`ausoleil.app`)"
       - "traefik.http.routers.terrasses.entrypoints=websecure"
       - "traefik.http.routers.terrasses.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.terrasses.middlewares=maintenance-errors"
       - "traefik.http.services.terrasses.loadbalancer.server.port=80"
+      # Error pages → maintenance service on 502/503
+      - "traefik.http.middlewares.maintenance-errors.errors.status=502,503"
+      - "traefik.http.middlewares.maintenance-errors.errors.service=maintenance@docker"
+      - "traefik.http.middlewares.maintenance-errors.errors.query=/"
       # Redirect ancien domaine → ausoleil.app
       - "traefik.http.routers.terrasses-old.rule=Host(`terrasses.paris.matge.com`)"
       - "traefik.http.routers.terrasses-old.entrypoints=websecure"
@@ -43,7 +48,24 @@ services:
       - "traefik.http.routers.matge.rule=Host(`matge.com`)"
       - "traefik.http.routers.matge.entrypoints=websecure"
       - "traefik.http.routers.matge.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.matge.middlewares=maintenance-errors"
       - "traefik.http.routers.matge.service=terrasses"
+
+  maintenance:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./infra/maintenance/index.html:/usr/share/nginx/html/index.html:ro
+      - ./infra/maintenance/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - ecosystem-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.maintenance.loadbalancer.server.port=80"
+    deploy:
+      resources:
+        limits:
+          memory: 16M
 
   umami:
     image: umamisoftware/umami:postgresql-latest
