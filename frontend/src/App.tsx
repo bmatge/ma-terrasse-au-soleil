@@ -19,20 +19,14 @@ import type {
 import { useDebounce } from "./hooks/useDebounce";
 import { normalizePlaceType } from "./utils/placeType";
 import { useTranslation } from "react-i18next";
-import funFacts_fr from "./data/funFacts.json";
-import funFacts_en from "./data/funFacts_en.json";
-import funFacts_es from "./data/funFacts_es.json";
-import funFacts_de from "./data/funFacts_de.json";
-import funFacts_ja from "./data/funFacts_ja.json";
-import funFacts_zh from "./data/funFacts_zh.json";
-
-const funFactsByLang: Record<string, typeof funFacts_fr> = {
-  fr: funFacts_fr,
-  en: funFacts_en,
-  es: funFacts_es,
-  de: funFacts_de,
-  ja: funFacts_ja,
-  zh: funFacts_zh,
+type FunFact = { fact: string };
+const FUN_FACTS_LOADERS: Record<string, () => Promise<{ default: FunFact[] }>> = {
+  fr: () => import("./data/funFacts.json"),
+  en: () => import("./data/funFacts_en.json"),
+  es: () => import("./data/funFacts_es.json"),
+  de: () => import("./data/funFacts_de.json"),
+  ja: () => import("./data/funFacts_ja.json"),
+  zh: () => import("./data/funFacts_zh.json"),
 };
 import UpdatePrompt from "./components/UpdatePrompt";
 import LanguageSelector from "./components/LanguageSelector";
@@ -654,9 +648,17 @@ export default function App() {
   const [shared, setShared] = useState(false);
   const [showInstall, setShowInstall] = useState(false);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
-  const funFacts = funFactsByLang[i18n.language] ?? funFactsByLang[i18n.language.split("-")[0]] ?? funFacts_fr;
-  const [funFactIndex, setFunFactIndex] = useState(() => Math.floor(Math.random() * funFacts_fr.length));
-  const safeFunFactIndex = funFactIndex % funFacts.length;
+  const [funFacts, setFunFacts] = useState<FunFact[]>([]);
+  const [funFactIndex, setFunFactIndex] = useState(0);
+  useEffect(() => {
+    const lang = i18n.language?.split("-")[0] || "fr";
+    const loader = FUN_FACTS_LOADERS[lang] || FUN_FACTS_LOADERS.fr;
+    loader().then((mod) => {
+      setFunFacts(mod.default);
+      setFunFactIndex(Math.floor(Math.random() * mod.default.length));
+    });
+  }, [i18n.language]);
+  const safeFunFactIndex = funFacts.length ? funFactIndex % funFacts.length : 0;
 
   // Favorites
   const [favorites, setFavorites] = useState<FavTerrasse[]>(loadFavorites);
@@ -1194,7 +1196,7 @@ export default function App() {
 
           {/* KPI */}
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
-            <img src="/logo.png" alt="" aria-hidden="true" style={{
+            <img src="/logo.webp" alt="" aria-hidden="true" fetchPriority="high" style={{
               position: "absolute", top: "50%", left: "50%",
               transform: "translate(-50%, -50%)",
               height: "200%", width: "auto",
