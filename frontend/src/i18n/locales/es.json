@@ -89,7 +89,9 @@
     "sunnySlots": "Franjas soleadas",
     "shadySlots": "Franjas con sombra",
     "noSlotAvailable": "Ninguna franja disponible",
-    "directions": "Cómo llegar"
+    "directions": "Cómo llegar",
+    "downloadPoster": "Descargar póster",
+    "generatingPoster": "Generando..."
   },
   "favorites": {
     "title": "Favoritos",

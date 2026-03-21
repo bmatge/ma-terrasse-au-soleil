@@ -41,11 +41,9 @@ async def get_poster(
 
     if row is None:
         raise HTTPException(status_code=404, detail="Terrasse not found")
-    if row.profile is None:
-        raise HTTPException(
-            status_code=422,
-            detail="Horizon profile not computed for this terrace",
-        )
+
+    # Flat profile (no building shadows) if horizon profile not computed
+    profile = row.profile if row.profile is not None else [0.0] * 360
 
     poster_year = year or date.today().year
     surface = (
@@ -67,7 +65,7 @@ async def get_poster(
         address=address,
         lat=row.lat,
         lon=row.lon,
-        profile=row.profile,
+        profile=profile,
         year=poster_year,
         qr_url=qr_url,
         surface_m2=surface,

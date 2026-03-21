@@ -89,7 +89,9 @@
     "sunnySlots": "阳光时段",
     "shadySlots": "阴凉时段",
     "noSlotAvailable": "无可用时段",
-    "directions": "导航"
+    "directions": "导航",
+    "downloadPoster": "下载海报",
+    "generatingPoster": "生成中..."
   },
   "favorites": {
     "title": "收藏",

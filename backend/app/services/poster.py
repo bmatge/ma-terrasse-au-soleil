@@ -24,6 +24,7 @@ from PIL import Image  # noqa: E402
 from app.services.sun import get_sun_position  # noqa: E402
 
 PARIS_TZ = ZoneInfo("Europe/Paris")
+PARIS_LAT, PARIS_LON = 48.8566, 2.3522
 ASSETS_DIR = Path(__file__).parent.parent / "assets"
 
 # --- Brand colours ---
@@ -95,111 +96,98 @@ def generate_poster(
 # Annual sunshine computation
 # ---------------------------------------------------------------------------
 
-def _compute_annual_data(
-    lat: float, lon: float, profile: list[float], year: int,
-    day_step: int = 3,
-) -> list[dict]:
-    """Compute sunrise/sunset and sunshine window, sampling every *day_step* days.
+_sun_cache: dict[int, list[list[tuple[float, float, int]]]] = {}
 
-    Interpolates intermediate days for smooth curves while keeping
-    computation fast (~3-4 s instead of ~17 s with daily resolution).
+
+def _get_sun_positions(year: int, day_step: int = 3) -> list[list[tuple[float, float, int]]]:
+    """Precompute sun (altitude, azimuth_index, hour_frac) for sampled days.
+
+    Cached per year so the expensive pysolar calls happen only once.
+    Returns a list of (doy, positions) where positions is a list of
+    (hour_frac, altitude, azimuth_index) tuples for each time step.
     """
-    sampled: list[dict] = []
-    current = date(year, 1, 1)
-    end = date(year, 12, 31)
-
-    while current <= end:
-        sampled.append(_compute_day(lat, lon, profile, current))
-        current += timedelta(days=day_step)
-    # Always include Dec 31
-    last_day = date(year, 12, 31)
-    if sampled[-1]["date"] != last_day:
-        sampled.append(_compute_day(lat, lon, profile, last_day))
-
-    # Interpolate to daily resolution
-    return _interpolate_to_daily(sampled, year)
-
-
-def _interpolate_to_daily(sampled: list[dict], year: int) -> list[dict]:
-    """Linearly interpolate sampled data to every day of the year."""
-    from bisect import bisect_right
-
-    sample_doys = [d["doy"] for d in sampled]
-    fields = ["sunrise", "sunset", "sun_start", "sun_end", "sunny_minutes"]
-    sample_vals = {
-        f: [d[f] for d in sampled] for f in fields
-    }
+    if year in _sun_cache:
+        return _sun_cache[year]
 
     total_days = (date(year, 12, 31) - date(year, 1, 1)).days + 1
+    all_days: list[list[tuple[float, float, int]]] = [[] for _ in range(total_days)]
+
+    current = date(year, 1, 1)
+    end = date(year, 12, 31)
+    while current <= end:
+        doy = current.timetuple().tm_yday
+        dt_base = datetime(current.year, current.month, current.day, tzinfo=PARIS_TZ)
+        positions = []
+        for minutes in range(4 * 60, 22 * 60 + 1, STEP_MINUTES):
+            dt = dt_base + timedelta(minutes=minutes)
+            alt, azi = get_sun_position(PARIS_LAT, PARIS_LON, dt)
+            if alt > 0:
+                positions.append((minutes / 60.0, alt, int(round(azi)) % 360))
+        all_days[doy - 1] = positions
+        current += timedelta(days=day_step)
+
+    # Always include Dec 31
+    last_doy = total_days
+    if not all_days[last_doy - 1]:
+        dt_base = datetime(year, 12, 31, tzinfo=PARIS_TZ)
+        positions = []
+        for minutes in range(4 * 60, 22 * 60 + 1, STEP_MINUTES):
+            dt = dt_base + timedelta(minutes=minutes)
+            alt, azi = get_sun_position(PARIS_LAT, PARIS_LON, dt)
+            if alt > 0:
+                positions.append((minutes / 60.0, alt, int(round(azi)) % 360))
+        all_days[last_doy - 1] = positions
+
+    # Interpolate empty days by copying nearest sampled day
+    last_filled = 0
+    for i in range(total_days):
+        if all_days[i]:
+            last_filled = i
+        else:
+            all_days[i] = all_days[last_filled]
+
+    _sun_cache[year] = all_days
+    return all_days
+
+
+def _compute_annual_data(
+    lat: float, lon: float, profile: list[float], year: int,
+) -> list[dict]:
+    """Compute sunshine data using precomputed sun positions (fast path)."""
+    sun_positions = _get_sun_positions(year)
+    total_days = len(sun_positions)
     results = []
 
-    for doy in range(1, total_days + 1):
-        idx = bisect_right(sample_doys, doy) - 1
-        idx = max(0, min(idx, len(sampled) - 1))
+    for doy_idx in range(total_days):
+        positions = sun_positions[doy_idx]
+        d = date(year, 1, 1) + timedelta(days=doy_idx)
 
-        if idx >= len(sampled) - 1 or sample_doys[idx] == doy:
-            # Exact match or last sample
-            src = sampled[idx]
-            results.append({
-                "date": date(year, 1, 1) + timedelta(days=doy - 1),
-                "doy": doy,
-                **{f: src[f] for f in fields},
-            })
-        else:
-            # Interpolate between idx and idx+1
-            doy0, doy1 = sample_doys[idx], sample_doys[idx + 1]
-            t = (doy - doy0) / (doy1 - doy0)
-            interp = {}
-            for f in fields:
-                v0, v1 = sample_vals[f][idx], sample_vals[f][idx + 1]
-                if v0 is None or v1 is None:
-                    interp[f] = v0 if v1 is None else v1
-                else:
-                    interp[f] = v0 + t * (v1 - v0)
-            results.append({
-                "date": date(year, 1, 1) + timedelta(days=doy - 1),
-                "doy": doy,
-                **interp,
-            })
+        sunrise = sunset = None
+        sun_start = sun_end = None
+        sunny_minutes = 0
 
-    return results
-
-
-def _compute_day(
-    lat: float, lon: float, profile: list[float], d: date
-) -> dict:
-    dt_base = datetime(d.year, d.month, d.day, tzinfo=PARIS_TZ)
-
-    sunrise = sunset = None
-    sun_start = sun_end = None
-    sunny_minutes = 0
-
-    for minutes in range(4 * 60, 22 * 60 + 1, STEP_MINUTES):
-        dt = dt_base + timedelta(minutes=minutes)
-        alt, azi = get_sun_position(lat, lon, dt)
-        hour_frac = minutes / 60.0
-
-        if alt > 0:
+        for hour_frac, alt, az_idx in positions:
             if sunrise is None:
                 sunrise = hour_frac
             sunset = hour_frac
 
-            az_idx = int(round(azi)) % 360
             if alt > profile[az_idx]:
                 if sun_start is None:
                     sun_start = hour_frac
                 sun_end = hour_frac
                 sunny_minutes += STEP_MINUTES
 
-    return {
-        "date": d,
-        "doy": d.timetuple().tm_yday,
-        "sunrise": sunrise or 8.0,
-        "sunset": sunset or 18.0,
-        "sun_start": sun_start,
-        "sun_end": sun_end,
-        "sunny_minutes": sunny_minutes,
-    }
+        results.append({
+            "date": d,
+            "doy": doy_idx + 1,
+            "sunrise": sunrise or 8.0,
+            "sunset": sunset or 18.0,
+            "sun_start": sun_start,
+            "sun_end": sun_end,
+            "sunny_minutes": sunny_minutes,
+        })
+
+    return results
 
 
 # ---------------------------------------------------------------------------

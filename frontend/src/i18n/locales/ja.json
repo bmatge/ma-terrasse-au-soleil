@@ -89,7 +89,9 @@
     "sunnySlots": "日当たりの良い時間帯",
     "shadySlots": "日陰の時間帯",
     "noSlotAvailable": "利用可能な時間帯なし",
-    "directions": "ルート案内"
+    "directions": "ルート案内",
+    "downloadPoster": "ポスターをダウンロード",
+    "generatingPoster": "生成中..."
   },
   "favorites": {
     "title": "お気に入り",
