@@ -33,9 +33,7 @@ export default function BlogPage() {
       <Nav back title={t("blog.title")} onBack={() => navigate(-1)} />
       <div style={{ padding: "20px 24px 100px" }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>📝</div>
-          <div style={{ fontFamily: F, fontWeight: 700, fontSize: 20, color: th.text }}>{t("blog.title")}</div>
-          <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginTop: 4 }}>{t("blog.subtitle")}</div>
+          <div style={{ fontFamily: F, fontWeight: 600, fontSize: 15, color: th.textSoft, marginTop: 8 }}>{t("blog.subtitle")}</div>
         </div>
 
         {posts.length === 0 && (
