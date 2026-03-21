@@ -112,6 +112,7 @@ async def sitemap_static() -> Response:
 BLOG_POSTS = [
     {"slug": "comment-on-a-construit-ausoleil", "date": "2026-03-21"},
     {"slug": "profil-ensoleillement-rorschach", "date": "2026-03-21"},
+    {"slug": "ode-open-data", "date": "2026-03-21"},
 ]
 
 

@@ -1,0 +1,99 @@
+{
+  "slug": "ode-open-data",
+  "title": "Ode à l'open data (ou pourquoi cette app n'aurait pas pu exister il y a 10 ans)",
+  "description": "Terrasses, bâtiments 3D, position du soleil, météo : tout ce qui fait tourner Au Soleil est gratuit, ouvert et public. Déclaration d'amour à l'open data.",
+  "date": "2026-03-21",
+  "author": "Bertrand & Virginie",
+  "tags": ["open-data", "IGN", "paris", "meteo", "transparence"],
+  "image": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "content": "Au Soleil n'a coûté zéro euro en données. Pas un centime. Pas un abonnement API. Pas un contrat de licence. Tout — absolument tout — ce qui fait tourner cette app vient de données ouvertes, gratuites et librement réutilisables. Et ça, c'est un petit miracle qu'il faut célébrer."
+    },
+    {
+      "type": "heading",
+      "content": "Le casting de rêve"
+    },
+    {
+      "type": "paragraph",
+      "content": "Pour savoir si une terrasse est au soleil, il faut quatre ingrédients. Quatre sources de données. Et les quatre sont en open data. Alignement des planètes — c'est le cas de le dire."
+    },
+    {
+      "type": "heading",
+      "content": "1. Les terrasses — Ville de Paris"
+    },
+    {
+      "type": "paragraph",
+      "content": "La Ville de Paris publie sur opendata.paris.fr le registre complet des autorisations de terrasses. Chaque terrasse ouverte déclarée est là : nom de l'établissement, adresse, dimensions, coordonnées GPS. C'est grâce à ce fichier qu'on sait où sont les terrasses. Sans lui, on calculerait l'ensoleillement de trottoirs vides — poétique, mais peu utile."
+    },
+    {
+      "type": "heading",
+      "content": "2. Les bâtiments en 3D — IGN BD TOPO"
+    },
+    {
+      "type": "paragraph",
+      "content": "L'IGN (Institut Géographique National, pour les intimes) publie la BD TOPO : un référentiel national avec l'empreinte au sol et la hauteur de chaque bâtiment de France. De France. Pas juste Paris. Chaque immeuble haussmannien, chaque tour de la Défense, chaque cabane de jardin (bon, presque). C'est cette base qui nous permet de savoir quel bâtiment fait de l'ombre à quelle terrasse."
+    },
+    {
+      "type": "paragraph",
+      "content": "Petit moment d'émotion : la BD TOPO est passée en open data en 2021. Avant ça, ces données coûtaient des milliers d'euros par département. Un side project comme le nôtre n'aurait tout simplement pas pu exister. Merci l'IGN. Vraiment."
+    },
+    {
+      "type": "heading",
+      "content": "3. La position du soleil — les maths (c'est gratuit aussi)"
+    },
+    {
+      "type": "paragraph",
+      "content": "OK, techniquement ce n'est pas de l'open data. C'est de l'astronomie. La position du soleil à n'importe quel instant, pour n'importe quel point du globe, ça se calcule avec des formules connues depuis des siècles. Personne n'a déposé de brevet sur la course du soleil (pas encore). On utilise pysolar, une bibliothèque Python open source, et le tour est joué."
+    },
+    {
+      "type": "paragraph",
+      "content": "Le soleil : l'ultime donnée ouverte. Disponible depuis 4,6 milliards d'années, sans interruption de service."
+    },
+    {
+      "type": "heading",
+      "content": "4. La météo — Open-Meteo"
+    },
+    {
+      "type": "paragraph",
+      "content": "Pour la couche météo (est-ce qu'il y a des nuages qui gâchent la fête ?), on utilise Open-Meteo. API gratuite, sans clé, sans inscription, sans limite abusive. Les données viennent de modèles météo publics (ECMWF, Météo-France via l'open data, NOAA). Le tout servi par un projet open source suisse. La Suisse, quoi. Fiable comme une horloge — pardon."
+    },
+    {
+      "type": "heading",
+      "content": "Pourquoi c'est important"
+    },
+    {
+      "type": "paragraph",
+      "content": "On pourrait se dire « oui bon, c'est juste un side project de terrasses, calme-toi avec tes grands discours ». Et c'est vrai. Mais justement : c'est parce que c'est un « petit » projet que l'open data est si important. Les grosses boîtes peuvent se payer des licences à 50 000 € par an. Nous, non. Et probablement vous non plus."
+    },
+    {
+      "type": "paragraph",
+      "content": "L'open data, c'est l'idée que les données financées par le public appartiennent au public. Que la cartographie d'un pays, les relevés météo, les registres administratifs — tout ça ne devrait pas être enfermé derrière des paywalls. Chaque jeu de données ouvert, c'est un projet rendu possible. Une startup qui peut démarrer sans lever 2 millions. Un étudiant qui peut faire son mémoire. Ou deux zigotos qui veulent savoir si le Café de Flore est au soleil à 16h."
+    },
+    {
+      "type": "heading",
+      "content": "La France, bonne élève (si si)"
+    },
+    {
+      "type": "paragraph",
+      "content": "On râle beaucoup sur l'administration française (c'est un sport national, on ne va pas s'en priver). Mais en matière d'open data, la France est objectivement dans le top mondial. data.gouv.fr, l'IGN, la Base Adresse Nationale, l'INSEE, les données de transport... C'est pas parfait, c'est parfois un peu le bazar dans les formats, mais c'est là. Et c'est libre."
+    },
+    {
+      "type": "paragraph",
+      "content": "Comparez avec d'autres pays où les données cadastrales coûtent un bras, où la météo est verrouillée par des monopoles privés, où même les horaires de bus sont propriétaires. On a de la chance. Et quand on a de la chance, le minimum c'est de le dire."
+    },
+    {
+      "type": "heading",
+      "content": "Merci"
+    },
+    {
+      "type": "paragraph",
+      "content": "Donc voilà. Merci l'IGN pour les bâtiments. Merci la Ville de Paris pour les terrasses. Merci Open-Meteo pour la météo. Merci les astronomes pour le soleil (même s'ils n'y sont pour rien). Et merci à tous les fonctionnaires, développeurs et militants qui poussent pour que les données publiques restent publiques."
+    },
+    {
+      "type": "paragraph",
+      "content": "Sans vous, on serait encore à deviner si notre terrasse est au soleil en regardant Google Street View en plissant les yeux. Et franchement, ça marchait moyen."
+    }
+  ]
+}
