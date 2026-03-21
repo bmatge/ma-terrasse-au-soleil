@@ -1,4 +1,11 @@
-@tailwind base;
+/* Minimal reset — replaces heavy @tailwind base (Preflight) */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+body { font-family: system-ui, -apple-system, sans-serif; }
+img, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: inherit; }
+
 @tailwind components;
 @tailwind utilities;
 

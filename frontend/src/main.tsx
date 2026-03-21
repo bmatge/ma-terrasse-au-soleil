@@ -4,7 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import App from "./App";
 import "./styles/index.css";
-import "./i18n";
+
+// Defer i18n init — non-blocking, loads after first paint
+import("./i18n");
 
 const queryClient = new QueryClient({
   defaultOptions: {
