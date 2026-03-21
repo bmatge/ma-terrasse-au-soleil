@@ -18,6 +18,7 @@ export interface TerrasseSearchResult {
 export interface TimelineSlot {
   time: string;
   sun_altitude: number;
+  sun_azimuth: number;
   urban_sunny: boolean;
   cloud_cover: number;
   uv_index: number;

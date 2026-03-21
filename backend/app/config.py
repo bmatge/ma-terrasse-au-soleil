@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     SMTP_FROM: str = "noreply@ecosysteme.matge.com"
     CONTACT_TO: str = "bertrand+ausoleil@matge.com,virginie.bellot@ymail.com"
 
+    FRONTEND_URL: str = "http://localhost:3000"
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 

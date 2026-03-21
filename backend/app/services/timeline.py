@@ -121,6 +121,7 @@ async def build_timeline(
         slots.append({
             "time": current.strftime("%H:%M"),
             "sun_altitude": round(sun_alt, 1),
+            "sun_azimuth": round(sun_azi, 1),
             "urban_sunny": urban_sunny,
             "cloud_cover": cloud_cover,
             "uv_index": round(uv_index, 1),

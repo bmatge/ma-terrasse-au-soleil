@@ -3,15 +3,16 @@ from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies import get_redis
 from app.i18n import get_lang
+from app.repositories.terrasse import search_terrasses as repo_search, get_with_profile, find_nearby
 from app.schemas.nearby import NearbyResponse
 from app.schemas.terrasse import TerrasseSearchResult
 from app.schemas.timeline import TimelineResponse
+from app.services.horizon_cache import get_cached_profile
 from app.services.nearby import find_nearby_terrasses
 from app.services.timeline import build_timeline
 
@@ -21,47 +22,13 @@ router = APIRouter(prefix="/api/terrasses", tags=["terrasses"])
 
 
 @router.get("/search", response_model=list[TerrasseSearchResult])
-async def search_terrasses(
+async def search(
     q: str = Query(..., min_length=2, description="Search query"),
     limit: int = Query(10, le=20),
     db: AsyncSession = Depends(get_db),
 ):
     """Search terrasses by name or address (trigram similarity)."""
-    result = await db.execute(
-        text("""
-            SELECT
-                id, nom, nom_commercial, adresse, arrondissement,
-                ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
-                price_level, place_type, rating, user_rating_count,
-                phone, website, google_maps_uri,
-                similarity(nom, :q) AS sim
-            FROM terrasses
-            WHERE nom % :q OR adresse % :q OR nom_commercial % :q
-            ORDER BY sim DESC
-            LIMIT :limit
-        """),
-        {"q": q, "limit": limit},
-    )
-    rows = result.fetchall()
-
-    if not rows:
-        # Fallback: ILIKE search
-        result = await db.execute(
-            text("""
-                SELECT
-                    id, nom, nom_commercial, adresse, arrondissement,
-                    ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
-                    price_level, place_type, rating, user_rating_count,
-                    phone, website, google_maps_uri
-                FROM terrasses
-                WHERE nom ILIKE :pattern OR adresse ILIKE :pattern OR nom_commercial ILIKE :pattern
-                ORDER BY nom
-                LIMIT :limit
-            """),
-            {"pattern": f"%{q}%", "limit": limit},
-        )
-        rows = result.fetchall()
-
+    rows = await repo_search(db, q, limit)
     return [
         TerrasseSearchResult(
             id=r.id, nom=r.nom, nom_commercial=r.nom_commercial,
@@ -86,26 +53,11 @@ async def get_timeline(
     redis=Depends(get_redis),
 ):
     """Mode 1: Get sunshine timeline for a specific terrace."""
-    # Fetch terrace + profile
-    result = await db.execute(
-        text("""
-            SELECT
-                t.id, t.nom, t.nom_commercial, t.adresse, t.arrondissement,
-                ST_X(t.geometry) AS lon, ST_Y(t.geometry) AS lat,
-                t.price_level, t.place_type, t.rating, t.user_rating_count,
-                t.phone, t.website, t.google_maps_uri,
-                hp.profile
-            FROM terrasses t
-            LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
-            WHERE t.id = :id
-        """),
-        {"id": terrasse_id},
-    )
-    row = result.fetchone()
+    row = await get_with_profile(db, terrasse_id)
     if row is None:
         raise HTTPException(status_code=404, detail="Terrasse not found")
 
-    profile = row.profile if row.profile else [0.0] * 360
+    profile = await get_cached_profile(redis, terrasse_id, row.profile)
     target_date = date.fromisoformat(date_str) if date_str else date.today()
 
     lang = get_lang(request)

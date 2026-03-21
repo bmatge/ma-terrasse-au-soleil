@@ -4,6 +4,7 @@ from pydantic import BaseModel
 class TimelineSlot(BaseModel):
     time: str
     sun_altitude: float
+    sun_azimuth: float
     urban_sunny: bool
     cloud_cover: int
     uv_index: float

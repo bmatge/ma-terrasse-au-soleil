@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: terrasse
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: terrasse_soleil
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://terrasse:testpassword@localhost:5432/terrasse_soleil
+      DATABASE_URL_SYNC: postgresql://terrasse:testpassword@localhost:5432/terrasse_soleil
+      REDIS_URL: redis://localhost:6379/0
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e ".[dev]" 2>/dev/null || pip install -e .
+      - name: Install test dependencies
+        run: pip install pytest pytest-asyncio httpx
+      - name: Enable PostGIS extension
+        run: |
+          PGPASSWORD=testpassword psql -h localhost -U terrasse -d terrasse_soleil -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+          PGPASSWORD=testpassword psql -h localhost -U terrasse -d terrasse_soleil -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+      - name: Run tests
+        run: python -m pytest tests/ -v --tb=short
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build

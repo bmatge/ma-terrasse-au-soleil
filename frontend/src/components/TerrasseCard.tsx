@@ -1,61 +1,65 @@
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useTheme, themes } from "../contexts/ThemeContext";
+import { useFavorites } from "../hooks/useFavorites";
+import { HeartIcon, StarIcon, PlaceTypeIcon } from "./Icons";
+import StatusBadge from "./StatusBadge";
+import { normalizePlaceType } from "../utils/placeType";
+import { F, PLACE_TYPE_KEYS } from "../lib/constants";
+import { isSunnyStatus } from "../lib/helpers";
 import type { NearbyTerrasse } from "../api/types";
-import PriceLevel from "./PriceLevel";
-import PlaceTypeBadge from "./PlaceTypeBadge";
-import Rating from "./Rating";
 
 interface TerrasseCardProps {
   terrasse: NearbyTerrasse;
+  onClick: (terrasse: NearbyTerrasse) => void;
 }
 
-export default function TerrasseCard({ terrasse }: TerrasseCardProps) {
+export default function TerrasseCard({ terrasse, onClick }: TerrasseCardProps) {
   const { t } = useTranslation();
-
-  const STATUS_CONFIG: Record<string, { icon: string; color: string; labelKey: string }> = {
-    soleil: { icon: "\u2600\uFE0F", color: "text-amber-600", labelKey: "status.soleil" },
-    mitige: { icon: "\u26C5", color: "text-yellow-600", labelKey: "status.mitige" },
-    couvert: { icon: "\u2601\uFE0F", color: "text-gray-500", labelKey: "status.couvert" },
-    ombre: { icon: "\uD83C\uDFE2", color: "text-gray-600", labelKey: "status.ombre" },
-    nuit: { icon: "\uD83C\uDF19", color: "text-slate-600", labelKey: "status.nuit" },
-  };
-
-  const config = STATUS_CONFIG[terrasse.status] || STATUS_CONFIG.ombre;
+  const { mode, th } = useTheme();
+  const { toggleFav, isFav } = useFavorites();
+  const modeMatch = mode === "sun" ? isSunnyStatus(terrasse.status) : !isSunnyStatus(terrasse.status);
 
   return (
-    <Link
-      to={`/terrasse/${terrasse.id}`}
-      className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100 hover:border-amber-200 hover:shadow-sm transition"
-    >
-      <div className="text-2xl">{config.icon}</div>
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-gray-800 truncate">{terrasse.nom_commercial || terrasse.nom}</div>
-        <div className="text-sm text-gray-500 truncate">
-          {terrasse.adresse}
-        </div>
-        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          {terrasse.place_type && (
-            <PlaceTypeBadge type={terrasse.place_type} />
-          )}
-          {terrasse.price_level != null && terrasse.price_level > 0 && (
-            <PriceLevel level={terrasse.price_level} />
-          )}
-          {terrasse.rating != null && (
-            <Rating rating={terrasse.rating} count={terrasse.user_rating_count} />
-          )}
-        </div>
-      </div>
-      <div className="text-right shrink-0">
-        <div className={`text-sm font-medium ${config.color}`}>
-          {t(config.labelKey)}
-        </div>
-        <div className="text-xs text-gray-400">{terrasse.distance_m}m</div>
-        {terrasse.soleil_jusqua && (
-          <div className="text-xs text-amber-500">
-            {t("detail.sunUntil", { time: terrasse.soleil_jusqua })}
+    <div onClick={() => onClick(terrasse)} style={{
+      background: th.bgCard, borderRadius: 16, padding: 18, cursor: "pointer",
+      border: `1px solid ${modeMatch ? th.accent + "40" : th.border}`,
+      boxShadow: `0 2px 12px ${th.shadow}`,
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <span style={{ fontFamily: F, fontWeight: 600, fontSize: 17, color: th.text }}>{terrasse.nom_commercial || terrasse.nom}</span>
+            <StatusBadge status={terrasse.status} />
           </div>
-        )}
+          {terrasse.adresse && <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+            {terrasse.place_type && (
+              <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: th.textSoft, fontFamily: F }}>
+                <PlaceTypeIcon type={normalizePlaceType(terrasse.place_type) ?? "autre"} size={12} color={th.textSoft} />
+                {t(PLACE_TYPE_KEYS[normalizePlaceType(terrasse.place_type) ?? "autre"])}
+              </span>
+            )}
+            {terrasse.price_level != null && terrasse.price_level > 0 && (
+              <span style={{ fontSize: 11, color: th.textSoft, fontFamily: F }}>{"€".repeat(terrasse.price_level)}</span>
+            )}
+            {terrasse.rating != null && (
+              <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 11, color: th.textSoft, fontFamily: F }}>
+                <StarIcon size={11} />
+                {terrasse.rating.toFixed(1)}{terrasse.user_rating_count ? ` (${terrasse.user_rating_count})` : ""}
+              </span>
+            )}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12, fontFamily: F, color: th.textSoft }}>
+            <span>{terrasse.distance_m}m</span>
+            {terrasse.soleil_jusqua && <span style={{ color: themes.sun.accentDark }}>{t("detail.sunUntil", { time: terrasse.soleil_jusqua })}</span>}
+            {!terrasse.has_profile && <span style={{ color: th.textMuted, fontStyle: "italic" }}>{t("detail.estimated")}</span>}
+          </div>
+        </div>
+        <button onClick={(e) => { e.stopPropagation(); toggleFav({ id: terrasse.id, nom: terrasse.nom, adresse: terrasse.adresse }); }}
+          style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: isFav(terrasse.id) ? "#EF4444" : th.textMuted }}>
+          <HeartIcon filled={isFav(terrasse.id)} size={18} />
+        </button>
       </div>
-    </Link>
+    </div>
   );
 }

@@ -7,9 +7,9 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from redis.asyncio import Redis
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.repositories.terrasse import find_nearby as repo_find_nearby
 from app.services.meteo import get_hourly_weather, weather_status
 from app.services.shadow import is_sunny
 from app.services.sun import get_sun_position
@@ -46,37 +46,7 @@ async def find_nearby_terrasses(
     cloud_cover = hour_weather.get("cloud_cover", 50)
 
     # Query terrasses with their horizon profiles
-    result = await session.execute(
-        text("""
-            SELECT
-                t.id,
-                t.nom,
-                t.nom_commercial,
-                t.adresse,
-                ST_X(t.geometry) AS lon,
-                ST_Y(t.geometry) AS lat,
-                ST_Distance(
-                    t.geometry::geography,
-                    ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography
-                )::int AS distance_m,
-                t.price_level,
-                t.place_type,
-                t.rating,
-                t.user_rating_count,
-                hp.profile
-            FROM terrasses t
-            LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
-            WHERE ST_DWithin(
-                t.geometry::geography,
-                ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography,
-                :radius
-            )
-            ORDER BY distance_m
-            LIMIT 50
-        """),
-        {"lat": lat, "lon": lon, "radius": radius_m},
-    )
-    rows = result.fetchall()
+    rows = await repo_find_nearby(session, lat, lon, radius_m)
 
     terrasses = []
     for row in rows:

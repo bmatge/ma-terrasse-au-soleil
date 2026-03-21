@@ -1,19 +1,17 @@
 """Contact form endpoint."""
-import time
 from email.message import EmailMessage
 from email.utils import make_msgid
 
 import aiosmtplib
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
 from app.config import settings
+from app.dependencies import get_redis
 from app.i18n import get_lang, tr
 
 router = APIRouter(prefix="/api", tags=["contact"])
 
-# Simple in-memory rate limit: max 5 submissions per IP per hour
-_rate: dict[str, list[float]] = {}
 _RATE_LIMIT = 5
 _RATE_WINDOW = 3600
 
@@ -24,20 +22,26 @@ class ContactRequest(BaseModel):
     message: str
 
 
-def _check_rate(ip: str) -> None:
-    now = time.time()
-    timestamps = [t for t in _rate.get(ip, []) if now - t < _RATE_WINDOW]
-    if len(timestamps) >= _RATE_LIMIT:
+async def _check_rate(ip: str, redis) -> None:
+    """Check rate limit using Redis. Allows _RATE_LIMIT requests per IP per hour."""
+    if redis is None:
+        return  # Skip rate limiting if Redis unavailable
+    key = f"contact:rate:{ip}"
+    count = await redis.incr(key)
+    if count == 1:
+        await redis.expire(key, _RATE_WINDOW)
+    if count > _RATE_LIMIT:
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    timestamps.append(now)
-    _rate[ip] = timestamps
 
 
 @router.post("/contact")
-async def contact(body: ContactRequest, request: Request) -> dict:
+async def contact(body: ContactRequest, request: Request, redis=Depends(get_redis)) -> dict:
     lang = get_lang(request)
     if not body.name.strip() or not body.message.strip():
         raise HTTPException(status_code=422, detail=tr("name_message_required", lang))
+
+    ip = request.client.host if request.client else "unknown"
+    await _check_rate(ip, redis)
 
     msg = EmailMessage()
     msg["Message-ID"] = make_msgid(domain="ecosysteme.matge.com")

@@ -9,7 +9,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           maplibre: ["maplibre-gl", "react-map-gl"],
-          suncalc: ["suncalc"],
           i18n: ["i18next", "react-i18next", "i18next-browser-languagedetector"],
         },
       },
