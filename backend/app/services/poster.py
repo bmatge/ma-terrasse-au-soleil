@@ -64,7 +64,7 @@ def generate_poster(
     surface_m2: float | None = None,
 ) -> bytes:
     """Generate the sunshine poster and return PNG bytes."""
-    annual = _compute_annual_data(lat, lon, profile, year)
+    grid, hours, day_summaries = _compute_sunshine_grid(profile, year)
 
     fig = plt.figure(figsize=(FIG_W_IN, FIG_H_IN), dpi=DPI, facecolor=WHITE)
 
@@ -78,8 +78,8 @@ def generate_poster(
 
     orientation_az, orientation_label = _compute_orientation(profile)
     _draw_sidebar(fig, ax_side, name, address, year, surface_m2, orientation_label)
-    _draw_chart(ax_chart, annual)
-    _draw_annotations(ax_chart, annual)
+    _draw_chart(ax_chart, grid, hours, day_summaries)
+    _draw_annotations(ax_chart, day_summaries)
     _draw_qr(fig, qr_url)
     _draw_footer(fig)
 
@@ -148,44 +148,58 @@ def _get_sun_positions(year: int, day_step: int = 3) -> list[list[tuple[float, f
     return all_days
 
 
-def _compute_annual_data(
-    lat: float, lon: float, profile: list[float], year: int,
-) -> list[dict]:
-    """Compute sunshine data using precomputed sun positions (fast path)."""
+def _compute_sunshine_grid(
+    profile: list[float], year: int,
+) -> tuple[np.ndarray, list[float], list[dict]]:
+    """Build a 2D grid of sunshine status and per-day summaries.
+
+    Returns:
+        grid: (n_steps, n_days) array — 0=night, 1=shadow, 2=sunny
+        hours: list of fractional hours for each row
+        summaries: per-day dicts with sunrise/sunset/sunny_minutes
+    """
     sun_positions = _get_sun_positions(year)
     total_days = len(sun_positions)
-    results = []
 
-    for doy_idx in range(total_days):
-        positions = sun_positions[doy_idx]
-        d = date(year, 1, 1) + timedelta(days=doy_idx)
+    time_minutes = list(range(4 * 60, 22 * 60 + 1, STEP_MINUTES))
+    n_steps = len(time_minutes)
+    hours = [m / 60.0 for m in time_minutes]
+
+    grid = np.zeros((n_steps, total_days), dtype=np.float32)
+    summaries = []
+
+    for day_idx in range(total_days):
+        # Build lookup: minutes -> (alt, az_idx)
+        pos_by_min: dict[int, tuple[float, int]] = {}
+        for hf, alt, az in sun_positions[day_idx]:
+            pos_by_min[int(round(hf * 60))] = (alt, az)
 
         sunrise = sunset = None
-        sun_start = sun_end = None
         sunny_minutes = 0
 
-        for hour_frac, alt, az_idx in positions:
-            if sunrise is None:
-                sunrise = hour_frac
-            sunset = hour_frac
+        for step_idx, m in enumerate(time_minutes):
+            entry = pos_by_min.get(m)
+            if entry is not None:
+                alt, az_idx = entry
+                hf = m / 60.0
+                if sunrise is None:
+                    sunrise = hf
+                sunset = hf
+                if alt > profile[az_idx]:
+                    grid[step_idx, day_idx] = 2.0  # sunny
+                    sunny_minutes += STEP_MINUTES
+                else:
+                    grid[step_idx, day_idx] = 1.0  # shadow
+            # else: 0 = night
 
-            if alt > profile[az_idx]:
-                if sun_start is None:
-                    sun_start = hour_frac
-                sun_end = hour_frac
-                sunny_minutes += STEP_MINUTES
-
-        results.append({
-            "date": d,
-            "doy": doy_idx + 1,
+        summaries.append({
+            "doy": day_idx + 1,
             "sunrise": sunrise or 8.0,
             "sunset": sunset or 18.0,
-            "sun_start": sun_start,
-            "sun_end": sun_end,
             "sunny_minutes": sunny_minutes,
         })
 
-    return results
+    return grid, hours, summaries
 
 
 # ---------------------------------------------------------------------------
@@ -351,56 +365,44 @@ def _draw_wrapped_text(ax, x, y, text, max_chars=20, line_spacing=0.035, **kw):
 # Main chart
 # ---------------------------------------------------------------------------
 
-def _draw_chart(ax, annual: list[dict]):
-    days = np.array([d["doy"] for d in annual])
-    sunrise = np.array([d["sunrise"] for d in annual])
-    sunset = np.array([d["sunset"] for d in annual])
-    sun_start = np.array([
-        d["sun_start"] if d["sun_start"] is not None else d["sunrise"]
-        for d in annual
+def _draw_chart(ax, grid: np.ndarray, hours: list[float], summaries: list[dict]):
+    from matplotlib.colors import ListedColormap
+
+    n_steps, total_days = grid.shape
+
+    # Custom colormap: night / shadow / sunny
+    cmap = ListedColormap([
+        (0.796, 0.835, 0.882, 0.4),   # 0 = night  (NIGHT_COLOR with alpha)
+        (0.961, 0.847, 0.604, 0.85),   # 1 = shadow (SHADOW)
+        (0.984, 0.812, 0.231, 0.95),   # 2 = sunny  (SUNSHINE)
     ])
-    sun_end = np.array([
-        d["sun_end"] if d["sun_end"] is not None else d["sunrise"]
-        for d in annual
-    ])
 
-    # Smooth curves for nicer rendering
-    sunrise_s = _smooth(sunrise)
-    sunset_s = _smooth(sunset)
-    sun_start_s = _smooth(sun_start)
-    sun_end_s = _smooth(sun_end)
+    # Build edges for pcolormesh
+    half_step = STEP_MINUTES / 120.0  # half step in hours
+    y_edges = np.array([h - half_step for h in hours] + [hours[-1] + half_step])
+    x_edges = np.arange(0.5, total_days + 1.5)
 
-    y_min, y_max = 4.0, 22.0
+    ax.pcolormesh(x_edges, y_edges, grid, cmap=cmap, vmin=-0.5, vmax=2.5,
+                  shading="flat", rasterized=True)
 
-    # 1. Night (bottom and top)
-    ax.fill_between(days, y_min, sunrise_s, color=NIGHT_COLOR, alpha=0.4)
-    ax.fill_between(days, sunset_s, y_max, color=NIGHT_COLOR, alpha=0.4)
-
-    # 2. Ombre — all daylight without direct sun (buildings or low sun)
-    ax.fill_between(days, sunrise_s, sunset_s, color=SHADOW, alpha=0.7)
-
-    # 3. Soleil — direct sunshine on terrace
-    ax.fill_between(days, sun_start_s, sun_end_s, color=SUNSHINE, alpha=0.95)
-
-    # Curves
-    ax.plot(days, sunrise_s, color=SKY_BLUE_DASHED, linewidth=1.2,
+    # Sunrise/sunset curves overlay
+    days = np.arange(1, total_days + 1)
+    sunrise = _smooth(np.array([s["sunrise"] for s in summaries]))
+    sunset = _smooth(np.array([s["sunset"] for s in summaries]))
+    ax.plot(days, sunrise, color=SKY_BLUE_DASHED, linewidth=1.2,
             linestyle="--", alpha=0.8)
-    ax.plot(days, sunset_s, color=SKY_BLUE_DASHED, linewidth=1.2,
+    ax.plot(days, sunset, color=SKY_BLUE_DASHED, linewidth=1.2,
             linestyle="--", alpha=0.8)
-    ax.plot(days, sun_start_s, color=AMBER_DARK, linewidth=1.8, alpha=0.9)
-    ax.plot(days, sun_end_s, color=AMBER_DARK, linewidth=1.8, alpha=0.9)
 
     # Axis formatting
-    ax.set_xlim(1, 365)
-    ax.set_ylim(y_min, y_max)
+    ax.set_xlim(0.5, total_days + 0.5)
+    ax.set_ylim(hours[0] - half_step, hours[-1] + half_step)
     ax.invert_yaxis()  # early hours at top
 
-    # X ticks: month names
     month_mids = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349]
     ax.set_xticks(month_mids)
     ax.set_xticklabels(MONTH_NAMES_FR, fontsize=9, fontfamily="sans-serif")
 
-    # Y ticks: hours
     hour_ticks = list(range(5, 22))
     ax.set_yticks(hour_ticks)
     ax.set_yticklabels(
@@ -415,7 +417,6 @@ def _draw_chart(ax, annual: list[dict]):
     for spine in ax.spines.values():
         spine.set_visible(False)
 
-    # Explanatory subtitle
     ax.text(
         0.01, 0.01,
         "Profil d\u2019ensoleillement \u00b7 Plus c\u2019est jaune, plus c\u2019est lumineux !",
@@ -426,7 +427,6 @@ def _draw_chart(ax, annual: list[dict]):
 
 
 def _smooth(arr: np.ndarray, window: int = 5) -> np.ndarray:
-    """Simple moving-average smoothing."""
     kernel = np.ones(window) / window
     padded = np.pad(arr, window // 2, mode="edge")
     return np.convolve(padded, kernel, mode="valid")[:len(arr)]
@@ -436,7 +436,7 @@ def _smooth(arr: np.ndarray, window: int = 5) -> np.ndarray:
 # Annotations (sunshine duration badges)
 # ---------------------------------------------------------------------------
 
-def _draw_annotations(ax, annual: list[dict]):
+def _draw_annotations(ax, summaries: list[dict]):
     """Place sunshine-duration badges at key dates."""
     key_dates = [
         (15, "Jan"),    # mid-January
@@ -447,24 +447,17 @@ def _draw_annotations(ax, annual: list[dict]):
     ]
 
     for doy_target, _label in key_dates:
-        # Find closest day
-        day = next((d for d in annual if d["doy"] == doy_target), None)
+        day = next((d for d in summaries if d["doy"] == doy_target), None)
         if day is None or day["sunny_minutes"] == 0:
             continue
 
         total_mins = int(round(day["sunny_minutes"]))
-        hours = total_mins // 60
-        mins = total_mins % 60
-        if mins > 0:
-            txt = f"{hours}h{mins:02d}"
-        else:
-            txt = f"{hours}h"
+        h = total_mins // 60
+        m = total_mins % 60
+        txt = f"{h}h{m:02d}" if m > 0 else f"{h}h"
 
-        # Position badge in the middle of the sunshine window
-        if day["sun_start"] is not None and day["sun_end"] is not None:
-            y_pos = (day["sun_start"] + day["sun_end"]) / 2
-        else:
-            y_pos = (day["sunrise"] + day["sunset"]) / 2
+        # Position badge at midpoint between sunrise and sunset
+        y_pos = (day["sunrise"] + day["sunset"]) / 2
 
         ax.annotate(
             txt,
@@ -483,9 +476,9 @@ def _draw_annotations(ax, annual: list[dict]):
         )
 
     # Label "Terrasse au soleil" near summer solstice
-    solstice = next((d for d in annual if d["doy"] == 172), None)
-    if solstice and solstice["sun_start"] is not None:
-        mid_y = (solstice["sun_start"] + solstice["sun_end"]) / 2
+    solstice = next((d for d in summaries if d["doy"] == 172), None)
+    if solstice and solstice["sunny_minutes"] > 0:
+        mid_y = (solstice["sunrise"] + solstice["sunset"]) / 2
         ax.text(
             195, mid_y + 0.6, "Terrasse\nau soleil",
             fontsize=10, fontweight="bold", color=AMBER_DARKER,
