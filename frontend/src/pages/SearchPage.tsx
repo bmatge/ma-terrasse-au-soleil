@@ -11,7 +11,7 @@ import { searchTerrasses as searchTerrassesApi, geocode as geocodeApi } from "..
 import type { TerrasseSearchResult, GeocodeResult } from "../api/types";
 import { normalizePlaceType } from "../utils/placeType";
 import { F, HOURS, METRO_STATIONS } from "../lib/constants";
-import { currentHourKey, todayISO, normalize } from "../lib/helpers";
+import { currentHourKey, todayISO, normalize, slugify } from "../lib/helpers";
 
 type SearchType = "address" | "terrasse" | "metro";
 
@@ -103,14 +103,19 @@ export default function SearchPage() {
       navigate(`/terrasse/${selectedTerrasseId}?${sp}`);
     } else if (searchCoords) {
       const sp = new URLSearchParams();
-      sp.set("lat", String(searchCoords.lat));
-      sp.set("lon", String(searchCoords.lon));
-      sp.set("q", searchQuery);
       sp.set("date", searchDate);
       sp.set("hour", searchHour);
       sp.set("radius", String(searchRadius));
       sp.set("mode", mode);
-      navigate(`/results?${sp}`);
+      const slug = slugify(searchQuery);
+      if (slug) {
+        navigate(`/recherche/${slug}?${sp}`);
+      } else {
+        // Fallback for geolocation (no text query)
+        sp.set("lat", String(searchCoords.lat));
+        sp.set("lon", String(searchCoords.lon));
+        navigate(`/results?${sp}`);
+      }
     }
   }, [selectedTerrasseId, searchCoords, navigate, searchDate, searchHour, mode, searchQuery, searchRadius]);
 

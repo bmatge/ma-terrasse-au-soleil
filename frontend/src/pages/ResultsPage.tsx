@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
@@ -8,11 +8,11 @@ import Nav from "../components/Nav";
 import BottomNav from "../components/BottomNav";
 import ResultsMap from "../components/ResultsMap";
 import TerrasseCard from "../components/TerrasseCard";
-import { getNearby } from "../api/terrasses";
+import { getNearby, geocode as geocodeApi } from "../api/terrasses";
 import { normalizePlaceType } from "../utils/placeType";
 import type { NearbyTerrasse } from "../api/types";
 import { F, HOURS, PLACE_TYPE_KEYS } from "../lib/constants";
-import { currentHourKey, todayISO, isSunnyStatus } from "../lib/helpers";
+import { currentHourKey, todayISO, isSunnyStatus, unslugify } from "../lib/helpers";
 
 type ViewMode = "list" | "map";
 
@@ -21,6 +21,7 @@ export default function ResultsPage() {
   const { t } = useTranslation();
   const { mode, th } = useTheme();
   const [sp] = useSearchParams();
+  const { lieu } = useParams<{ lieu?: string }>();
 
   const lat = parseFloat(sp.get("lat") || "");
   const lon = parseFloat(sp.get("lon") || "");
@@ -28,6 +29,19 @@ export default function ResultsPage() {
   const [searchHour, setSearchHour] = useState(sp.get("hour") || currentHourKey());
   const [searchRadius, setSearchRadius] = useState(parseInt(sp.get("radius") || "200"));
   const [searchCoords, setSearchCoords] = useState({ lat: isNaN(lat) ? 48.8566 : lat, lon: isNaN(lon) ? 2.3522 : lon });
+  const [geoResolving, setGeoResolving] = useState(!!lieu && isNaN(lat));
+
+  // Resolve slug to coordinates via geocoding
+  useEffect(() => {
+    if (!lieu || !isNaN(lat)) return;
+    const query = unslugify(lieu);
+    setGeoResolving(true);
+    geocodeApi(`${query}, Paris`).then((results) => {
+      if (results.length > 0) {
+        setSearchCoords({ lat: results[0].lat, lon: results[0].lon });
+      }
+    }).finally(() => setGeoResolving(false));
+  }, [lieu, lat]);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
@@ -39,7 +53,7 @@ export default function ResultsPage() {
   const { data: nearbyData, isLoading: nearbyLoading, isError: nearbyError } = useQuery({
     queryKey: ["nearby", searchCoords.lat, searchCoords.lon, datetime, searchRadius],
     queryFn: () => getNearby(searchCoords.lat, searchCoords.lon, datetime, searchRadius),
-    enabled: !isNaN(searchCoords.lat) && !isNaN(searchCoords.lon),
+    enabled: !geoResolving && !isNaN(searchCoords.lat) && !isNaN(searchCoords.lon),
     placeholderData: keepPreviousData,
   });
 

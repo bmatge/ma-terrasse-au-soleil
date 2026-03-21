@@ -26,6 +26,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/results" element={<ResultsPage />} />
+          <Route path="/recherche/:lieu" element={<ResultsPage />} />
           <Route path="/terrasse/:terrasseId" element={<DetailPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/about" element={<Navigate to="/contact?tab=about" replace />} />

@@ -1,5 +1,6 @@
 """SEO endpoints: sitemap index + paginated sub-sitemaps."""
 import math
+import unicodedata
 from datetime import date
 
 from fastapi import APIRouter, HTTPException
@@ -12,6 +13,33 @@ router = APIRouter(tags=["seo"])
 
 BASE_URL = "https://ausoleil.app"
 TERRASSES_PER_SITEMAP = 10_000
+
+
+def _slugify(s: str) -> str:
+    """Turn a place name into a URL-friendly slug."""
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    s = s.lower()
+    import re
+    s = re.sub(r"[^a-z0-9]+", "-", s)
+    return s.strip("-")
+
+
+# Quartiers & lieux populaires de Paris pour le sitemap recherche
+PARIS_LIEUX = [
+    "Marais", "Bastille", "Oberkampf", "Belleville", "Montmartre",
+    "Saint-Germain-des-Prés", "Latin", "Batignolles", "Buttes-Chaumont",
+    "Canal Saint-Martin", "Opéra", "Châtelet", "République", "Nation",
+    "Père Lachaise", "Pigalle", "Abbesses", "Ménilmontant",
+    "Alésia", "Denfert-Rochereau", "Odéon", "Maubert",
+    "Place d'Italie", "Bercy", "Bibliothèque", "Tolbiac",
+    "Trocadéro", "Champs-Élysées", "Invalides", "Concorde",
+    "Grands Boulevards", "Sentier", "Bourse", "Palais-Royal",
+    "Saint-Michel", "Luxembourg", "Mouffetard", "Jussieu",
+    "Gare de Lyon", "Gare du Nord", "Gare de l'Est", "Montparnasse",
+    "Convention", "Vaugirard", "Commerce", "La Motte-Picquet",
+    "Passy", "Auteuil", "Gambetta", "Charonne", "Ledru-Rollin",
+]
 
 
 @router.get("/api/sitemap.xml")
@@ -27,6 +55,10 @@ async def sitemap_index() -> Response:
 
     sitemaps = [f"""  <sitemap>
     <loc>{BASE_URL}/api/sitemap-static.xml</loc>
+    <lastmod>{today}</lastmod>
+  </sitemap>""",
+    f"""  <sitemap>
+    <loc>{BASE_URL}/api/sitemap-recherche.xml</loc>
     <lastmod>{today}</lastmod>
   </sitemap>"""]
 
@@ -139,6 +171,29 @@ async def sitemap_terrasses(page: int) -> Response:
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+{chr(10).join(urls)}
+</urlset>"""
+
+    return Response(content=xml, media_type="application/xml")
+
+
+@router.get("/api/sitemap-recherche.xml")
+async def sitemap_recherche() -> Response:
+    """Sitemap for popular search landing pages (/recherche/...)."""
+    today = date.today().isoformat()
+    urls = []
+
+    for lieu in PARIS_LIEUX:
+        slug = _slugify(lieu)
+        urls.append(f"""  <url>
+    <loc>{BASE_URL}/recherche/{slug}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>""")
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {chr(10).join(urls)}
 </urlset>"""
 

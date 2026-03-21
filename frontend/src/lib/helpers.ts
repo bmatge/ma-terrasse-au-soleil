@@ -14,6 +14,21 @@ export function isSunnyStatus(status: string): boolean {
 
 export const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+/** Turn a place name into a URL-friendly slug: "Métro Bastille, Paris" → "metro-bastille-paris" */
+export function slugify(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Reverse a slug to a geocodable query: "metro-bastille-paris" → "metro bastille paris" */
+export function unslugify(slug: string): string {
+  return slug.replace(/-/g, " ");
+}
+
 export function parseCurrentUrl() {
   const path = window.location.pathname;
   const p = new URLSearchParams(window.location.search);
