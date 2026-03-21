@@ -1218,7 +1218,7 @@ export default function App() {
                 {t("home.at")} {kpi.station}
               </span>
               <span style={{ fontFamily: F, fontSize: 11, color: th.textMuted, fontWeight: 600 }}>
-                {t("home.rightNow")}
+                {kpi.hour}
               </span>
               <button onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
                 style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 8px", lineHeight: 1 }}>
