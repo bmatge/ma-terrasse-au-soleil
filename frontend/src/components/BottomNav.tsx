@@ -71,7 +71,6 @@ export default function BottomNav({ page, navigate }: BottomNavProps) {
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
                 padding: "8px 0 10px", background: "none", border: "none", cursor: "pointer",
                 color, fontFamily: F, fontSize: 10, fontWeight: active ? 600 : 400,
-                opacity: active ? 1 : 0.65,
                 transition: "color 0.2s, opacity 0.2s",
               }}
             >

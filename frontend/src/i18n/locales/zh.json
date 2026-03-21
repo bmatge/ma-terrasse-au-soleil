@@ -201,6 +201,8 @@
   },
   "common": {
     "back": "返回",
-    "myPosition": "我的位置"
+    "myPosition": "我的位置",
+    "previousStation": "上一站",
+    "nextStation": "下一站"
   }
 }

@@ -20,15 +20,17 @@ export default function App() {
         </div>
       }
     >
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/results" element={<ResultsPage />} />
-        <Route path="/terrasse/:terrasseId" element={<DetailPage />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-      </Routes>
+      <main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/results" element={<ResultsPage />} />
+          <Route path="/terrasse/:terrasseId" element={<DetailPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
+      </main>
     </Suspense>
   );
 }

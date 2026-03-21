@@ -168,9 +168,9 @@ export default function HomePage() {
             mixBlendMode: "multiply",
           }} />
           <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <button onClick={() => setKpiStationIndex((i) => (i - 1 + KPI_STATIONS.length) % KPI_STATIONS.length)}
+            <button aria-label={t("common.previousStation")} onClick={() => setKpiStationIndex((i) => (i - 1 + KPI_STATIONS.length) % KPI_STATIONS.length)}
               style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 8px", lineHeight: 1 }}>
-              <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 7L7 1L13 7" stroke={th.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none" aria-hidden="true"><path d="M1 7L7 1L13 7" stroke={th.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
             <span style={{ fontFamily: F, fontSize: 13, color: th.textSoft, fontWeight: 700, padding: "2px 0", whiteSpace: "nowrap" }}>
               {t("home.at")} {kpi.station}
@@ -178,9 +178,9 @@ export default function HomePage() {
             <span style={{ fontFamily: F, fontSize: 11, color: th.textMuted, fontWeight: 600 }}>
               {kpi.hour}
             </span>
-            <button onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
+            <button aria-label={t("common.nextStation")} onClick={() => setKpiStationIndex((i) => (i + 1) % KPI_STATIONS.length)}
               style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 8px", lineHeight: 1 }}>
-              <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke={th.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none" aria-hidden="true"><path d="M1 1L7 7L13 1" stroke={th.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </div>
           <div style={{ display: "flex", position: "relative", zIndex: 1 }}>
@@ -197,7 +197,7 @@ export default function HomePage() {
                 <ShadeIcon size={18} color="#6B7280" />
                 <span style={{ fontSize: 28, fontWeight: 700, color: "#374151", fontFamily: F }}>{kpi.shadeCount}</span>
               </div>
-              <div style={{ fontSize: 12, color: "#6B7280", fontFamily: F }}>{kpi.shadeCount !== "..." && Number(kpi.shadeCount) > 1 ? t("home.terrasse_other") : t("home.terrasse_one")}</div>
+              <div style={{ fontSize: 12, color: "#4B5563", fontFamily: F }}>{kpi.shadeCount !== "..." && Number(kpi.shadeCount) > 1 ? t("home.terrasse_other") : t("home.terrasse_one")}</div>
               <div style={{ fontSize: 12, color: "#374151", fontWeight: 600, fontFamily: F }}>{t("home.terrasseShade")}</div>
             </div>
           </div>

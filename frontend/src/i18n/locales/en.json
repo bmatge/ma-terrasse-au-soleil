@@ -201,6 +201,8 @@
   },
   "common": {
     "back": "Back",
-    "myPosition": "My location"
+    "myPosition": "My location",
+    "previousStation": "Previous station",
+    "nextStation": "Next station"
   }
 }

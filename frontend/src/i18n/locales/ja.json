@@ -201,6 +201,8 @@
   },
   "common": {
     "back": "戻る",
-    "myPosition": "現在地"
+    "myPosition": "現在地",
+    "previousStation": "前の駅",
+    "nextStation": "次の駅"
   }
 }
