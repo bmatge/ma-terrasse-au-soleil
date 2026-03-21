@@ -12,7 +12,11 @@ async def search_terrasses(db: AsyncSession, query: str, limit: int = 10) -> lis
                 ST_X(geometry) AS lon, ST_Y(geometry) AS lat,
                 price_level, place_type, rating, user_rating_count,
                 phone, website, google_maps_uri,
-                similarity(nom, :q) AS sim
+                GREATEST(
+                    COALESCE(similarity(nom_commercial, :q), 0),
+                    similarity(nom, :q),
+                    similarity(adresse, :q)
+                ) AS sim
             FROM terrasses
             WHERE nom % :q OR adresse % :q OR nom_commercial % :q
             ORDER BY sim DESC
@@ -33,7 +37,7 @@ async def search_terrasses(db: AsyncSession, query: str, limit: int = 10) -> lis
                     phone, website, google_maps_uri
                 FROM terrasses
                 WHERE nom ILIKE :pattern OR adresse ILIKE :pattern OR nom_commercial ILIKE :pattern
-                ORDER BY nom
+                ORDER BY COALESCE(nom_commercial, nom)
                 LIMIT :limit
             """),
             {"pattern": f"%{query}%", "limit": limit},
