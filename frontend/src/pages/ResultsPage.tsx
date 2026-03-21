@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
 import { ListIcon, MapPinIcon, PlaceTypeIcon } from "../components/Icons";
@@ -40,6 +40,7 @@ export default function ResultsPage() {
     queryKey: ["nearby", searchCoords.lat, searchCoords.lon, datetime, searchRadius],
     queryFn: () => getNearby(searchCoords.lat, searchCoords.lon, datetime, searchRadius),
     enabled: !isNaN(searchCoords.lat) && !isNaN(searchCoords.lon),
+    placeholderData: keepPreviousData,
   });
 
   const results = useMemo(() => {
