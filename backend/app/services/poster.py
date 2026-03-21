@@ -32,11 +32,9 @@ AMBER = "#F59E0B"
 AMBER_DARK = "#D97706"
 AMBER_DARKER = "#B45309"
 SUNSHINE = "#FBCF3B"
-SUNSHINE_LIGHT = "#FDE68A"
+SHADOW = "#F5D89A"
 SKY_BLUE_DASHED = "#60BFEA"
 NIGHT_COLOR = "#CBD5E1"
-DAY_NO_SUN = "#E8ECF1"
-SHADOW_HATCH = "#E2A230"
 WHITE = "#FFFFFF"
 SIDEBAR_BG = "#F59E0B"
 
@@ -302,10 +300,9 @@ def _draw_sidebar(
     legend_y = row_y - 0.035
     ax.text(0.08, legend_y, "L\u00e9gende", fontsize=8, alpha=0.65, **text_kw)
 
-    _legend_item(ax, 0.08, legend_y - 0.05, SUNSHINE, None, "Terrasse ensoleill\u00e9e")
-    _legend_item(ax, 0.08, legend_y - 0.11, SUNSHINE_LIGHT, "///", "Ombre des b\u00e2timents")
-    _legend_item(ax, 0.08, legend_y - 0.17, DAY_NO_SUN, None, "Jour (pas de soleil)")
-    _legend_item(ax, 0.08, legend_y - 0.23, NIGHT_COLOR, None, "Nuit")
+    _legend_item(ax, 0.08, legend_y - 0.06, SUNSHINE, None, "Soleil")
+    _legend_item(ax, 0.08, legend_y - 0.13, SHADOW, None, "Ombre")
+    _legend_item(ax, 0.08, legend_y - 0.20, NIGHT_COLOR, None, "Nuit")
 
 
 def _detail_row(ax, x, y, label, value, **kw):
@@ -379,25 +376,11 @@ def _draw_chart(ax, annual: list[dict]):
     ax.fill_between(days, y_min, sunrise_s, color=NIGHT_COLOR, alpha=0.4)
     ax.fill_between(days, sunset_s, y_max, color=NIGHT_COLOR, alpha=0.4)
 
-    # 2. Daylight without direct sun
-    ax.fill_between(days, sunrise_s, sunset_s, color=DAY_NO_SUN, alpha=0.6)
+    # 2. Ombre — all daylight without direct sun (buildings or low sun)
+    ax.fill_between(days, sunrise_s, sunset_s, color=SHADOW, alpha=0.7)
 
-    # 3. Sunshine (main yellow area)
-    ax.fill_between(days, sun_start_s, sun_end_s, color=SUNSHINE, alpha=0.9)
-
-    # 4. Building shadow — morning (hatched)
-    ax.fill_between(
-        days, sunrise_s, np.minimum(sun_start_s, sunset_s),
-        facecolor=SUNSHINE_LIGHT, alpha=0.6,
-        hatch="///", edgecolor=SHADOW_HATCH, linewidth=0.5,
-    )
-
-    # 5. Building shadow — evening (hatched)
-    ax.fill_between(
-        days, np.maximum(sun_end_s, sunrise_s), sunset_s,
-        facecolor=SUNSHINE_LIGHT, alpha=0.6,
-        hatch="///", edgecolor=SHADOW_HATCH, linewidth=0.5,
-    )
+    # 3. Soleil — direct sunshine on terrace
+    ax.fill_between(days, sun_start_s, sun_end_s, color=SUNSHINE, alpha=0.95)
 
     # Curves
     ax.plot(days, sunrise_s, color=SKY_BLUE_DASHED, linewidth=1.2,
