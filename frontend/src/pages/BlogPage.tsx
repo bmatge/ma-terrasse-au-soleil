@@ -14,7 +14,7 @@ interface BlogPost {
   tags: string[];
 }
 
-const postModules = import.meta.glob<BlogPost>("../../../content/blog/*/index.json", { eager: true, import: "default" });
+const postModules = import.meta.glob<BlogPost>("../content/blog/*/index.json", { eager: true, import: "default" });
 
 function getPosts(): BlogPost[] {
   return Object.values(postModules).sort((a, b) => b.date.localeCompare(a.date));

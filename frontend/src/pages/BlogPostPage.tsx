@@ -22,9 +22,9 @@ interface BlogPost {
   body: BlogPostBlock[];
 }
 
-const postModules = import.meta.glob<BlogPost>("../../../content/blog/*/index.json", { eager: true, import: "default" });
+const postModules = import.meta.glob<BlogPost>("../content/blog/*/index.json", { eager: true, import: "default" });
 
-const mediaModules = import.meta.glob<string>("../../../content/blog/*/media/*", { eager: true, import: "default" });
+const mediaModules = import.meta.glob<string>("../content/blog/*/media/*", { eager: true, import: "default" });
 
 function getPost(slug: string): BlogPost | undefined {
   return Object.values(postModules).find((p) => p.slug === slug);
