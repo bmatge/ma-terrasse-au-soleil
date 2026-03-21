@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -27,6 +27,26 @@ export default function DetailPage() {
   const [searchHour, setSearchHour] = useState(sp.get("hour") || currentHourKey());
   const [shared, setShared] = useState(false);
   const [posterLoading, setPosterLoading] = useState(false);
+  const [posterMsg, setPosterMsg] = useState(0);
+  const posterMsgTimer = useRef<ReturnType<typeof setInterval>>();
+
+  const posterMessages = [
+    "Cherche le soleil...",
+    "Calcule les ombres...",
+    "Mesure les b\u00e2timents...",
+    "Met une bi\u00e8re au frais...",
+    "Dessine l\u2019affiche...",
+  ];
+
+  useEffect(() => {
+    if (posterLoading) {
+      setPosterMsg(0);
+      posterMsgTimer.current = setInterval(() => setPosterMsg((m) => (m + 1) % 5), 1800);
+    } else {
+      clearInterval(posterMsgTimer.current);
+    }
+    return () => clearInterval(posterMsgTimer.current);
+  }, [posterLoading]);
 
   const { data: timelineData, isLoading: timelineLoading } = useQuery({
     queryKey: ["timeline", terrasseId, searchDate],
@@ -281,7 +301,7 @@ export default function DetailPage() {
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          {posterLoading ? t("detail.generatingPoster") : t("detail.downloadPoster")}
+          {posterLoading ? posterMessages[posterMsg] : t("detail.downloadPoster")}
         </button>
 
       </div>
