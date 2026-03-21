@@ -1,6 +1,5 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
 
 import fr from "./locales/fr.json";
 
@@ -12,6 +11,22 @@ export const LANGUAGES = [
   { code: "ja", label: "日本語", flag: "🇯🇵" },
   { code: "zh", label: "中文", flag: "🇨🇳" },
 ] as const;
+
+const SUPPORTED: Set<string> = new Set(LANGUAGES.map((l) => l.code));
+
+// Tiny language detector — replaces i18next-browser-languagedetector (~8 KiB)
+function detectLanguage(): string {
+  const stored = localStorage.getItem("i18nextLng");
+  if (stored) {
+    const code = stored.split("-")[0];
+    if (SUPPORTED.has(code)) return code;
+  }
+  for (const lang of navigator.languages ?? [navigator.language]) {
+    const code = lang.split("-")[0];
+    if (SUPPORTED.has(code)) return code;
+  }
+  return "fr";
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const LOCALE_LOADERS: Record<string, () => Promise<{ default: any }>> = {
@@ -31,33 +46,32 @@ async function loadLanguage(lng: string) {
   }
 }
 
+const detected = detectLanguage();
+
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
       fr: { translation: fr },
     },
-    supportedLngs: ["fr", "en", "es", "de", "ja", "zh"],
+    lng: detected,
+    supportedLngs: [...SUPPORTED],
     load: "languageOnly",
     fallbackLng: "fr",
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
-    detection: {
-      order: ["localStorage", "navigator"],
-      caches: ["localStorage"],
-    },
   });
 
 // Load detected language if not French
-const detected = i18n.language?.split("-")[0];
-if (detected && detected !== "fr") {
+if (detected !== "fr") {
   loadLanguage(detected);
 }
 
-// Load language on change
+// Load language on change + persist
 i18n.on("languageChanged", (lng: string) => {
-  loadLanguage(lng.split("-")[0]);
+  const code = lng.split("-")[0];
+  localStorage.setItem("i18nextLng", code);
+  loadLanguage(code);
 });
 
 export default i18n;
