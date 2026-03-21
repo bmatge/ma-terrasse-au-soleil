@@ -1285,6 +1285,7 @@ export default function App() {
             </button>
           </div>
 
+          {funFacts.length > 0 && (
           <div
             onClick={() => setFunFactIndex((i) => (i + 1) % funFacts.length)}
             style={{ marginTop: 16, padding: "14px 18px", background: th.bgCard, borderRadius: 14, border: `1px solid ${th.border}`, cursor: "pointer", textAlign: "center" }}
@@ -1293,6 +1294,7 @@ export default function App() {
             <div style={{ fontSize: 13, color: th.textSoft, lineHeight: 1.5, fontFamily: F }}>{funFacts[safeFunFactIndex].fact}</div>
             <div style={{ fontSize: 11, color: th.textMuted, marginTop: 8 }}>{t("home.tapForAnother")}</div>
           </div>
+          )}
         </div>
 
         <UpdatePrompt />
