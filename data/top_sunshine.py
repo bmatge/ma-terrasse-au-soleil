@@ -1,74 +1,95 @@
 #!/usr/bin/env python3
 """Compute top terrasses by sunshine duration (minutes) for a given date.
 
+Optimized: sun positions are precomputed once (same for all of Paris),
+then each terrasse's horizon profile is checked with simple comparisons.
+
 Usage:
     python -m data.top_sunshine [--date 2026-03-21] [--limit 20]
 """
 import argparse
+import time as timer
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import create_engine, text
 
 from app.config import settings
-from app.services.shadow import is_sunny
 from app.services.sun import get_sun_position, get_sunrise_sunset
 
 PARIS_TZ = ZoneInfo("Europe/Paris")
-STEP_MINUTES = 5  # 5-min resolution for accuracy
+PARIS_LAT, PARIS_LON = 48.8566, 2.3522
+STEP_MINUTES = 5
 
 
-def compute_sunny_minutes(profile: list[float], lat: float, lon: float, target_date: date) -> int:
+def precompute_sun_positions(target_date: date) -> list[tuple[float, int]]:
+    """Precompute sun (altitude, azimuth_index) for each time step.
+
+    Returns only steps where sun is above horizon.
+    """
     day_dt = datetime(target_date.year, target_date.month, target_date.day, tzinfo=PARIS_TZ)
-    sunrise, sunset = get_sunrise_sunset(lat, lon, day_dt)
+    sunrise, sunset = get_sunrise_sunset(PARIS_LAT, PARIS_LON, day_dt)
 
     start = datetime(target_date.year, target_date.month, target_date.day,
                      sunrise.hour, 0, tzinfo=PARIS_TZ)
     end = datetime(target_date.year, target_date.month, target_date.day,
                    min(sunset.hour + 1, 22), 0, tzinfo=PARIS_TZ)
 
-    sunny_minutes = 0
+    positions = []
     current = start
     while current <= end:
-        alt, azi = get_sun_position(lat, lon, current)
-        if is_sunny(profile, alt, azi):
-            sunny_minutes += STEP_MINUTES
+        alt, azi = get_sun_position(PARIS_LAT, PARIS_LON, current)
+        if alt > 0:
+            positions.append((alt, int(round(azi)) % 360))
         current += timedelta(minutes=STEP_MINUTES)
 
-    return sunny_minutes
+    return positions
+
+
+def count_sunny_minutes(profile: list[float], sun_positions: list[tuple[float, int]]) -> int:
+    """Count sunny minutes by comparing sun altitude vs horizon profile."""
+    count = 0
+    for alt, az_idx in sun_positions:
+        if alt > profile[az_idx]:
+            count += 1
+    return count * STEP_MINUTES
 
 
 def main(target_date: date, limit: int) -> None:
     engine = create_engine(settings.DATABASE_URL_SYNC)
+    t0 = timer.time()
+
+    # Precompute sun positions once for all terrasses
+    print(f"Precomputing sun positions for {target_date}...")
+    sun_positions = precompute_sun_positions(target_date)
+    print(f"  {len(sun_positions)} time steps with sun above horizon")
 
     with engine.connect() as conn:
         rows = conn.execute(text("""
             SELECT t.id, COALESCE(t.nom_commercial, t.nom) AS nom, t.adresse,
-                   ST_X(t.geometry) AS lon, ST_Y(t.geometry) AS lat,
                    hp.profile
             FROM terrasses t
             JOIN horizon_profiles hp ON hp.terrasse_id = t.id
             WHERE t.etat_administratif IS DISTINCT FROM 'F'
         """)).fetchall()
 
-    print(f"Computing sunshine for {len(rows)} terrasses on {target_date}...")
-    print(f"(resolution: {STEP_MINUTES} min)\n")
+    print(f"Computing sunshine for {len(rows)} terrasses...\n")
 
     results = []
-    for i, row in enumerate(rows, 1):
-        minutes = compute_sunny_minutes(row.profile, row.lat, row.lon, target_date)
+    for row in rows:
+        minutes = count_sunny_minutes(row.profile, sun_positions)
         results.append((row.id, row.nom, row.adresse, minutes))
-        if i % 500 == 0:
-            print(f"  {i}/{len(rows)} processed...")
 
     results.sort(key=lambda r: r[3], reverse=True)
 
-    print(f"\n{'#':>3}  {'Min':>5}  {'Heures':>6}  {'Nom':<35}  Adresse")
+    elapsed = timer.time() - t0
+    print(f"{'#':>3}  {'Min':>5}  {'Heures':>6}  {'Nom':<35}  Adresse")
     print("-" * 100)
     for rank, (tid, nom, adresse, minutes) in enumerate(results[:limit], 1):
         hours = f"{minutes // 60}h{minutes % 60:02d}"
         print(f"{rank:>3}  {minutes:>5}  {hours:>6}  {nom[:35]:<35}  {(adresse or '')[:40]}")
 
+    print(f"\nDone in {elapsed:.1f}s")
     engine.dispose()
 
 
