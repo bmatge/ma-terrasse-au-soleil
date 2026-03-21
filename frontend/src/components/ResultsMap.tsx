@@ -74,9 +74,12 @@ export default function ResultsMap({
     terrasses.forEach((terrasse) => {
       const cfg = STATUS_CONFIG[terrasse.status] || STATUS_CONFIG.ombre;
       const el = document.createElement("div");
-      el.style.cssText = `width:22px;height:22px;background:${cfg.color};border:2.5px solid white;border-radius:50%;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.3);transition:transform 0.15s;`;
-      el.addEventListener("mouseenter", () => { el.style.transform = "scale(1.2)"; });
-      el.addEventListener("mouseleave", () => { el.style.transform = "scale(1)"; });
+      el.style.cssText = `cursor:pointer;`;
+      const dot = document.createElement("div");
+      dot.style.cssText = `width:22px;height:22px;background:${cfg.color};border:2.5px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);transition:transform 0.15s;`;
+      el.appendChild(dot);
+      el.addEventListener("mouseenter", () => { dot.style.transform = "scale(1.2)"; });
+      el.addEventListener("mouseleave", () => { dot.style.transform = "scale(1)"; });
       const displayName = terrasse.nom_commercial || terrasse.nom;
       const secondaryName = terrasse.nom_commercial && terrasse.nom && terrasse.nom_commercial !== terrasse.nom ? terrasse.nom : "";
       const btnId = `consult-btn-${terrasse.id}`;
