@@ -26,6 +26,7 @@ export default function DetailPage() {
   const searchDate = sp.get("date") || todayISO();
   const [searchHour, setSearchHour] = useState(sp.get("hour") || currentHourKey());
   const [shared, setShared] = useState(false);
+  const [posterLoading, setPosterLoading] = useState(false);
 
   const { data: timelineData, isLoading: timelineLoading } = useQuery({
     queryKey: ["timeline", terrasseId, searchDate],
@@ -56,6 +57,25 @@ export default function DetailPage() {
       setTimeout(() => setShared(false), 2000);
     }
   }, [mode]);
+
+  const handleDownloadPoster = useCallback(async () => {
+    setPosterLoading(true);
+    try {
+      const resp = await fetch(`/api/terrasses/${terrasseId}/poster`);
+      if (!resp.ok) throw new Error("Poster generation failed");
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ausoleil-${terrasseId}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // silently fail
+    } finally {
+      setPosterLoading(false);
+    }
+  }, [terrasseId]);
 
   const wrap: React.CSSProperties = { minHeight: "100vh", background: th.bg, fontFamily: F, maxWidth: 860, margin: "0 auto", paddingBottom: 70 };
 
@@ -249,28 +269,21 @@ export default function DetailPage() {
           </button>
         </div>
 
-        {/* Sunny hours pills */}
-        <div style={{ marginTop: 24, padding: "16px 18px", background: th.bgCard, borderRadius: 14, border: `1px solid ${th.border}` }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10 }}>
-            {mode === "sun" ? t("detail.sunnySlots") : t("detail.shadySlots")}
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {(() => {
-              const matchingHours = HOURS.filter((h) => {
-                const slot = hourlyFromTimeline[h];
-                if (!slot) return false;
-                return mode === "sun" ? isSunnyStatus(slot.status) : !isSunnyStatus(slot.status);
-              });
-              return matchingHours.length > 0 ? (
-                matchingHours.map((h) => (
-                  <span key={h} onClick={() => setSearchHour(h)} style={{ padding: "6px 14px", borderRadius: 100, fontSize: 13, fontWeight: 500, background: h === selectedHour ? th.accent : th.accentLight, color: h === selectedHour ? "#FFF" : th.accentDark, fontFamily: F, cursor: "pointer" }}>{h}</span>
-                ))
-              ) : (
-                <span style={{ fontSize: 13, color: th.textMuted }}>{t("detail.noSlotAvailable")}</span>
-              );
-            })()}
-          </div>
-        </div>
+        {/* Download poster */}
+        <button onClick={handleDownloadPoster} disabled={posterLoading}
+          style={{
+            width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            padding: "14px", borderRadius: 12, border: `1.5px solid ${th.accent}`,
+            background: th.accentLight, cursor: posterLoading ? "wait" : "pointer",
+            color: th.accentDark, fontFamily: F, fontSize: 14, fontWeight: 600,
+            marginTop: 10, opacity: posterLoading ? 0.7 : 1,
+          }}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          {posterLoading ? t("detail.generatingPoster") : t("detail.downloadPoster")}
+        </button>
+
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       <BottomNav page="detail" navigate={(p) => navigate(p === "home" ? "/" : `/${p}`)} />

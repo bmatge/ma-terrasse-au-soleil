@@ -41,7 +41,7 @@ def _find_best_window(slots: list[dict]) -> dict | None:
     cur_len = 0
 
     for slot in slots:
-        if slot["status"] == "soleil":
+        if slot["status"] in ("soleil", "mitige"):
             if cur_start is None:
                 cur_start = slot["time"]
             cur_len += 1
