@@ -80,7 +80,16 @@
     "streetView": "Straßenansicht",
     "shareCopied": "Link kopiert!",
     "shareButton": "Teilen",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "addFavorite": "Zu Favoriten hinzufügen",
+    "removeFavorite": "Aus Favoriten entfernen",
+    "shareText": "An Freunde senden",
+    "copied": "Kopiert!",
+    "sunlight": "Sonnenschein",
+    "sunnySlots": "Sonnige Zeitfenster",
+    "shadySlots": "Schattige Zeitfenster",
+    "noSlotAvailable": "Kein Zeitfenster verfügbar",
+    "directions": "Route"
   },
   "favorites": {
     "title": "Favoriten",

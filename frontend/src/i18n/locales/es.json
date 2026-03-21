@@ -80,7 +80,16 @@
     "streetView": "Vista de calle",
     "shareCopied": "¡Enlace copiado!",
     "shareButton": "Compartir",
-    "timeline": "Cronología"
+    "timeline": "Cronología",
+    "addFavorite": "Añadir a favoritos",
+    "removeFavorite": "Quitar de favoritos",
+    "shareText": "Enviar a amigos",
+    "copied": "¡Copiado!",
+    "sunlight": "Soleamiento",
+    "sunnySlots": "Franjas soleadas",
+    "shadySlots": "Franjas con sombra",
+    "noSlotAvailable": "Ninguna franja disponible",
+    "directions": "Cómo llegar"
   },
   "favorites": {
     "title": "Favoritos",

@@ -80,7 +80,16 @@
     "streetView": "ストリートビュー",
     "shareCopied": "リンクをコピーしました！",
     "shareButton": "共有",
-    "timeline": "タイムライン"
+    "timeline": "タイムライン",
+    "addFavorite": "お気に入りに追加",
+    "removeFavorite": "お気に入りから削除",
+    "shareText": "友達に送る",
+    "copied": "コピーしました！",
+    "sunlight": "日照",
+    "sunnySlots": "日当たりの良い時間帯",
+    "shadySlots": "日陰の時間帯",
+    "noSlotAvailable": "利用可能な時間帯なし",
+    "directions": "ルート案内"
   },
   "favorites": {
     "title": "お気に入り",

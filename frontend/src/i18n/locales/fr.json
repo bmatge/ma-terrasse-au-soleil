@@ -80,7 +80,16 @@
     "streetView": "Vue de la rue",
     "shareCopied": "Lien copié !",
     "shareButton": "Partager",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "addFavorite": "Ajouter aux favoris",
+    "removeFavorite": "Retirer des favoris",
+    "shareText": "Envoyer aux potes",
+    "copied": "Copié !",
+    "sunlight": "Ensoleillement",
+    "sunnySlots": "Créneaux ensoleillés",
+    "shadySlots": "Créneaux ombragés",
+    "noSlotAvailable": "Aucun créneau disponible",
+    "directions": "Itinéraire"
   },
   "favorites": {
     "title": "Favoris",

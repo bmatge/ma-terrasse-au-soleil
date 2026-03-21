@@ -80,7 +80,16 @@
     "streetView": "Street view",
     "shareCopied": "Link copied!",
     "shareButton": "Share",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "addFavorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites",
+    "shareText": "Send to friends",
+    "copied": "Copied!",
+    "sunlight": "Sunlight",
+    "sunnySlots": "Sunny time slots",
+    "shadySlots": "Shady time slots",
+    "noSlotAvailable": "No time slot available",
+    "directions": "Directions"
   },
   "favorites": {
     "title": "Favorites",

@@ -126,7 +126,7 @@ export default function DetailPage() {
           </div>
 
           {/* Right: big location button */}
-          <a href={`https://maps.apple.com/?q=${terrasse.lat},${terrasse.lon}&ll=${terrasse.lat},${terrasse.lon}`} target="_blank" rel="noopener noreferrer" title="Itinéraire"
+          <a href={`https://maps.apple.com/?q=${terrasse.lat},${terrasse.lon}&ll=${terrasse.lat},${terrasse.lon}`} target="_blank" rel="noopener noreferrer" title={t("detail.directions")}
             style={{ width: 62, height: 62, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <MapPinIcon size={30} color="#FFF" />
           </a>
@@ -171,10 +171,10 @@ export default function DetailPage() {
               <div style={{ fontFamily: F, fontSize: 13, color: "#B45309" }}>{timelineData.meteo_resume}</div>
               {currentSlot && currentSlot.uv_index > 0 && (() => {
                 const uv = currentSlot.uv_index;
-                const { label, color } = uv <= 2 ? { label: "UV faible", color: "#166534" }
-                  : uv <= 5 ? { label: "UV modéré", color: "#854D0E" }
-                  : uv <= 7 ? { label: "UV fort", color: "#9A3412" }
-                  : { label: "UV très fort", color: "#991B1B" };
+                const { label, color } = uv <= 2 ? { label: t("uv.uvLow"), color: "#166534" }
+                  : uv <= 5 ? { label: t("uv.uvModerate"), color: "#854D0E" }
+                  : uv <= 7 ? { label: t("uv.uvHigh"), color: "#9A3412" }
+                  : { label: t("uv.uvVeryHigh"), color: "#991B1B" };
                 return <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: F }}>{uv} · {label}</span>;
               })()}
             </div>
@@ -189,7 +189,7 @@ export default function DetailPage() {
         {/* Hourly slider */}
         <div style={{ marginBottom: 24 }}>
           <span style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10, display: "block" }}>
-            Ensoleillement
+            {t("detail.sunlight")}
           </span>
           <div style={{ position: "relative" }}>
             {/* Visual cells */}
@@ -233,7 +233,7 @@ export default function DetailPage() {
               color: isFav(terrasse.id) ? "#EF4444" : th.text, fontFamily: F, fontSize: 14, fontWeight: 500,
             }}>
             <HeartIcon filled={isFav(terrasse.id)} size={17} />
-            {isFav(terrasse.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
+            {isFav(terrasse.id) ? t("detail.removeFavorite") : t("detail.addFavorite")}
           </button>
           <button onClick={() => handleShare(terrasse.nom, terrasse.adresse, terrasse.id)}
             style={{
@@ -245,14 +245,14 @@ export default function DetailPage() {
               <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
               <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
             </svg>
-            {shared ? "Copié !" : "Envoyer aux potes"}
+            {shared ? t("detail.copied") : t("detail.shareText")}
           </button>
         </div>
 
         {/* Sunny hours pills */}
         <div style={{ marginTop: 24, padding: "16px 18px", background: th.bgCard, borderRadius: 14, border: `1px solid ${th.border}` }}>
           <div style={{ fontSize: 12, fontWeight: 600, color: th.textSoft, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10 }}>
-            Créneaux {mode === "sun" ? "ensoleillés" : "ombragés"}
+            {mode === "sun" ? t("detail.sunnySlots") : t("detail.shadySlots")}
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {(() => {
@@ -266,7 +266,7 @@ export default function DetailPage() {
                   <span key={h} onClick={() => setSearchHour(h)} style={{ padding: "6px 14px", borderRadius: 100, fontSize: 13, fontWeight: 500, background: h === selectedHour ? th.accent : th.accentLight, color: h === selectedHour ? "#FFF" : th.accentDark, fontFamily: F, cursor: "pointer" }}>{h}</span>
                 ))
               ) : (
-                <span style={{ fontSize: 13, color: th.textMuted }}>Aucun créneau disponible</span>
+                <span style={{ fontSize: 13, color: th.textMuted }}>{t("detail.noSlotAvailable")}</span>
               );
             })()}
           </div>
