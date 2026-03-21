@@ -391,8 +391,26 @@ def _draw_chart(ax, grid: np.ndarray, hours: list[float], summaries: list[dict])
     ax.invert_yaxis()  # early hours at top
 
     month_mids = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349]
+    # Compute average sunny minutes per month for x-axis sub-labels
+    month_ranges = [
+        (1, 31), (32, 59), (60, 90), (91, 120), (121, 151), (152, 181),
+        (182, 212), (213, 243), (244, 273), (274, 304), (305, 334), (335, 365),
+    ]
+    month_labels = []
+    for i, (doy_start, doy_end) in enumerate(month_ranges):
+        days_in_month = [s for s in summaries if doy_start <= s["doy"] <= doy_end]
+        if days_in_month:
+            avg_mins = sum(d["sunny_minutes"] for d in days_in_month) / len(days_in_month)
+            avg_mins = int(round(avg_mins))
+            h, m = avg_mins // 60, avg_mins % 60
+            dur = f"{h}h{m:02d}" if m > 0 else f"{h}h"
+        else:
+            dur = ""
+        month_labels.append(f"{MONTH_NAMES_FR[i]}\n{dur}")
+
     ax.set_xticks(month_mids)
-    ax.set_xticklabels(MONTH_NAMES_FR, fontsize=9, fontfamily="sans-serif")
+    ax.set_xticklabels(month_labels, fontsize=8, fontfamily="sans-serif",
+                       linespacing=1.6)
 
     hour_ticks = list(range(5, 22))
     ax.set_yticks(hour_ticks)
@@ -428,37 +446,8 @@ def _smooth(arr: np.ndarray, window: int = 5) -> np.ndarray:
 # ---------------------------------------------------------------------------
 
 def _draw_annotations(ax, summaries: list[dict]):
-    """Place sunshine-duration badge for each month."""
-    # Mid-month day-of-year for each of the 12 months
-    month_mids = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349]
-
-    for doy_target in month_mids:
-        day = next((d for d in summaries if d["doy"] == doy_target), None)
-        if day is None or day["sunny_minutes"] == 0:
-            continue
-
-        total_mins = int(round(day["sunny_minutes"]))
-        h = total_mins // 60
-        m = total_mins % 60
-        txt = f"{h}h{m:02d}" if m > 0 else f"{h}h"
-
-        y_pos = (day["sunrise"] + day["sunset"]) / 2
-
-        ax.annotate(
-            txt,
-            xy=(doy_target, y_pos),
-            fontsize=7.5,
-            fontweight="bold",
-            color=WHITE,
-            fontfamily="sans-serif",
-            ha="center", va="center",
-            bbox=dict(
-                boxstyle="round,pad=0.35",
-                facecolor=AMBER_DARK,
-                edgecolor="none",
-                alpha=0.9,
-            ),
-        )
+    """No in-chart badges — durations are shown on the x-axis."""
+    pass
 
 
 # ---------------------------------------------------------------------------
