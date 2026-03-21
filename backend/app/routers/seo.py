@@ -54,17 +54,17 @@ async def sitemap_index() -> Response:
     num_pages = max(1, math.ceil(total / TERRASSES_PER_SITEMAP))
 
     sitemaps = [f"""  <sitemap>
-    <loc>{BASE_URL}/api/sitemap-static.xml</loc>
+    <loc>{BASE_URL}/sitemap-static.xml</loc>
     <lastmod>{today}</lastmod>
   </sitemap>""",
     f"""  <sitemap>
-    <loc>{BASE_URL}/api/sitemap-recherche.xml</loc>
+    <loc>{BASE_URL}/sitemap-recherche.xml</loc>
     <lastmod>{today}</lastmod>
   </sitemap>"""]
 
     for page in range(1, num_pages + 1):
         sitemaps.append(f"""  <sitemap>
-    <loc>{BASE_URL}/api/sitemap-terrasses-{page}.xml</loc>
+    <loc>{BASE_URL}/sitemap-terrasses-{page}.xml</loc>
     <lastmod>{today}</lastmod>
   </sitemap>""")
 
