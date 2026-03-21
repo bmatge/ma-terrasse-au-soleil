@@ -8,7 +8,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          maplibre: ["maplibre-gl", "react-map-gl"],
+          maplibre: ["maplibre-gl"],
           i18n: ["i18next", "react-i18next", "i18next-browser-languagedetector"],
         },
       },
