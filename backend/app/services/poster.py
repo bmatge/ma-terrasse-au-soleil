@@ -432,6 +432,15 @@ def _draw_chart(ax, annual: list[dict]):
     for spine in ax.spines.values():
         spine.set_visible(False)
 
+    # Explanatory subtitle
+    ax.text(
+        0.01, 0.01,
+        "Profil d\u2019ensoleillement \u00b7 Plus c\u2019est jaune, plus c\u2019est lumineux !",
+        fontsize=7.5, color=AMBER_DARKER, fontfamily="sans-serif",
+        fontstyle="italic", alpha=0.7,
+        transform=ax.transAxes, ha="left", va="bottom",
+    )
+
 
 def _smooth(arr: np.ndarray, window: int = 5) -> np.ndarray:
     """Simple moving-average smoothing."""
