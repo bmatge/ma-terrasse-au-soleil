@@ -1,9 +1,10 @@
 """SEO endpoints: sitemap index + paginated sub-sitemaps."""
 import math
+import re
 import unicodedata
 from datetime import date
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import Response
 from sqlalchemy import text
 
@@ -12,7 +13,7 @@ from app.database import async_session
 router = APIRouter(tags=["seo"])
 
 BASE_URL = "https://ausoleil.app"
-TERRASSES_PER_SITEMAP = 10_000
+TERRASSES_PER_SITEMAP = 2_000
 
 
 def _slugify(s: str) -> str:
@@ -20,9 +21,19 @@ def _slugify(s: str) -> str:
     s = unicodedata.normalize("NFD", s)
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     s = s.lower()
-    import re
     s = re.sub(r"[^a-z0-9]+", "-", s)
     return s.strip("-")
+
+
+def _xml_escape(s: str) -> str:
+    """Escape special XML characters."""
+    return (
+        s.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&apos;")
+    )
 
 
 # Quartiers & lieux populaires de Paris pour le sitemap recherche
@@ -53,24 +64,25 @@ async def sitemap_index() -> Response:
 
     num_pages = max(1, math.ceil(total / TERRASSES_PER_SITEMAP))
 
-    sitemaps = [f"""  <sitemap>
+    sitemaps = f"""  <sitemap>
     <loc>{BASE_URL}/sitemap-static.xml</loc>
     <lastmod>{today}</lastmod>
-  </sitemap>""",
-    f"""  <sitemap>
+  </sitemap>
+  <sitemap>
     <loc>{BASE_URL}/sitemap-recherche.xml</loc>
     <lastmod>{today}</lastmod>
-  </sitemap>"""]
+  </sitemap>"""
 
     for page in range(1, num_pages + 1):
-        sitemaps.append(f"""  <sitemap>
-    <loc>{BASE_URL}/sitemap-terrasses-{page}.xml</loc>
+        sitemaps += f"""
+  <sitemap>
+    <loc>{BASE_URL}/sitemap-terrasses.xml?p={page}</loc>
     <lastmod>{today}</lastmod>
-  </sitemap>""")
+  </sitemap>"""
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{chr(10).join(sitemaps)}
+{sitemaps}
 </sitemapindex>"""
 
     return Response(content=xml, media_type="application/xml")
@@ -83,113 +95,47 @@ async def sitemap_static() -> Response:
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>{BASE_URL}/</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/search</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/comment-on-a-construit-ausoleil</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/profil-ensoleillement-rorschach</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/about</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/contact</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
+  <url><loc>{BASE_URL}/</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>{BASE_URL}/search</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>{BASE_URL}/blog</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>{BASE_URL}/blog/comment-on-a-construit-ausoleil</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>{BASE_URL}/blog/profil-ensoleillement-rorschach</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>{BASE_URL}/about</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>{BASE_URL}/contact</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
 </urlset>"""
 
     return Response(content=xml, media_type="application/xml")
 
 
-@router.get("/api/sitemap-terrasses-{page}.xml")
-async def sitemap_terrasses(page: int) -> Response:
-    """Paginated sitemap for terrasse detail pages with image extension."""
-    if page < 1:
-        raise HTTPException(status_code=404, detail="Invalid page")
-
-    offset = (page - 1) * TERRASSES_PER_SITEMAP
-
+@router.get("/api/sitemap-terrasses.xml")
+async def sitemap_terrasses(p: int = Query(1, ge=1)) -> Response:
+    """Paginated sitemap for terrasse detail pages. Lightweight: loc + lastmod only."""
     async with async_session() as db:
         result = await db.execute(text("SELECT COUNT(*) FROM terrasses"))
         total = result.scalar()
 
     num_pages = max(1, math.ceil(total / TERRASSES_PER_SITEMAP))
-    if page > num_pages:
+    if p > num_pages:
         raise HTTPException(status_code=404, detail="Page not found")
+
+    offset = (p - 1) * TERRASSES_PER_SITEMAP
 
     async with async_session() as db:
         result = await db.execute(
-            text("""
-                SELECT id, nom, nom_commercial, adresse, arrondissement
-                FROM terrasses
-                ORDER BY id
-                LIMIT :limit OFFSET :offset
-            """),
+            text("SELECT id FROM terrasses ORDER BY id LIMIT :limit OFFSET :offset"),
             {"limit": TERRASSES_PER_SITEMAP, "offset": offset},
         )
         rows = result.fetchall()
 
     today = date.today().isoformat()
-    urls = []
-
-    for row in rows:
-        terrasse_id, nom, nom_commercial, adresse, arrondissement = row
-        display_name = _xml_escape(nom_commercial or nom)
-        loc = f"{BASE_URL}/terrasse/{terrasse_id}"
-        poster_url = f"{BASE_URL}/api/terrasses/{terrasse_id}/poster"
-
-        caption_parts = [display_name]
-        if adresse:
-            caption_parts.append(_xml_escape(adresse))
-        if arrondissement:
-            caption_parts.append(f"Paris {arrondissement}")
-        caption = " — ".join(caption_parts)
-
-        urls.append(f"""  <url>
-    <loc>{loc}</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <image:image>
-      <image:loc>{poster_url}</image:loc>
-      <image:title>Ensoleillement annuel — {display_name}</image:title>
-      <image:caption>{caption}</image:caption>
-    </image:image>
-  </url>""")
+    entries = "\n".join(
+        f'  <url><loc>{BASE_URL}/terrasse/{row[0]}</loc><lastmod>{today}</lastmod></url>'
+        for row in rows
+    )
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-{chr(10).join(urls)}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{entries}
 </urlset>"""
 
     return Response(content=xml, media_type="application/xml")
@@ -199,31 +145,14 @@ async def sitemap_terrasses(page: int) -> Response:
 async def sitemap_recherche() -> Response:
     """Sitemap for popular search landing pages (/recherche/...)."""
     today = date.today().isoformat()
-    urls = []
-
-    for lieu in PARIS_LIEUX:
-        slug = _slugify(lieu)
-        urls.append(f"""  <url>
-    <loc>{BASE_URL}/recherche/{slug}</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>""")
+    entries = "\n".join(
+        f'  <url><loc>{BASE_URL}/recherche/{_slugify(lieu)}</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>'
+        for lieu in PARIS_LIEUX
+    )
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{chr(10).join(urls)}
+{entries}
 </urlset>"""
 
     return Response(content=xml, media_type="application/xml")
-
-
-def _xml_escape(s: str) -> str:
-    """Escape special XML characters."""
-    return (
-        s.replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
-        .replace("'", "&apos;")
-    )
