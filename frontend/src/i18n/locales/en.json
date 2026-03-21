@@ -89,7 +89,9 @@
     "sunnySlots": "Sunny time slots",
     "shadySlots": "Shady time slots",
     "noSlotAvailable": "No time slot available",
-    "directions": "Directions"
+    "directions": "Directions",
+    "downloadPoster": "Download poster",
+    "generatingPoster": "Generating..."
   },
   "favorites": {
     "title": "Favorites",

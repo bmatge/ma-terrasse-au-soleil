@@ -89,7 +89,9 @@
     "sunnySlots": "Créneaux ensoleillés",
     "shadySlots": "Créneaux ombragés",
     "noSlotAvailable": "Aucun créneau disponible",
-    "directions": "Itinéraire"
+    "directions": "Itinéraire",
+    "downloadPoster": "Télécharger l'affiche",
+    "generatingPoster": "Génération..."
   },
   "favorites": {
     "title": "Favoris",
