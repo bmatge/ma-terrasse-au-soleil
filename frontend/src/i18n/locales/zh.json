@@ -92,7 +92,10 @@
     "noSlotAvailable": "无可用时段",
     "directions": "导航",
     "downloadPoster": "下载海报",
-    "generatingPoster": "生成中..."
+    "generatingPoster": "生成中...",
+    "today": "今天",
+    "tomorrow": "明天",
+    "pickDate": "选择日期"
   },
   "favorites": {
     "title": "收藏",

@@ -8,6 +8,12 @@ export function todayISO(): string {
   return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
 }
 
+export function tomorrowISO(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
+}
+
 export function isSunnyStatus(status: string): boolean {
   return status === "soleil" || status === "mitige";
 }

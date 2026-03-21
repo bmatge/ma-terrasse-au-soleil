@@ -92,7 +92,10 @@
     "noSlotAvailable": "利用可能な時間帯なし",
     "directions": "ルート案内",
     "downloadPoster": "ポスターをダウンロード",
-    "generatingPoster": "生成中..."
+    "generatingPoster": "生成中...",
+    "today": "今日",
+    "tomorrow": "明日",
+    "pickDate": "日付を選択"
   },
   "favorites": {
     "title": "お気に入り",

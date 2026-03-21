@@ -12,7 +12,7 @@ import { getTimeline } from "../api/terrasses";
 import { normalizePlaceType } from "../utils/placeType";
 import type { TimelineSlot } from "../api/types";
 import { F, HOURS, PLACE_TYPE_KEYS } from "../lib/constants";
-import { currentHourKey, todayISO, isSunnyStatus } from "../lib/helpers";
+import { currentHourKey, todayISO, tomorrowISO, isSunnyStatus } from "../lib/helpers";
 
 export default function DetailPage() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function DetailPage() {
   const { mode, th } = useTheme();
   const { toggleFav, isFav } = useFavorites();
   const { terrasseId: terrasseIdParam } = useParams<{ terrasseId: string }>();
-  const [sp] = useSearchParams();
+  const [sp, setSp] = useSearchParams();
 
   const terrasseId = parseInt(terrasseIdParam || "0");
   const searchDate = sp.get("date") || todayISO();
@@ -29,6 +29,19 @@ export default function DetailPage() {
   const [posterLoading, setPosterLoading] = useState(false);
   const [posterMsg, setPosterMsg] = useState(0);
   const posterMsgTimer = useRef<ReturnType<typeof setInterval>>();
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  const setDate = useCallback((date: string) => {
+    setSp((prev) => {
+      const next = new URLSearchParams(prev);
+      if (date === todayISO()) {
+        next.delete("date");
+      } else {
+        next.set("date", date);
+      }
+      return next;
+    }, { replace: true });
+  }, [setSp]);
 
   const posterMessages = [
     "Cherche le soleil...",
@@ -264,6 +277,43 @@ export default function DetailPage() {
               style={{ position: "absolute", inset: "0 0 18px 0", width: "100%", opacity: 0, cursor: "pointer", margin: 0 }}
             />
           </div>
+        </div>
+
+        {/* Date selector */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+          {[
+            { label: t("detail.today"), value: todayISO() },
+            { label: t("detail.tomorrow"), value: tomorrowISO() },
+          ].map(({ label, value }) => {
+            const active = searchDate === value;
+            return (
+              <button key={value} onClick={() => setDate(value)}
+                style={{
+                  flex: 1, padding: "10px 0", borderRadius: 10, border: `1.5px solid ${active ? th.accent : th.border}`,
+                  background: active ? th.accentLight : th.bgCard, color: active ? th.accentDark : th.text,
+                  fontFamily: F, fontSize: 13, fontWeight: active ? 600 : 400, cursor: "pointer",
+                }}>
+                {label}
+              </button>
+            );
+          })}
+          <button onClick={() => dateInputRef.current?.showPicker()}
+            style={{
+              flex: 1, position: "relative", padding: "10px 0", borderRadius: 10,
+              border: `1.5px solid ${searchDate !== todayISO() && searchDate !== tomorrowISO() ? th.accent : th.border}`,
+              background: searchDate !== todayISO() && searchDate !== tomorrowISO() ? th.accentLight : th.bgCard,
+              color: searchDate !== todayISO() && searchDate !== tomorrowISO() ? th.accentDark : th.text,
+              fontFamily: F, fontSize: 13, fontWeight: searchDate !== todayISO() && searchDate !== tomorrowISO() ? 600 : 400,
+              cursor: "pointer", overflow: "hidden",
+            }}>
+            {searchDate !== todayISO() && searchDate !== tomorrowISO()
+              ? new Date(searchDate + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" })
+              : t("detail.pickDate")}
+            <input ref={dateInputRef} type="date" value={searchDate}
+              onChange={(e) => { if (e.target.value) setDate(e.target.value); }}
+              style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+            />
+          </button>
         </div>
 
         {/* Action buttons */}

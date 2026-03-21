@@ -92,7 +92,10 @@
     "noSlotAvailable": "Ninguna franja disponible",
     "directions": "Cómo llegar",
     "downloadPoster": "Descargar póster",
-    "generatingPoster": "Generando..."
+    "generatingPoster": "Generando...",
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "pickDate": "Otra fecha"
   },
   "favorites": {
     "title": "Favoritos",

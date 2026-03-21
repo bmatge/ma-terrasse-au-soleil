@@ -92,7 +92,10 @@
     "noSlotAvailable": "No time slot available",
     "directions": "Directions",
     "downloadPoster": "Download poster",
-    "generatingPoster": "Generating..."
+    "generatingPoster": "Generating...",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "pickDate": "Pick date"
   },
   "favorites": {
     "title": "Favorites",

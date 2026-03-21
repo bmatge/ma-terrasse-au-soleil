@@ -92,7 +92,10 @@
     "noSlotAvailable": "Kein Zeitfenster verfügbar",
     "directions": "Route",
     "downloadPoster": "Poster herunterladen",
-    "generatingPoster": "Wird erstellt..."
+    "generatingPoster": "Wird erstellt...",
+    "today": "Heute",
+    "tomorrow": "Morgen",
+    "pickDate": "Datum wählen"
   },
   "favorites": {
     "title": "Favoriten",

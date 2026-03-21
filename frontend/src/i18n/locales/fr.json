@@ -92,7 +92,10 @@
     "noSlotAvailable": "Aucun créneau disponible",
     "directions": "Itinéraire",
     "downloadPoster": "Télécharger l'affiche",
-    "generatingPoster": "Génération..."
+    "generatingPoster": "Génération...",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "pickDate": "Autre date"
   },
   "favorites": {
     "title": "Favoris",
