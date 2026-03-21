@@ -25,16 +25,12 @@ services:
       - ecosystem-network
     labels:
       - "traefik.enable=true"
-      # Domaine principal
+      # Domaine principal (priority 100 > maintenance priority 1)
       - "traefik.http.routers.terrasses.rule=Host(`ausoleil.app`)"
       - "traefik.http.routers.terrasses.entrypoints=websecure"
       - "traefik.http.routers.terrasses.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.terrasses.middlewares=maintenance-errors"
+      - "traefik.http.routers.terrasses.priority=100"
       - "traefik.http.services.terrasses.loadbalancer.server.port=80"
-      # Error pages → maintenance service on 502/503
-      - "traefik.http.middlewares.maintenance-errors.errors.status=502,503"
-      - "traefik.http.middlewares.maintenance-errors.errors.service=maintenance@docker"
-      - "traefik.http.middlewares.maintenance-errors.errors.query=/"
       # Redirect ancien domaine → ausoleil.app
       - "traefik.http.routers.terrasses-old.rule=Host(`terrasses.paris.matge.com`)"
       - "traefik.http.routers.terrasses-old.entrypoints=websecure"
@@ -48,7 +44,7 @@ services:
       - "traefik.http.routers.matge.rule=Host(`matge.com`)"
       - "traefik.http.routers.matge.entrypoints=websecure"
       - "traefik.http.routers.matge.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.matge.middlewares=maintenance-errors"
+      - "traefik.http.routers.matge.priority=100"
       - "traefik.http.routers.matge.service=terrasses"
 
   maintenance:
@@ -61,6 +57,16 @@ services:
       - ecosystem-network
     labels:
       - "traefik.enable=true"
+      # Fallback routers — same domains, lower priority (1 < 100)
+      # When frontend is down, Traefik falls back to these
+      - "traefik.http.routers.maintenance.rule=Host(`ausoleil.app`)"
+      - "traefik.http.routers.maintenance.entrypoints=websecure"
+      - "traefik.http.routers.maintenance.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.maintenance.priority=1"
+      - "traefik.http.routers.maintenance-matge.rule=Host(`matge.com`)"
+      - "traefik.http.routers.maintenance-matge.entrypoints=websecure"
+      - "traefik.http.routers.maintenance-matge.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.maintenance-matge.priority=1"
       - "traefik.http.services.maintenance.loadbalancer.server.port=80"
     deploy:
       resources:
