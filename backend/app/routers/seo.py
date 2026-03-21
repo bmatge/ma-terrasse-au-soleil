@@ -96,6 +96,24 @@ async def sitemap_static() -> Response:
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>{BASE_URL}/blog</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/blog/comment-on-a-construit-ausoleil</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/blog/profil-ensoleillement-rorschach</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>{BASE_URL}/about</loc>
     <lastmod>{today}</lastmod>
     <changefreq>monthly</changefreq>
