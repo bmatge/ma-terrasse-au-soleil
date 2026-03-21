@@ -63,7 +63,8 @@
     "editSearch": "修改搜索",
     "all": "全部",
     "list": "列表",
-    "map": "地图"
+    "map": "地图",
+    "consultEstablishment": "查看场所"
   },
   "detail": {
     "loadingTimeline": "加载时间线...",

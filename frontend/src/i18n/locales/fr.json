@@ -63,7 +63,8 @@
     "editSearch": "Modifier la recherche",
     "all": "Tous",
     "list": "Liste",
-    "map": "Carte"
+    "map": "Carte",
+    "consultEstablishment": "Consulter l'établissement"
   },
   "detail": {
     "loadingTimeline": "Chargement de la timeline...",

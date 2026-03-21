@@ -63,7 +63,8 @@
     "editSearch": "Modificar búsqueda",
     "all": "Todos",
     "list": "Lista",
-    "map": "Mapa"
+    "map": "Mapa",
+    "consultEstablishment": "Consultar establecimiento"
   },
   "detail": {
     "loadingTimeline": "Cargando cronología...",

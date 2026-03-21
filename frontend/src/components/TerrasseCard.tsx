@@ -27,10 +27,13 @@ export default function TerrasseCard({ terrasse, onClick }: TerrasseCardProps) {
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
             <span style={{ fontFamily: F, fontWeight: 600, fontSize: 17, color: th.text }}>{terrasse.nom_commercial || terrasse.nom}</span>
             <StatusBadge status={terrasse.status} />
           </div>
+          {terrasse.nom_commercial && terrasse.nom && terrasse.nom_commercial !== terrasse.nom && (
+            <div style={{ fontFamily: F, fontSize: 12, color: th.textMuted, marginBottom: 2 }}>{terrasse.nom}</div>
+          )}
           {terrasse.adresse && <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginBottom: 4 }}>{terrasse.adresse}</div>}
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
             {terrasse.place_type && (

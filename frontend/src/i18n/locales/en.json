@@ -63,7 +63,8 @@
     "editSearch": "Edit search",
     "all": "All",
     "list": "List",
-    "map": "Map"
+    "map": "Map",
+    "consultEstablishment": "View establishment"
   },
   "detail": {
     "loadingTimeline": "Loading timeline...",
