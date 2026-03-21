@@ -69,6 +69,10 @@ async def sitemap_index() -> Response:
     <lastmod>{today}</lastmod>
   </sitemap>
   <sitemap>
+    <loc>{BASE_URL}/sitemap-blog.xml</loc>
+    <lastmod>{today}</lastmod>
+  </sitemap>
+  <sitemap>
     <loc>{BASE_URL}/sitemap-recherche.xml</loc>
     <lastmod>{today}</lastmod>
   </sitemap>"""
@@ -97,11 +101,32 @@ async def sitemap_static() -> Response:
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>{BASE_URL}/</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>{BASE_URL}/search</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>{BASE_URL}/blog</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>{BASE_URL}/blog/comment-on-a-construit-ausoleil</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>{BASE_URL}/blog/profil-ensoleillement-rorschach</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>{BASE_URL}/about</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>{BASE_URL}/contact</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+</urlset>"""
+
+    return Response(content=xml, media_type="application/xml")
+
+
+# Blog posts — add new posts here when publishing
+BLOG_POSTS = [
+    {"slug": "comment-on-a-construit-ausoleil", "date": "2026-03-21"},
+    {"slug": "profil-ensoleillement-rorschach", "date": "2026-03-21"},
+]
+
+
+@router.get("/api/sitemap-blog.xml")
+async def sitemap_blog() -> Response:
+    """Sitemap for blog index + individual posts."""
+    today = date.today().isoformat()
+
+    urls = [f'  <url><loc>{BASE_URL}/blog</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>']
+    for post in BLOG_POSTS:
+        urls.append(f'  <url><loc>{BASE_URL}/blog/{post["slug"]}</loc><lastmod>{post["date"]}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>')
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{chr(10).join(urls)}
 </urlset>"""
 
     return Response(content=xml, media_type="application/xml")
