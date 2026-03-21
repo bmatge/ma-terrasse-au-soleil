@@ -68,7 +68,7 @@ async def get_timeline(
 
     return TimelineResponse(
         terrasse=TerrasseSearchResult(
-            id=row.id, nom=row.nom, adresse=row.adresse,
+            id=row.id, nom=row.nom, nom_commercial=row.nom_commercial, adresse=row.adresse,
             arrondissement=row.arrondissement, lat=row.lat, lon=row.lon,
             price_level=row.price_level,
             place_type=row.place_type, rating=row.rating,
