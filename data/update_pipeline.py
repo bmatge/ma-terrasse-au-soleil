@@ -174,7 +174,7 @@ def step_compute_horizons():
     result = subprocess.run(
         [sys.executable, str(DATA_DIR / "compute_horizon_profiles.py")],
         capture_output=True, text=True,
-        cwd=str(DATA_DIR.parent / "backend"),
+        cwd=str(DATA_DIR.parent),
     )
     logger.info(result.stdout)
     if result.returncode != 0:
