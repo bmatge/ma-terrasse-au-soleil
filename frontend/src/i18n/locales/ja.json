@@ -63,7 +63,8 @@
     "editSearch": "検索を変更",
     "all": "すべて",
     "list": "リスト",
-    "map": "地図"
+    "map": "地図",
+    "consultEstablishment": "施設を見る"
   },
   "detail": {
     "loadingTimeline": "タイムライン読み込み中...",

@@ -63,7 +63,8 @@
     "editSearch": "Suche ändern",
     "all": "Alle",
     "list": "Liste",
-    "map": "Karte"
+    "map": "Karte",
+    "consultEstablishment": "Einrichtung ansehen"
   },
   "detail": {
     "loadingTimeline": "Timeline wird geladen...",

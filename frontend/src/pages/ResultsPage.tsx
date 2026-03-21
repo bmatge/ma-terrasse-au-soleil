@@ -216,7 +216,7 @@ export default function ResultsPage() {
             )}
 
             {viewMode === "map" ? (
-              <ResultsMap terrasses={results.filter(r => !typeFilter || normalizePlaceType(r.place_type) === typeFilter)} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} />
+              <ResultsMap terrasses={results.filter(r => !typeFilter || normalizePlaceType(r.place_type) === typeFilter)} mode={mode} onTerrasseClick={openDetail} onCenterChange={(lat, lon) => setSearchCoords({ lat, lon })} consultLabel={t("results.consultEstablishment")} />
             ) : (
               <div className="terrasse-grid">
                 {results.filter(r => !typeFilter || normalizePlaceType(r.place_type) === typeFilter).map((tr) => <TerrasseCard key={tr.id} terrasse={tr} onClick={openDetail} />)}

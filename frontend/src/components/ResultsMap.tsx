@@ -14,6 +14,7 @@ interface ResultsMapProps {
   mode: Mode;
   onTerrasseClick: (t: NearbyTerrasse) => void;
   onCenterChange?: (lat: number, lon: number) => void;
+  consultLabel?: string;
 }
 
 export default function ResultsMap({
@@ -21,6 +22,7 @@ export default function ResultsMap({
   mode,
   onTerrasseClick,
   onCenterChange,
+  consultLabel = "Consulter l'établissement",
 }: ResultsMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -68,19 +70,31 @@ export default function ResultsMap({
     if (!map) return;
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
+    const th = themes[mode];
     terrasses.forEach((terrasse) => {
       const cfg = STATUS_CONFIG[terrasse.status] || STATUS_CONFIG.ombre;
       const el = document.createElement("div");
-      el.style.cssText = `width:14px;height:14px;background:${cfg.color};border:2px solid white;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.3);`;
-      const popup = new maplibregl.Popup({ offset: 10 }).setHTML(`
-        <div style="font-size:13px;font-family:${F}">
-          <strong>${terrasse.nom_commercial || terrasse.nom}</strong><br/>
-          <span style="color:#78716C">${terrasse.distance_m}m</span>
-          ${terrasse.soleil_jusqua ? `<br/><span style="color:#D97706">\u2600\uFE0F ${terrasse.soleil_jusqua}</span>` : ""}
+      el.style.cssText = `width:22px;height:22px;background:${cfg.color};border:2.5px solid white;border-radius:50%;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.3);transition:transform 0.15s;`;
+      el.addEventListener("mouseenter", () => { el.style.transform = "scale(1.2)"; });
+      el.addEventListener("mouseleave", () => { el.style.transform = "scale(1)"; });
+      const displayName = terrasse.nom_commercial || terrasse.nom;
+      const secondaryName = terrasse.nom_commercial && terrasse.nom && terrasse.nom_commercial !== terrasse.nom ? terrasse.nom : "";
+      const btnId = `consult-btn-${terrasse.id}`;
+      const popup = new maplibregl.Popup({ offset: 14, maxWidth: "240px" }).setHTML(`
+        <div style="font-size:13px;font-family:${F};padding:4px 0;">
+          <strong style="font-size:14px;">${displayName}</strong>
+          ${secondaryName ? `<br/><span style="color:#78716C;font-size:12px;">${secondaryName}</span>` : ""}
+          <br/><span style="color:#78716C">${terrasse.distance_m}m</span>
+          ${terrasse.soleil_jusqua ? `<span style="color:#D97706;margin-left:6px;">\u2600\uFE0F ${terrasse.soleil_jusqua}</span>` : ""}
+          <br/><button id="${btnId}" style="margin-top:8px;width:100%;padding:8px 12px;border:none;border-radius:8px;background:${th.gradient};color:#FFF;font-family:${F};font-size:13px;font-weight:600;cursor:pointer;">${consultLabel}</button>
         </div>
       `);
+      popup.on("open", () => {
+        const btn = document.getElementById(btnId);
+        if (btn) btn.addEventListener("click", () => onClickRef.current(terrasse));
+      });
       const marker = new maplibregl.Marker({ element: el }).setLngLat([terrasse.lon, terrasse.lat]).setPopup(popup).addTo(map);
-      el.addEventListener("click", () => onClickRef.current(terrasse));
+      el.addEventListener("click", (e) => { e.stopPropagation(); marker.togglePopup(); });
       markersRef.current.push(marker);
     });
     // Only auto-fit on the first load; after user pans we keep their viewport
@@ -94,7 +108,7 @@ export default function ResultsMap({
         map.flyTo({ center: [terrasses[0].lon, terrasses[0].lat], zoom: 15 });
       }
     }
-  }, [terrasses, mode]);
+  }, [terrasses, mode, consultLabel]);
 
   const toggle3D = useCallback(() => {
     const map = mapRef.current;

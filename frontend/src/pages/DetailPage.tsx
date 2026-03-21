@@ -130,7 +130,10 @@ export default function DetailPage() {
         <div style={{ position: "relative", display: "flex", gap: 16, alignItems: "flex-start" }}>
           {/* Left: text info */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", lineHeight: 1.2, marginBottom: 4 }}>{terrasse.nom_commercial || terrasse.nom}</div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: "#FFF", lineHeight: 1.2, marginBottom: 2 }}>{terrasse.nom_commercial || terrasse.nom}</div>
+            {terrasse.nom_commercial && terrasse.nom && terrasse.nom_commercial !== terrasse.nom && (
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginBottom: 2 }}>{terrasse.nom}</div>
+            )}
             {terrasse.adresse && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginBottom: 12 }}>{terrasse.adresse}{terrasse.arrondissement ? ` · ${terrasse.arrondissement}` : ""}</div>}
 
             {/* Meta: type, price, rating + small action icons */}

@@ -74,7 +74,7 @@ export default function SearchPage() {
   const selectTerrasse = useCallback((tr: TerrasseSearchResult) => {
     setSelectedTerrasseId(tr.id);
     setSearchCoords(null);
-    setSearchQuery(tr.nom);
+    setSearchQuery(tr.nom_commercial ? `${tr.nom_commercial} (${tr.nom})` : tr.nom);
     setDropdownOpen(false);
   }, []);
 
@@ -145,7 +145,7 @@ export default function SearchPage() {
           {searchTypeTabs.map(({ key, label, emoji }) => {
             const active = searchType === key;
             return (
-              <button key={key} onClick={() => { setSearchType(key); setSearchQuery(""); setDropdownOpen(false); setSelectedTerrasseId(null); setSearchCoords(null); }}
+              <button key={key} onClick={() => { setSearchType(key); setDropdownOpen(false); setSelectedTerrasseId(null); setSearchCoords(null); }}
                 style={{
                   flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                   padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${active ? th.accent : th.border}`,
@@ -201,7 +201,12 @@ export default function SearchPage() {
                         style={{ display: "flex", flexDirection: "column", padding: "11px 14px", cursor: "pointer", borderBottom: `1px solid ${th.border}` }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           <PlaceTypeIcon type={normalizePlaceType(tr.place_type) ?? "autre"} size={14} color={th.textMuted} />
-                          <span style={{ fontSize: 14, fontWeight: 500, color: th.text, fontFamily: F }}>{tr.nom_commercial || tr.nom}</span>
+                          <span style={{ fontSize: 14, fontWeight: 500, color: th.text, fontFamily: F }}>
+                            {tr.nom_commercial || tr.nom}
+                            {tr.nom_commercial && tr.nom && tr.nom_commercial !== tr.nom && (
+                              <span style={{ fontWeight: 400, color: th.textMuted }}> ({tr.nom})</span>
+                            )}
+                          </span>
                         </div>
                         <span style={{ fontSize: 12, color: th.textMuted, fontFamily: F, marginLeft: 22 }}>{tr.adresse}</span>
                       </div>
