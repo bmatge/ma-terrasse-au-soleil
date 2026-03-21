@@ -1,0 +1,71 @@
+{
+  "slug": "profil-ensoleillement-rorschach",
+  "title": "Le profil d'ensoleillement : votre terrasse a une empreinte digitale (et elle ressemble parfois à Goldorak)",
+  "description": "On a inventé la fiche de profil pour terrasses. C'est inutile, c'est beau, et ça pourrait bien changer la façon dont les bars parlent de leur terrasse.",
+  "date": "2026-03-21",
+  "author": "Bertrand & Virginie",
+  "tags": ["profil", "terrasses", "data-viz", "goldorak", "rorschach"],
+  "image": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "content": "Quand on a commencé à calculer l'ensoleillement de chaque terrasse de Paris, on s'est retrouvés avec un truc qu'on n'avait pas prévu : une visualisation. Un graphique en forme de montagne dorée qui montre, mois par mois, heure par heure, quand la terrasse est au soleil."
+    },
+    {
+      "type": "paragraph",
+      "content": "On l'a appelé le « profil d'ensoleillement ». Et honnêtement, au début, c'était juste un outil de debug. Sauf que c'est devenu le truc le plus cool de l'app."
+    },
+    {
+      "type": "heading",
+      "content": "C'est quoi exactement ?"
+    },
+    {
+      "type": "paragraph",
+      "content": "Le profil, c'est la carte d'identité solaire d'une terrasse. L'axe horizontal, c'est les mois de l'année. L'axe vertical, c'est les heures de la journée. Et la zone dorée, c'est quand le soleil atteint la terrasse — en tenant compte des bâtiments qui l'entourent. Plus c'est jaune, plus c'est lumineux."
+    },
+    {
+      "type": "paragraph",
+      "content": "Chaque terrasse a un profil unique. Une terrasse orientée plein sud avec rien devant ? Un gros bloc doré bien large. Une terrasse coincée dans une ruelle du Marais ? Un petit créneau timide entre 12h et 14h en été. C'est comme une empreinte digitale : il n'y en a pas deux pareils."
+    },
+    {
+      "type": "heading",
+      "content": "Le gadget qui n'en est pas un"
+    },
+    {
+      "type": "paragraph",
+      "content": "Sur le papier, c'est un gadget total. Personne ne s'est jamais dit « tiens, avant de réserver, je vais consulter le profil d'ensoleillement annuel de cet établissement ». Ce n'est pas un KPI, ce n'est pas un label, ce n'est pas noté sur Google Maps."
+    },
+    {
+      "type": "paragraph",
+      "content": "Mais regardez-le autrement. Imaginez un bar qui affiche fièrement son profil sur sa vitrine, à côté de son menu et de sa note TripAdvisor. « Ici, terrasse ensoleillée de 14h à 19h d'avril à septembre. » Avec le graphique pour prouver. C'est du jamais vu. C'est de la data qui parle directement aux gens. Et c'est vérifiable — c'est pas un avis bidon posté par le cousin du patron."
+    },
+    {
+      "type": "paragraph",
+      "content": "On imagine même une version imprimable, un poster A3 à afficher. « Profil solaire certifié Au Soleil. » Le label qualité que personne n'a demandé, mais que tout le monde comprend."
+    },
+    {
+      "type": "heading",
+      "content": "Le test de Rorschach des terrasses"
+    },
+    {
+      "type": "paragraph",
+      "content": "Le truc inattendu, c'est que les profils ont des formes. Des vraies formes reconnaissables. On a un bar avenue Bosquet dont le profil ressemble trait pour trait à la soucoupe de Goldorak. Un autre dans le 11e qui fait penser à un croissant (approprié). Certains ont des profils symétriques presque parfaits, d'autres sont complètement biscornus."
+    },
+    {
+      "type": "paragraph",
+      "content": "C'est devenu un jeu entre nous : « celui-là on dirait une tête de chat », « non c'est plutôt un champignon ». Un vrai test de Rorschach à base de données 3D et de trajectoire solaire. Si vous voyez un papillon dans le profil de votre bar préféré, on ne juge pas. Si vous voyez la Vierge Marie, par contre, prévenez-nous — on a peut-être un bug."
+    },
+    {
+      "type": "heading",
+      "content": "Pourquoi c'est plus innovant qu'il n'y paraît"
+    },
+    {
+      "type": "paragraph",
+      "content": "À notre connaissance, personne n'a jamais fait ça. Il existe des outils d'analyse solaire pour l'architecture et l'urbanisme, mais personne n'a transformé ça en fiche de profil grand public pour un café. C'est de la donnée géospatiale 3D vulgarisée en un coup d'œil. Pas de chiffres, pas de tableau, juste une forme dorée qui dit tout."
+    },
+    {
+      "type": "paragraph",
+      "content": "Et si ça inspire un jour un patron de bar à mettre ça sur sa devanture entre la carte des vins et le menu du jour — franchement, on aura gagné."
+    }
+  ]
+}

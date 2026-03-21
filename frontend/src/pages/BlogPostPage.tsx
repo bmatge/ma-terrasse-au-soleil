@@ -6,8 +6,10 @@ import BottomNav from "../components/BottomNav";
 import { F } from "../lib/constants";
 
 interface BlogPostBlock {
-  type: "paragraph" | "heading";
+  type: "paragraph" | "heading" | "image";
   content: string;
+  alt?: string;
+  caption?: string;
 }
 
 interface BlogPost {
@@ -22,8 +24,22 @@ interface BlogPost {
 
 const postModules = import.meta.glob<BlogPost>("../../../content/blog/*/index.json", { eager: true, import: "default" });
 
+const mediaModules = import.meta.glob<string>("../../../content/blog/*/media/*", { eager: true, import: "default" });
+
 function getPost(slug: string): BlogPost | undefined {
   return Object.values(postModules).find((p) => p.slug === slug);
+}
+
+function resolveMedia(slug: string, filename: string): string | undefined {
+  const suffix = `/${slug}/media/${filename}`;
+  for (const [path, url] of Object.entries(mediaModules)) {
+    if (path.endsWith(suffix)) return url;
+  }
+  // Try matching just the filename across all post dirs
+  for (const [path, url] of Object.entries(mediaModules)) {
+    if (path.includes(`/media/${filename}`)) return url;
+  }
+  return undefined;
 }
 
 export default function BlogPostPage() {
@@ -80,6 +96,24 @@ export default function BlogPostPage() {
                 <h2 key={i} style={{ fontFamily: F, fontWeight: 700, fontSize: 17, color: th.text, marginTop: 8 }}>
                   {block.content}
                 </h2>
+              );
+            }
+            if (block.type === "image") {
+              const src = resolveMedia(post.slug, block.content);
+              if (!src) return null;
+              return (
+                <figure key={i} style={{ margin: "8px 0" }}>
+                  <img
+                    src={src}
+                    alt={block.alt || ""}
+                    style={{ width: "100%", borderRadius: 10, display: "block" }}
+                  />
+                  {block.caption && (
+                    <figcaption style={{ fontFamily: F, fontSize: 12, color: th.textMuted, textAlign: "center", marginTop: 6 }}>
+                      {block.caption}
+                    </figcaption>
+                  )}
+                </figure>
               );
             }
             return (
