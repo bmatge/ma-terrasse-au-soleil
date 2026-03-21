@@ -1,6 +1,10 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import maplibregl from "maplibre-gl";
+import maplibregl, { setWorkerUrl } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import cspWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
 import type { NearbyTerrasse } from "../api/types";
+
+setWorkerUrl(cspWorkerUrl);
 import type { Mode } from "../contexts/ThemeContext";
 import { themes } from "../contexts/ThemeContext";
 import { F, STATUS_CONFIG, STYLE_URL, TILE_ORIGIN } from "../lib/constants";

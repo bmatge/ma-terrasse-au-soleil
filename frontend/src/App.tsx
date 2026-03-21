@@ -1,10 +1,5 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import { setWorkerUrl } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import cspWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
-
-setWorkerUrl(cspWorkerUrl);
 
 // Lazy-loaded pages for code splitting
 const HomePage = lazy(() => import("./pages/HomePage"));

@@ -7,9 +7,9 @@ export default defineConfig({
     target: "es2022",
     rollupOptions: {
       output: {
-        manualChunks: {
-          maplibre: ["maplibre-gl"],
-          i18n: ["i18next", "react-i18next", "i18next-browser-languagedetector"],
+        manualChunks(id) {
+          if (id.includes("maplibre-gl")) return "maplibre";
+          if (id.includes("i18next")) return "i18n";
         },
       },
     },
