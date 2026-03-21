@@ -29,18 +29,25 @@ export default function AboutPage() {
           <div style={{ fontFamily: F, fontSize: 13, color: th.textMuted, marginTop: 4 }}>{t("about.description")}</div>
         </div>
 
-        {section(t("about.howTitle"), <>
-          {t("about.how1")}<br />
-          {t("about.how2")}<br />
-          {t("about.how3")}<br />
-          {t("about.how4")}
+        {section(t("about.conceptTitle"), <>
+          {t("about.concept")}<br /><br />
+          <em>{t("about.conceptPunchline")}</em>
         </>)}
 
-        {section(t("about.dataTitle"), <>
-          {t("about.data1")}<br />
-          {t("about.data2")}<br />
-          {t("about.data3")}<br />
-          {t("about.data4")}
+        {section(t("about.howTitle"), <>
+          {t("about.how")}<br /><br />
+          {t("about.howData")}
+        </>)}
+
+        {section(t("about.whyParisTitle"), t("about.whyParis"))}
+
+        {section(t("about.whyMissingTitle"), t("about.whyMissing"))}
+
+        {section(t("about.techTitle"), <>
+          {t("about.techBackend")}<br />
+          {t("about.techFrontend")}<br />
+          {t("about.techInfra")}<br />
+          {t("about.techData")}
         </>)}
 
         <div style={{ textAlign: "center", fontFamily: F, fontSize: 13, color: th.textMuted, marginTop: 20 }}>
@@ -50,7 +57,7 @@ export default function AboutPage() {
         <div style={{ borderTop: `1px solid ${th.border}`, paddingTop: 20, marginTop: 20, textAlign: "center" }}>
           <a href="https://github.com/bmatge/ma-terrasse-au-soleil" target="_blank" rel="noopener noreferrer"
             style={{ fontFamily: F, fontSize: 13, color: th.accent, textDecoration: "none" }}>
-            GitHub →
+            {t("about.sourceCode")}
           </a>
         </div>
       </div>
