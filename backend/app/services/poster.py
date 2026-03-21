@@ -72,7 +72,7 @@ def generate_poster(
 
     # Axes: sidebar (left) and chart (right)
     ax_side = fig.add_axes([0, 0, SIDEBAR_FRAC, 1], facecolor=SIDEBAR_BG)
-    chart_left = SIDEBAR_FRAC + 0.015
+    chart_left = SIDEBAR_FRAC + 0.04
     ax_chart = fig.add_axes(
         [chart_left, 0.10, 1 - chart_left - 0.02, 0.82],
         facecolor=WHITE,
@@ -235,11 +235,20 @@ def _draw_sidebar(
 
     text_kw = dict(color=WHITE, fontfamily="sans-serif", transform=ax.transAxes)
 
-    # Logo — composite onto amber background to handle transparency
+    # Logo — radial crop + composite onto amber background
     logo_path = ASSETS_DIR / "logo.png"
     if logo_path.exists():
         logo_img = Image.open(logo_path).convert("RGBA")
         logo_img.thumbnail((400, 400))
+        w, h = logo_img.size
+        # Radial crop: create circular mask, shrunk by 10px to remove white edge
+        mask = Image.new("L", (w, h), 0)
+        from PIL import ImageDraw
+        draw = ImageDraw.Draw(mask)
+        margin = 10
+        draw.ellipse([margin, margin, w - margin, h - margin], fill=255)
+        logo_img.putalpha(mask)
+        # Composite onto amber background
         bg = Image.new("RGBA", logo_img.size, (245, 158, 11, 255))
         bg.paste(logo_img, mask=logo_img)
         logo_arr = np.array(bg.convert("RGB"))
@@ -413,7 +422,7 @@ def _draw_chart(ax, annual: list[dict]):
     ax.set_yticks(hour_ticks)
     ax.set_yticklabels(
         [f"{h}h" for h in hour_ticks],
-        fontsize=8, fontfamily="sans-serif", color="#64748B",
+        fontsize=8, fontfamily="sans-serif", color=AMBER_DARKER,
     )
 
     ax.tick_params(axis="both", length=0, pad=6)
@@ -507,39 +516,34 @@ def _draw_qr(fig, qr_url: str):
     )
     qr.add_data(qr_url)
     qr.make(fit=True)
-    qr_img = qr.make_image(fill_color="#333333", back_color=WHITE).convert("RGBA")
+    qr_img = qr.make_image(fill_color="#333333", back_color=WHITE).convert("RGB")
+    qr_arr = np.array(qr_img)
 
-    # Add QR to figure
+    # Create axes for QR block
     ax_qr = fig.add_axes([0.82, 0.02, 0.16, 0.22], facecolor=WHITE)
-
-    # White rounded background
-    bg = mpatches.FancyBboxPatch(
-        (0.0, 0.0), 1.0, 1.0,
-        boxstyle="round,pad=0.05",
-        facecolor=WHITE,
-        edgecolor="#E2E8F0",
-        linewidth=0.8,
-        transform=ax_qr.transAxes,
-    )
-    ax_qr.add_patch(bg)
+    ax_qr.set_xlim(0, 1)
+    ax_qr.set_ylim(0, 1)
+    ax_qr.set_xticks([])
+    ax_qr.set_yticks([])
+    for spine in ax_qr.spines.values():
+        spine.set_edgecolor("#E2E8F0")
+        spine.set_linewidth(0.8)
+    ax_qr.patch.set_visible(True)
 
     ax_qr.text(
-        0.5, 0.95, "Scannez-moi",
+        0.5, 0.96, "Scannez-moi",
         fontsize=8, fontweight="bold", color=AMBER_DARK,
         fontfamily="sans-serif", ha="center", va="top",
         transform=ax_qr.transAxes,
     )
     ax_qr.text(
-        0.5, 0.87, "ausoleil.app",
+        0.5, 0.88, "ausoleil.app",
         fontsize=7, color="#64748B",
         fontfamily="sans-serif", ha="center", va="top",
         transform=ax_qr.transAxes,
     )
 
-    ax_qr.imshow(np.array(qr_img), extent=[0.1, 0.9, 0.05, 0.82])
-    ax_qr.set_xlim(0, 1)
-    ax_qr.set_ylim(0, 1)
-    ax_qr.axis("off")
+    ax_qr.imshow(qr_arr, extent=[0.1, 0.9, 0.05, 0.80], aspect="auto")
 
 
 # ---------------------------------------------------------------------------
