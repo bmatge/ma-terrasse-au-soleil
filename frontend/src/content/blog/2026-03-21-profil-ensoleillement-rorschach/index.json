@@ -30,10 +30,23 @@
       "content": "Le profil, c'est la carte d'identité solaire d'une terrasse. L'axe horizontal, c'est les mois de l'année. L'axe vertical, c'est les heures de la journée. Et la zone dorée, c'est quand le soleil atteint la terrasse — en tenant compte des bâtiments qui l'entourent. Plus c'est jaune, plus c'est lumineux."
     },
     {
-      "type": "image",
-      "content": "HD9G7vVbAAAaF9h.jpg",
-      "alt": "Profil d'ensoleillement du Kozy Bosquet — fiche complète avec QR code",
-      "caption": "Le profil du Kozy Bosquet, 79 avenue Bosquet. Notez la forme... on y revient."
+      "type": "columns",
+      "left": [
+        {
+          "type": "image",
+          "content": "HD9G7vVbAAAaF9h.jpg",
+          "alt": "Profil d'ensoleillement du Kozy Bosquet — fiche complète avec QR code",
+          "caption": "Le profil du Kozy Bosquet, 79 avenue Bosquet. Notez la forme... on y revient."
+        }
+      ],
+      "right": [
+        {
+          "type": "image",
+          "content": "HD9G7vUb0AA2d_I.jpg",
+          "alt": "La soucoupe de Goldorak",
+          "caption": "Vous la voyez aussi, non ? Le Kozy Bosquet, c'est Goldorak."
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -62,12 +75,6 @@
     {
       "type": "paragraph",
       "content": "Le truc inattendu, c'est que les profils ont des formes. Des vraies formes reconnaissables. On a un bar avenue Bosquet dont le profil ressemble trait pour trait à la soucoupe de Goldorak. Un autre dans le 11e qui fait penser à un croissant (approprié). Certains ont des profils symétriques presque parfaits, d'autres sont complètement biscornus."
-    },
-    {
-      "type": "image",
-      "content": "HD9G7vUb0AA2d_I.jpg",
-      "alt": "La soucoupe de Goldorak",
-      "caption": "Vous la voyez aussi, non ? Le Kozy Bosquet, c'est Goldorak."
     },
     {
       "type": "paragraph",
