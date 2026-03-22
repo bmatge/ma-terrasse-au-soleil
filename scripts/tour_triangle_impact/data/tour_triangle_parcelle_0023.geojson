@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "properties": {
+      "id_parcelle": "75115000BC0023",
+      "nom": "Tour Triangle",
+      "hauteur_m": 180,
+      "nb_etages": 44,
+      "architecte": "Herzog & de Meuron",
+      "livraison": 2026,
+      "emprise_base_m": 35,
+      "emprise_sommet_m": 16,
+      "longueur_m": 194
+    },
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[
+        [2.28637019, 48.832157],
+        [2.28638435, 48.83214755],
+        [2.28651369, 48.83215336],
+        [2.28657831, 48.83211031],
+        [2.28666993, 48.83189572],
+        [2.28515953, 48.83090422],
+        [2.28473059, 48.83108037],
+        [2.28637019, 48.832157]
+      ]]
+    }
+  }]
+}
