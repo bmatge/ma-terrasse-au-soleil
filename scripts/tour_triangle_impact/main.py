@@ -74,7 +74,8 @@ def main():
 
         for i, t in enumerate(terrasses):
             if args.verbose or (i + 1) % 50 == 0 or i == 0:
-                print(f"[{i+1}/{len(terrasses)}] {t['nom'] or t['adresse'] or f'id={t[\"id\"]}'}")
+                label = t['nom'] or t['adresse'] or f"id={t['id']}"
+                print(f"[{i+1}/{len(terrasses)}] {label}")
 
             # Fetch horizon profile
             profile = fetch_horizon_profile(conn, t["id"])
