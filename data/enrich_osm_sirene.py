@@ -121,6 +121,7 @@ async def enrich_from_sirene(engine, force: bool = False, limit: int | None = No
     """
     where = "siret IS NOT NULL AND siret != ''"
     if not force:
+        # NULL = never attempted; '' = attempted but not found (skip)
         where += " AND enseigne_sirene IS NULL"
 
     query = f"""
@@ -144,6 +145,18 @@ async def enrich_from_sirene(engine, force: bool = False, limit: int | None = No
 
     # Batch fetch from API
     sirene_data = await batch_fetch_sirene(sirets)
+
+    # Mark SIRETs not found so we don't retry them next run
+    not_found_sirets = set(sirets) - set(sirene_data.keys())
+    if not_found_sirets:
+        not_found_ids = [row.id for row in rows if row.siret in not_found_sirets]
+        if not_found_ids:
+            with engine.begin() as conn:
+                conn.execute(
+                    text("UPDATE terrasses SET enseigne_sirene = '' WHERE id = ANY(:ids) AND enseigne_sirene IS NULL"),
+                    {"ids": not_found_ids},
+                )
+            logger.info("SIRENE: marked %d terrasses with unfound SIRETs (won't retry)", len(not_found_ids))
 
     # Apply to terrasses
     updated = 0

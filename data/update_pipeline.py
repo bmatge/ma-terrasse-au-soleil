@@ -121,13 +121,19 @@ def step_sync_terrasses(engine) -> dict:
             categorie = classify_typologie(typologie_raw)
 
             if key in existing_keys:
-                # Already exists — update mutable fields
-                conn.execute(text("""
+                # Already exists — only update if mutable fields changed
+                result = conn.execute(text("""
                     UPDATE terrasses
                     SET nom = :nom, longueur = :longueur, largeur = :largeur,
                         arrondissement = :arrondissement, typologie = :typologie,
                         categorie = :categorie
                     WHERE id = :id
+                      AND (nom IS DISTINCT FROM :nom
+                           OR longueur IS DISTINCT FROM :longueur
+                           OR largeur IS DISTINCT FROM :largeur
+                           OR arrondissement IS DISTINCT FROM :arrondissement
+                           OR typologie IS DISTINCT FROM :typologie
+                           OR categorie IS DISTINCT FROM :categorie)
                 """), {
                     "id": existing_keys[key],
                     "nom": props.get("nom_enseigne") or props.get("adresse") or "Inconnu",
@@ -137,7 +143,8 @@ def step_sync_terrasses(engine) -> dict:
                     "typologie": typologie_raw,
                     "categorie": categorie,
                 })
-                updated += 1
+                if result.rowcount > 0:
+                    updated += 1
             else:
                 conn.execute(upsert_sql, {
                     "nom": props.get("nom_enseigne") or props.get("adresse") or "Inconnu",
