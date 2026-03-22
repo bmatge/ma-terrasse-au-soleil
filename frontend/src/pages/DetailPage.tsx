@@ -12,7 +12,7 @@ import { getTimeline } from "../api/terrasses";
 import { normalizePlaceType } from "../utils/placeType";
 import type { TimelineSlot } from "../api/types";
 import { F, HOURS, PLACE_TYPE_KEYS } from "../lib/constants";
-import { currentHourKey, todayISO, tomorrowISO, isSunnyStatus } from "../lib/helpers";
+import { currentHourKey, todayISO, tomorrowISO, maxDateISO, isSunnyStatus } from "../lib/helpers";
 
 export default function DetailPage() {
   const navigate = useNavigate();
@@ -310,6 +310,7 @@ export default function DetailPage() {
               ? new Date(searchDate + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" })
               : t("detail.pickDate")}
             <input ref={dateInputRef} type="date" value={searchDate}
+              min={todayISO()} max={maxDateISO()}
               onChange={(e) => { if (e.target.value) setDate(e.target.value); }}
               style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
             />

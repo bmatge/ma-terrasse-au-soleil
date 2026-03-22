@@ -1,5 +1,5 @@
 """API routes for terrasses: search, timeline (Mode 1), nearby (Mode 2)."""
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -59,6 +59,9 @@ async def get_timeline(
 
     profile = await get_cached_profile(redis, terrasse_id, row.profile)
     target_date = date.fromisoformat(date_str) if date_str else date.today()
+    max_date = date.today() + timedelta(days=14)
+    if target_date > max_date:
+        raise HTTPException(status_code=400, detail="Date too far in the future (max 14 days)")
 
     lang = get_lang(request)
     timeline = await build_timeline(
