@@ -190,48 +190,97 @@ async def run_pipeline(
 ) -> None:
     engine = create_engine(settings.DATABASE_URL_SYNC)
     t0 = time.time()
+    errors: list[str] = []
+    sync_stats = {"inserted": 0, "updated": 0, "removed": 0}
+    osm_count = 0
+    sirene_count = 0
+    osm_import = 0
+    pois = []
 
     # Step 1: Download
-    if not skip_download:
-        step_download_terrasses()
-    else:
-        logger.info("Skipping download (--skip-download)")
+    try:
+        if not skip_download:
+            step_download_terrasses()
+        else:
+            logger.info("Skipping download (--skip-download)")
+    except Exception as e:
+        logger.error("Step 1 (download) failed: %s", e)
+        errors.append(f"Step 1 download: {e}")
 
     # Step 2: Sync terrasses
-    sync_stats = step_sync_terrasses(engine)
+    try:
+        sync_stats = step_sync_terrasses(engine)
+    except Exception as e:
+        logger.error("Step 2 (sync) failed: %s", e)
+        errors.append(f"Step 2 sync: {e}")
 
     # Step 3: Download OSM
-    logger.info("=== Step 3: Download OSM POIs ===")
-    pois = await download_osm_pois(force=force)
+    try:
+        logger.info("=== Step 3: Download OSM POIs ===")
+        pois = await download_osm_pois(force=force)
+    except Exception as e:
+        logger.error("Step 3 (OSM download) failed: %s", e)
+        errors.append(f"Step 3 OSM download: {e}")
 
     # Step 4: Enrich from OSM
-    logger.info("=== Step 4: Enrich from OSM ===")
-    osm_count = await enrich_from_osm(engine, pois, force=force)
+    try:
+        if pois:
+            logger.info("=== Step 4: Enrich from OSM ===")
+            osm_count = await enrich_from_osm(engine, pois, force=force)
+        else:
+            logger.info("Skipping step 4 (no OSM data)")
+    except Exception as e:
+        logger.error("Step 4 (OSM enrich) failed: %s", e)
+        errors.append(f"Step 4 OSM enrich: {e}")
 
     # Step 5: Enrich from SIRENE
-    logger.info("=== Step 5: Enrich from SIRENE ===")
-    sirene_count = await enrich_from_sirene(engine, force=force)
+    try:
+        logger.info("=== Step 5: Enrich from SIRENE ===")
+        sirene_count = await enrich_from_sirene(engine, force=force)
+    except Exception as e:
+        logger.error("Step 5 (SIRENE) failed: %s", e)
+        errors.append(f"Step 5 SIRENE: {e}")
 
     # Step 6: Import new bars from OSM
-    logger.info("=== Step 6: Import OSM bars without declared terrasse ===")
-    osm_import = await import_osm_bars(engine, pois)
+    try:
+        if pois:
+            logger.info("=== Step 6: Import OSM bars without declared terrasse ===")
+            osm_import = await import_osm_bars(engine, pois)
+        else:
+            logger.info("Skipping step 6 (no OSM data)")
+    except Exception as e:
+        logger.error("Step 6 (OSM import) failed: %s", e)
+        errors.append(f"Step 6 OSM import: {e}")
 
-    # Step 6b: Enrich newly imported bars with SIRENE (those with SIRET from OSM)
-    if osm_import > 0:
-        logger.info("=== Step 6b: Enrich new OSM bars with SIRENE ===")
-        sirene_count_2 = await enrich_from_sirene(engine)
-        sirene_count += sirene_count_2
+    # Step 6b: Enrich newly imported bars with SIRENE
+    try:
+        if osm_import > 0:
+            logger.info("=== Step 6b: Enrich new OSM bars with SIRENE ===")
+            sirene_count_2 = await enrich_from_sirene(engine)
+            sirene_count += sirene_count_2
+    except Exception as e:
+        logger.error("Step 6b (SIRENE for new bars) failed: %s", e)
+        errors.append(f"Step 6b SIRENE new bars: {e}")
 
     # Step 7: Compute horizons
-    if not skip_horizons:
-        step_compute_horizons()
-    else:
-        logger.info("Skipping horizon computation (--skip-horizons)")
+    try:
+        if not skip_horizons:
+            step_compute_horizons()
+        else:
+            logger.info("Skipping horizon computation (--skip-horizons)")
+    except Exception as e:
+        logger.error("Step 7 (horizons) failed: %s", e)
+        errors.append(f"Step 7 horizons: {e}")
 
     elapsed = time.time() - t0
 
     logger.info("=" * 60)
-    logger.info("UPDATE PIPELINE COMPLETE in %.1fs", elapsed)
+    if errors:
+        logger.warning("UPDATE PIPELINE COMPLETE WITH %d ERROR(S) in %.1fs", len(errors), elapsed)
+        for err in errors:
+            logger.warning("  ✗ %s", err)
+    else:
+        logger.info("UPDATE PIPELINE COMPLETE in %.1fs", elapsed)
     logger.info("  Terrasses: +%d new, ~%d updated, -%d removed",
                 sync_stats["inserted"], sync_stats["updated"], sync_stats["removed"])
     logger.info("  OSM enriched: %d | SIRENE enriched: %d | OSM imported: %d",
