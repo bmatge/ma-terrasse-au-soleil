@@ -151,12 +151,10 @@ class TestWeatherSummary:
         assert "Matin nuageux" in result
         assert "éclaircies l'après-midi" in result
 
-    def test_empty_hourly_defaults_to_mixed(self):
-        """Missing hour keys → defaults to cloud_cover=50, producing mixed."""
+    def test_empty_hourly_returns_no_forecast(self):
+        """Empty weather dict → no-forecast fallback message."""
         result = weather_summary({}, lang="fr")
-        # avg defaults to 50 which is 30 <= 50 < 60 → mixed
-        assert "Éclaircies le matin" in result
-        assert "éclaircies l'après-midi" in result
+        assert "indisponibles" in result
 
     def test_english_locale(self):
         """English translations are used when lang='en'."""
