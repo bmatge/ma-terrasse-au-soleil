@@ -64,6 +64,9 @@ services:
     volumes:
       - ./data:/app/data
       - ./scripts:/app/scripts
+    networks:
+      - default
+      - ecosystem-network
     depends_on:
       db:
         condition: service_healthy
