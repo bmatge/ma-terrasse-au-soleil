@@ -1,0 +1,72 @@
+[
+  {
+    "nom": "LA PANAMEENNE FOOD2RUE",
+    "arrondissement": "75014",
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "Oniwa",
+    "arrondissement": "75007",
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "Breakfast club",
+    "arrondissement": null,
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "L'HyperBol",
+    "arrondissement": "75001",
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "Le Père Claude",
+    "arrondissement": null,
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "RESTAURANT LA VEGA",
+    "arrondissement": null,
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "L'Atlantique",
+    "arrondissement": "75009",
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "Les deux parisiens",
+    "arrondissement": "75012",
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "Le Napoléon",
+    "arrondissement": "75010",
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  },
+  {
+    "nom": "Meisia",
+    "arrondissement": "75010",
+    "heures_soleil": 0,
+    "heures_ombre": 15,
+    "pct_ombre": "100.0"
+  }
+]

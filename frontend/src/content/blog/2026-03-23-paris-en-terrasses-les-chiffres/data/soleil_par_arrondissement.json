@@ -1,0 +1,107 @@
+[
+  {
+    "arrondissement": "75019",
+    "pct_moyen_soleil": "29.7",
+    "nb_terrasses": 641
+  },
+  {
+    "arrondissement": "75020",
+    "pct_moyen_soleil": "27.5",
+    "nb_terrasses": 862
+  },
+  {
+    "arrondissement": "75012",
+    "pct_moyen_soleil": "26.7",
+    "nb_terrasses": 961
+  },
+  {
+    "arrondissement": "75013",
+    "pct_moyen_soleil": "25.6",
+    "nb_terrasses": 787
+  },
+  {
+    "arrondissement": "75017",
+    "pct_moyen_soleil": "24.3",
+    "nb_terrasses": 1092
+  },
+  {
+    "arrondissement": "75007",
+    "pct_moyen_soleil": "24.2",
+    "nb_terrasses": 495
+  },
+  {
+    "arrondissement": "75016",
+    "pct_moyen_soleil": "23.2",
+    "nb_terrasses": 427
+  },
+  {
+    "arrondissement": "75015",
+    "pct_moyen_soleil": "23.2",
+    "nb_terrasses": 1191
+  },
+  {
+    "arrondissement": "75006",
+    "pct_moyen_soleil": "22.6",
+    "nb_terrasses": 549
+  },
+  {
+    "arrondissement": "75011",
+    "pct_moyen_soleil": "22.2",
+    "nb_terrasses": 1189
+  },
+  {
+    "arrondissement": "75018",
+    "pct_moyen_soleil": "22.0",
+    "nb_terrasses": 1169
+  },
+  {
+    "arrondissement": "75005",
+    "pct_moyen_soleil": "21.7",
+    "nb_terrasses": 917
+  },
+  {
+    "arrondissement": "75010",
+    "pct_moyen_soleil": "21.7",
+    "nb_terrasses": 1163
+  },
+  {
+    "arrondissement": "75004",
+    "pct_moyen_soleil": "21.6",
+    "nb_terrasses": 627
+  },
+  {
+    "arrondissement": "75001",
+    "pct_moyen_soleil": "20.5",
+    "nb_terrasses": 652
+  },
+  {
+    "arrondissement": "75003",
+    "pct_moyen_soleil": "20.2",
+    "nb_terrasses": 415
+  },
+  {
+    "arrondissement": "75008",
+    "pct_moyen_soleil": "19.8",
+    "nb_terrasses": 864
+  },
+  {
+    "arrondissement": "75014",
+    "pct_moyen_soleil": "19.0",
+    "nb_terrasses": 961
+  },
+  {
+    "arrondissement": "75116",
+    "pct_moyen_soleil": "18.4",
+    "nb_terrasses": 431
+  },
+  {
+    "arrondissement": "75009",
+    "pct_moyen_soleil": "17.8",
+    "nb_terrasses": 1086
+  },
+  {
+    "arrondissement": "75002",
+    "pct_moyen_soleil": "14.8",
+    "nb_terrasses": 532
+  }
+]

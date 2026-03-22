@@ -1,0 +1,32 @@
+[
+  {
+    "tranche": "< 5 m²",
+    "nb_terrasses": 7160,
+    "pct": "40.8"
+  },
+  {
+    "tranche": "5–10 m²",
+    "nb_terrasses": 5338,
+    "pct": "30.4"
+  },
+  {
+    "tranche": "10–25 m²",
+    "nb_terrasses": 4276,
+    "pct": "24.4"
+  },
+  {
+    "tranche": "25–50 m²",
+    "nb_terrasses": 628,
+    "pct": "3.6"
+  },
+  {
+    "tranche": "50–100 m²",
+    "nb_terrasses": 139,
+    "pct": "0.8"
+  },
+  {
+    "tranche": "> 100 m²",
+    "nb_terrasses": 19,
+    "pct": "0.1"
+  }
+]

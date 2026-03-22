@@ -1,0 +1,86 @@
+[
+  {
+    "arrondissement": "75015",
+    "nb_terrasses": 1191
+  },
+  {
+    "arrondissement": "75011",
+    "nb_terrasses": 1189
+  },
+  {
+    "arrondissement": "75018",
+    "nb_terrasses": 1169
+  },
+  {
+    "arrondissement": "75010",
+    "nb_terrasses": 1163
+  },
+  {
+    "arrondissement": "75017",
+    "nb_terrasses": 1092
+  },
+  {
+    "arrondissement": "75009",
+    "nb_terrasses": 1086
+  },
+  {
+    "arrondissement": "75014",
+    "nb_terrasses": 961
+  },
+  {
+    "arrondissement": "75012",
+    "nb_terrasses": 961
+  },
+  {
+    "arrondissement": "75005",
+    "nb_terrasses": 917
+  },
+  {
+    "arrondissement": "75008",
+    "nb_terrasses": 864
+  },
+  {
+    "arrondissement": "75020",
+    "nb_terrasses": 862
+  },
+  {
+    "arrondissement": "75013",
+    "nb_terrasses": 787
+  },
+  {
+    "arrondissement": "75001",
+    "nb_terrasses": 652
+  },
+  {
+    "arrondissement": "75019",
+    "nb_terrasses": 641
+  },
+  {
+    "arrondissement": "75004",
+    "nb_terrasses": 627
+  },
+  {
+    "arrondissement": "75006",
+    "nb_terrasses": 549
+  },
+  {
+    "arrondissement": "75002",
+    "nb_terrasses": 532
+  },
+  {
+    "arrondissement": "75007",
+    "nb_terrasses": 495
+  },
+  {
+    "arrondissement": "75116",
+    "nb_terrasses": 431
+  },
+  {
+    "arrondissement": "75016",
+    "nb_terrasses": 427
+  },
+  {
+    "arrondissement": "75003",
+    "nb_terrasses": 415
+  }
+]

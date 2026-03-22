@@ -7,11 +7,14 @@ import BlogChart from "../components/BlogChart";
 import { F } from "../lib/constants";
 
 interface BlogPostBlock {
-  type: "paragraph" | "heading" | "image" | "chart";
+  type: "paragraph" | "heading" | "image" | "chart" | "columns" | "kpi";
   content?: string;
   alt?: string;
   caption?: string;
   chartId?: string;
+  left?: BlogPostBlock[];
+  right?: BlogPostBlock[];
+  items?: Array<{ value: string; label: string; icon?: string }>;
 }
 
 interface BlogPost {
@@ -42,6 +45,84 @@ function resolveMedia(slug: string, filename: string): string | undefined {
     if (path.includes(`/media/${filename}`)) return url;
   }
   return undefined;
+}
+
+function renderBlock(
+  block: BlogPostBlock,
+  i: number,
+  slug: string,
+  th: ReturnType<typeof useTheme>["th"],
+  resolveMedia: (slug: string, filename: string) => string | undefined,
+): React.ReactNode {
+  if (block.type === "heading") {
+    return (
+      <h2 key={i} style={{ fontFamily: F, fontWeight: 700, fontSize: 17, color: th.text, marginTop: 8 }}>
+        {block.content}
+      </h2>
+    );
+  }
+  if (block.type === "chart" && block.chartId) {
+    return (
+      <div key={i}>
+        <BlogChart chartId={block.chartId} slug={slug} />
+        {block.caption && (
+          <p style={{ fontFamily: F, fontSize: 12, color: th.textMuted, textAlign: "center", marginTop: 6 }}>
+            {block.caption}
+          </p>
+        )}
+      </div>
+    );
+  }
+  if (block.type === "image") {
+    const src = resolveMedia(slug, block.content!);
+    if (!src) return null;
+    return (
+      <figure key={i} style={{ margin: "8px 0" }}>
+        <img src={src} alt={block.alt || ""} style={{ width: "100%", borderRadius: 10, display: "block" }} />
+        {block.caption && (
+          <figcaption style={{ fontFamily: F, fontSize: 12, color: th.textMuted, textAlign: "center", marginTop: 6 }}>
+            {block.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+  if (block.type === "kpi" && block.items) {
+    return (
+      <div key={i} style={{
+        display: "grid", gridTemplateColumns: `repeat(${Math.min(block.items.length, 4)}, 1fr)`,
+        gap: 12, margin: "8px 0",
+      }}>
+        {block.items.map((item, j) => (
+          <div key={j} style={{
+            background: th.bgCard, borderRadius: 12, border: `1px solid ${th.border}`,
+            padding: "16px 12px", textAlign: "center",
+          }}>
+            {item.icon && <div style={{ fontSize: 24, marginBottom: 4 }}>{item.icon}</div>}
+            <div style={{ fontFamily: F, fontWeight: 700, fontSize: 22, color: th.accent }}>{item.value}</div>
+            <div style={{ fontFamily: F, fontSize: 11, color: th.textMuted, marginTop: 4 }}>{item.label}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "columns" && block.left && block.right) {
+    return (
+      <div key={i} style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
+        <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+          {block.left.map((b, j) => renderBlock(b, j, slug, th, resolveMedia))}
+        </div>
+        <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+          {block.right.map((b, j) => renderBlock(b, j, slug, th, resolveMedia))}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <p key={i} style={{ fontFamily: F, fontSize: 14, color: th.textSoft, lineHeight: 1.7, margin: 0 }}>
+      {block.content}
+    </p>
+  );
 }
 
 export default function BlogPostPage() {
@@ -92,50 +173,7 @@ export default function BlogPostPage() {
         </header>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {post.body.map((block, i) => {
-            if (block.type === "heading") {
-              return (
-                <h2 key={i} style={{ fontFamily: F, fontWeight: 700, fontSize: 17, color: th.text, marginTop: 8 }}>
-                  {block.content}
-                </h2>
-              );
-            }
-            if (block.type === "chart" && block.chartId) {
-              return (
-                <div key={i}>
-                  <BlogChart chartId={block.chartId} slug={post.slug} />
-                  {block.caption && (
-                    <p style={{ fontFamily: F, fontSize: 12, color: th.textMuted, textAlign: "center", marginTop: 6 }}>
-                      {block.caption}
-                    </p>
-                  )}
-                </div>
-              );
-            }
-            if (block.type === "image") {
-              const src = resolveMedia(post.slug, block.content!);
-              if (!src) return null;
-              return (
-                <figure key={i} style={{ margin: "8px 0" }}>
-                  <img
-                    src={src}
-                    alt={block.alt || ""}
-                    style={{ width: "100%", borderRadius: 10, display: "block" }}
-                  />
-                  {block.caption && (
-                    <figcaption style={{ fontFamily: F, fontSize: 12, color: th.textMuted, textAlign: "center", marginTop: 6 }}>
-                      {block.caption}
-                    </figcaption>
-                  )}
-                </figure>
-              );
-            }
-            return (
-              <p key={i} style={{ fontFamily: F, fontSize: 14, color: th.textSoft, lineHeight: 1.7, margin: 0 }}>
-                {block.content}
-              </p>
-            );
-          })}
+          {post.body.map((block, i) => renderBlock(block, i, post.slug, th, resolveMedia))}
         </div>
 
         <div style={{ borderTop: `1px solid ${th.border}`, marginTop: 32, paddingTop: 16, textAlign: "center" }}>

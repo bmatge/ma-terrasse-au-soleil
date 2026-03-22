@@ -1,0 +1,92 @@
+[
+  {
+    "heure": 7,
+    "au_soleil": 504,
+    "a_l_ombre": 19647,
+    "pct_soleil": "2.5"
+  },
+  {
+    "heure": 8,
+    "au_soleil": 1682,
+    "a_l_ombre": 18469,
+    "pct_soleil": "8.3"
+  },
+  {
+    "heure": 9,
+    "au_soleil": 3887,
+    "a_l_ombre": 16264,
+    "pct_soleil": "19.3"
+  },
+  {
+    "heure": 10,
+    "au_soleil": 5713,
+    "a_l_ombre": 14438,
+    "pct_soleil": "28.4"
+  },
+  {
+    "heure": 11,
+    "au_soleil": 7441,
+    "a_l_ombre": 12710,
+    "pct_soleil": "36.9"
+  },
+  {
+    "heure": 12,
+    "au_soleil": 8754,
+    "a_l_ombre": 11397,
+    "pct_soleil": "43.4"
+  },
+  {
+    "heure": 13,
+    "au_soleil": 9377,
+    "a_l_ombre": 10774,
+    "pct_soleil": "46.5"
+  },
+  {
+    "heure": 14,
+    "au_soleil": 9100,
+    "a_l_ombre": 11051,
+    "pct_soleil": "45.2"
+  },
+  {
+    "heure": 15,
+    "au_soleil": 7655,
+    "a_l_ombre": 12496,
+    "pct_soleil": "38.0"
+  },
+  {
+    "heure": 16,
+    "au_soleil": 5586,
+    "a_l_ombre": 14565,
+    "pct_soleil": "27.7"
+  },
+  {
+    "heure": 17,
+    "au_soleil": 3516,
+    "a_l_ombre": 16635,
+    "pct_soleil": "17.4"
+  },
+  {
+    "heure": 18,
+    "au_soleil": 1409,
+    "a_l_ombre": 18742,
+    "pct_soleil": "7.0"
+  },
+  {
+    "heure": 19,
+    "au_soleil": 487,
+    "a_l_ombre": 19664,
+    "pct_soleil": "2.4"
+  },
+  {
+    "heure": 20,
+    "au_soleil": 1,
+    "a_l_ombre": 20150,
+    "pct_soleil": "0.0"
+  },
+  {
+    "heure": 21,
+    "au_soleil": 1,
+    "a_l_ombre": 20150,
+    "pct_soleil": "0.0"
+  }
+]

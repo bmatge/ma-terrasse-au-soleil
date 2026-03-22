@@ -1,0 +1,62 @@
+[
+  {
+    "rue": "BOULEVARD VOLTAIRE",
+    "nb_terrasses": 142
+  },
+  {
+    "rue": "RUE DES PYRENEES",
+    "nb_terrasses": 118
+  },
+  {
+    "rue": "RUE DU FAUBOURG SAINT DENIS",
+    "nb_terrasses": 107
+  },
+  {
+    "rue": "RUE DE VAUGIRARD",
+    "nb_terrasses": 99
+  },
+  {
+    "rue": "RUE LA FAYETTE",
+    "nb_terrasses": 94
+  },
+  {
+    "rue": "RUE DE BELLEVILLE",
+    "nb_terrasses": 92
+  },
+  {
+    "rue": "RUE DE LA CONVENTION",
+    "nb_terrasses": 91
+  },
+  {
+    "rue": "RUE SAINT MARTIN",
+    "nb_terrasses": 86
+  },
+  {
+    "rue": "RUE DE CHARENTON",
+    "nb_terrasses": 86
+  },
+  {
+    "rue": "BOULEVARD DU MONTPARNASSE",
+    "nb_terrasses": 84
+  },
+  {
+    "rue": "AVENUE DE VERSAILLES",
+    "nb_terrasses": 84
+  },
+  {
+    "rue": "AVENUE JEAN JAURES",
+    "nb_terrasses": 82
+  },
+  {
+    "rue": "RUE DAGUERRE",
+    "nb_terrasses": 82
+  },
+  {
+    "rue": "RUE DE LA ROQUETTE",
+    "nb_terrasses": 82
+  },
+  {
+    "rue": "RUE SAINT MAUR",
+    "nb_terrasses": 79
+  }
+]

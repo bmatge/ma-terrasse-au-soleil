@@ -1,0 +1,32 @@
+[
+  {
+    "categorie": "TERRASSE OUVERTE",
+    "nb": 7797,
+    "pct": "38.7"
+  },
+  {
+    "categorie": "ÉTALAGE",
+    "nb": 4154,
+    "pct": "20.6"
+  },
+  {
+    "categorie": "CONTRE-TERRASSE",
+    "nb": 3862,
+    "pct": "19.2"
+  },
+  {
+    "categorie": "AUTRE",
+    "nb": 2520,
+    "pct": "12.5"
+  },
+  {
+    "categorie": "TERRASSE FERMÉE",
+    "nb": 1102,
+    "pct": "5.5"
+  },
+  {
+    "categorie": "AUTRE",
+    "nb": 716,
+    "pct": "3.6"
+  }
+]

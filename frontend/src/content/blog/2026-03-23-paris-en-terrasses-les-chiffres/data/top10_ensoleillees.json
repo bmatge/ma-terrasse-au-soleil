@@ -1,0 +1,62 @@
+[
+  {
+    "nom": "Monument café",
+    "arrondissement": "75012",
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "L'aquarium de Paris",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "La Balle au Bond",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "Cargo Container Bar",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "Rosa Bonheur sur Seine",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "Riviera Fuga",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "Flow",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "New Mandarin Massena",
+    "arrondissement": "75013",
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "Rosa Bonheur sur Seine",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  },
+  {
+    "nom": "Fluctuart",
+    "arrondissement": null,
+    "heures_soleil": 13,
+    "pct_soleil": "86.7"
+  }
+]

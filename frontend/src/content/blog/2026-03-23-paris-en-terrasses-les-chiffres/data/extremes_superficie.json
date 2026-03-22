@@ -1,0 +1,52 @@
+{
+  "plus_grandes": [
+
+    {
+      "nom": "Trattoria",
+      "arrondissement": "75019",
+      "superficie_m2": "900.0"
+    },
+    {
+      "nom": "Billy Mango",
+      "arrondissement": "75010",
+      "superficie_m2": "720.0"
+    },
+    {
+      "nom": "Poké'up",
+      "arrondissement": "75009",
+      "superficie_m2": "420.0"
+    },
+    {
+      "nom": "Le bar fleuri",
+      "arrondissement": "75019",
+      "superficie_m2": "156.3"
+    }
+  ],
+  "plus_petites": [
+    {
+      "nom": "RT SUPERMARCHE",
+      "arrondissement": "75010",
+      "superficie_m2": "0.0"
+    },
+    {
+      "nom": "Maison Teissedre",
+      "arrondissement": "75001",
+      "superficie_m2": "0.0"
+    },
+    {
+      "nom": "BOOK NOOK",
+      "arrondissement": "75009",
+      "superficie_m2": "0.0"
+    },
+    {
+      "nom": "POINTE THIRTY FOUR",
+      "arrondissement": "75008",
+      "superficie_m2": "0.1"
+    },
+    {
+      "nom": "L'Ours et La Vieille Grille",
+      "arrondissement": "75005",
+      "superficie_m2": "0.1"
+    }
+  ]
+}

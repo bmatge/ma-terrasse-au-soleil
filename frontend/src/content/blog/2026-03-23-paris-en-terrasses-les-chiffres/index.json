@@ -1,0 +1,244 @@
+{
+  "slug": "paris-en-terrasses-les-chiffres",
+  "title": "Paris en terrasses : les chiffres",
+  "description": "20 151 terrasses, 526 529 bâtiments 3D, des millions de calculs d'ombre — plongée dans la base de données d'Au Soleil en 11 visualisations.",
+  "date": "2026-03-23",
+  "author": "Au Soleil",
+  "tags": ["data", "open-data", "dataviz", "paris", "terrasses"],
+  "body": [
+    {
+      "type": "paragraph",
+      "content": "On a passé des semaines à construire la base de données d'Au Soleil : aspirer les données ouvertes de la Ville de Paris, modéliser les bâtiments en 3D, calculer l'ensoleillement de chaque terrasse heure par heure. Aujourd'hui, on ouvre le capot et on vous montre ce qu'il y a dedans — en chiffres et en images."
+    },
+
+    {
+      "type": "kpi",
+      "items": [
+        { "value": "20 151", "label": "terrasses indexées", "icon": "☀️" },
+        { "value": "526 529", "label": "bâtiments 3D", "icon": "🏛️" },
+        { "value": "158 509 m²", "label": "de terrasses cumulées", "icon": "📐" },
+        { "value": "7,2 M", "label": "profils d'horizon", "icon": "🔭" }
+      ]
+    },
+
+    {
+      "type": "paragraph",
+      "content": "20 151 terrasses, c'est le nombre d'autorisations de terrasses délivrées par la Mairie de Paris que nous avons importées. Pour chacune, nous avons calculé un profil d'horizon à 360° — une empreinte digitale de son environnement bâti — en interrogeant les 526 529 bâtiments de la BD TOPO de l'IGN."
+    },
+
+    { "type": "heading", "content": "Quels types de terrasses ?" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-categories",
+          "caption": "Répartition des 20 151 terrasses par catégorie"
+        }
+      ],
+      "right": [
+        {
+          "type": "paragraph",
+          "content": "Les terrasses ouvertes — celles qui nous intéressent le plus pour le calcul d'ensoleillement — représentent 39% du total. Le reste se partage entre étalages (21%), contre-terrasses (19%), terrasses fermées (5%) et autres installations."
+        },
+        {
+          "type": "paragraph",
+          "content": "Même si nous calculons l'ensoleillement pour toutes les catégories, ce sont bien les terrasses ouvertes qui bénéficient le plus de notre outil : ce sont elles où l'on va boire un café au soleil."
+        }
+      ]
+    },
+
+    { "type": "heading", "content": "Où sont les terrasses ?" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "paragraph",
+          "content": "Le 15e arrondissement mène le bal avec 1 191 terrasses, talonné par le 11e (1 189) et le 18e (1 169). À l'inverse, le 3e arrondissement n'en compte que 415 — mais ses rues étroites du Marais offrent un charme incomparable."
+        },
+        {
+          "type": "paragraph",
+          "content": "L'écart entre le premier et le dernier est presque de 1 à 3, reflet de la géographie et de la densité commerciale très variable d'un arrondissement à l'autre."
+        }
+      ],
+      "right": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-arrondissements",
+          "caption": "Nombre de terrasses par arrondissement"
+        }
+      ]
+    },
+
+    { "type": "heading", "content": "Les rues reines de la terrasse" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-top-rues",
+          "caption": "Top 10 des rues avec le plus de terrasses"
+        }
+      ],
+      "right": [
+        {
+          "type": "paragraph",
+          "content": "Le boulevard Voltaire écrase la concurrence avec 142 terrasses sur son tracé — presque une tous les 20 mètres. La rue des Pyrénées (118) et la rue du Faubourg Saint-Denis (107) complètent le podium."
+        },
+        {
+          "type": "paragraph",
+          "content": "On note la présence de grands boulevards (Voltaire, Montparnasse) mais aussi de rues plus « village » comme la rue Daguerre dans le 14e ou la rue de Belleville dans le 20e."
+        }
+      ]
+    },
+
+    { "type": "heading", "content": "Quelle taille fait une terrasse parisienne ?" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "paragraph",
+          "content": "La terrasse parisienne typique est petite : 6 m² de médiane, 9 m² de moyenne. 71% font moins de 10 m², soit à peine la place pour 2-3 tables. Seules 19 terrasses dépassent les 100 m² dans tout Paris."
+        },
+        {
+          "type": "paragraph",
+          "content": "La plus grande ? L'Atelier du Sourcil Auteuil dans le 16e, avec 3 600 m² déclarés (probablement une erreur dans les données). La plus petite terrasse mesurable fait 0,1 m² — autant dire un pot de fleurs."
+        }
+      ],
+      "right": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-superficies",
+          "caption": "Distribution des terrasses par superficie"
+        }
+      ]
+    },
+
+    {
+      "type": "chart",
+      "chartId": "chiffres-extremes",
+      "caption": "Top 5 des plus grandes terrasses de Paris (en m²)"
+    },
+
+    { "type": "heading", "content": "D'où viennent nos données ?" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-enrichissement",
+          "caption": "Nombre de terrasses enrichies par source"
+        }
+      ],
+      "right": [
+        {
+          "type": "paragraph",
+          "content": "Les données de base viennent de l'Open Data parisien (localisation, dimensions, typologie). On les croise ensuite avec trois sources : OpenStreetMap (16 095 correspondances — horaires, cuisine, terrasse déclarée), le répertoire SIRENE (8 172 — statut administratif, code NAF) et Google Places (4 035 — notes, avis, prix)."
+        },
+        {
+          "type": "paragraph",
+          "content": "Ce croisement multi-sources nous permet d'afficher des informations riches sur chaque terrasse, bien au-delà de ce que propose chaque source individuellement."
+        }
+      ]
+    },
+
+    { "type": "heading", "content": "L'ensoleillement : la cloche de 13h" },
+
+    {
+      "type": "paragraph",
+      "content": "Passons au cœur du sujet : l'ensoleillement. Pour chaque terrasse, on sait à chaque heure si elle est au soleil ou à l'ombre, en croisant la position du soleil avec le profil d'horizon calculé à partir des bâtiments voisins. Voici ce que ça donne un jour d'équinoxe de printemps (20 mars) :"
+    },
+
+    {
+      "type": "chart",
+      "chartId": "chiffres-ensoleillement-heure",
+      "caption": "Nombre de terrasses au soleil vs à l'ombre, heure par heure — 20 mars 2026 (équinoxe de printemps)"
+    },
+
+    {
+      "type": "paragraph",
+      "content": "La courbe dessine une cloche presque parfaite. À 7h, seules 500 terrasses (2,5%) voient le soleil. Le pic est atteint à 13h avec 9 377 terrasses au soleil (46,5%). À 18h, on retombe à 7%. Même au plus fort de la journée, plus de la moitié des terrasses parisiennes restent à l'ombre — Paris est une ville dense."
+    },
+
+    { "type": "heading", "content": "Quel arrondissement est le plus ensoleillé ?" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "paragraph",
+          "content": "Le 19e arrondissement arrive en tête avec 29,7% d'ensoleillement moyen sur la journée. Le Parc de la Villette et ses larges avenues y sont pour beaucoup. Le 20e (27,5%) et le 12e (26,7%) suivent — des arrondissements aux rues plus aérées."
+        },
+        {
+          "type": "paragraph",
+          "content": "En queue de peloton : le 2e (14,8%) et le 9e (17,8%), victimes de rues étroites et de bâtiments haussmanniens qui bloquent la lumière. L'écart entre le 19e et le 2e est du simple au double."
+        }
+      ],
+      "right": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-soleil-arrondissement",
+          "caption": "% moyen d'ensoleillement par arrondissement"
+        }
+      ]
+    },
+
+    { "type": "heading", "content": "Les champions du soleil" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-top10-soleil",
+          "caption": "Top 10 des terrasses les plus ensoleillées (20 mars)"
+        }
+      ],
+      "right": [
+        {
+          "type": "paragraph",
+          "content": "Les terrasses en bord de Seine trustent le haut du classement : Rosa Bonheur sur Seine, Flow, Fluctuart, Cargo Container Bar... Logique : pas de bâtiment entre elles et le ciel. Avec 13h de soleil sur 15h possibles (87%), elles profitent de presque chaque rayon."
+        },
+        {
+          "type": "paragraph",
+          "content": "Le Monument café (12e) est le seul établissement « classique » du top 10 — une terrasse bien exposée sur une place dégagée."
+        }
+      ]
+    },
+
+    { "type": "heading", "content": "Les refuges de l'ombre" },
+
+    {
+      "type": "columns",
+      "left": [
+        {
+          "type": "paragraph",
+          "content": "À l'inverse, 10 terrasses ne voient pas un seul rayon de soleil de toute la journée. Pas une heure, pas une minute. La Panameenne Food2Rue (14e), Oniwa (7e), Le Père Claude... Encaissées dans des cours intérieures ou coincées sous des bâtiments hauts, elles sont dans l'ombre permanente."
+        },
+        {
+          "type": "paragraph",
+          "content": "Mais ce n'est pas forcément un défaut : en pleine canicule, ces terrasses 100% ombre deviennent les refuges les plus prisés de Paris."
+        }
+      ],
+      "right": [
+        {
+          "type": "chart",
+          "chartId": "chiffres-top10-ombre",
+          "caption": "Top 10 des terrasses les plus ombragées (20 mars)"
+        }
+      ]
+    },
+
+    { "type": "heading", "content": "Et maintenant ?" },
+
+    {
+      "type": "paragraph",
+      "content": "Ces chiffres ne sont qu'un aperçu de ce que contient la base. Chaque terrasse a son profil d'horizon unique, recalculé en temps réel selon la date et l'heure. On travaille sur de nouvelles analyses — l'impact des saisons, la corrélation entre hauteur des bâtiments voisins et ensoleillement, les golden hours par quartier. En attendant, allez tester l'app et trouver votre terrasse au soleil."
+    }
+  ]
+}
