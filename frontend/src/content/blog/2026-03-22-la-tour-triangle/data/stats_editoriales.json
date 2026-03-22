@@ -1,0 +1,16 @@
+{
+  "nb_terrasses_zone": 130,
+  "nb_terrasses_impactees": 48,
+  "pct_terrasses_impactees": 36.9,
+  "total_heures_perdues_annuel": 211,
+  "moyenne_heures_perdues_par_terrasse": 4.4,
+  "terrasse_plus_impactee": {
+    "nom": "Café Eugène",
+    "adresse": "49 BOULEVARD VICTOR",
+    "heures_perdues": 11
+  },
+  "rayon_impact_reel_m": 722.0,
+  "ombre_max_hiver_m": 554.0,
+  "ombre_max_ete_m": 84.0,
+  "moment_pire_impact": "décembre 21, 12h"
+}

@@ -1,0 +1,103 @@
+{
+  "slug": "la-tour-triangle",
+  "title": "On pourrait avoir 3T s'il vous plaît ? Triangle, Terrasse et Trigonométrie",
+  "description": "On a fait tourner nos algorithmes d'ensoleillement sur la Tour Triangle, pas encore sortie de terre. Résultat : 48 terrasses impactées, 211 heures de soleil perdues par an, et un Boulevard Victor qui va trinquer.",
+  "date": "2026-03-22",
+  "author": "Bertrand & Virginie",
+  "tags": ["paris", "tour-triangle", "ombre", "urbanisme", "data", "15e"],
+  "image": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "content": "La Tour Triangle, c'est ce projet de gratte-ciel de 180 mètres que Paris se traîne depuis plus de dix ans. Porte de Versailles, 15e arrondissement. Votée, contestée, revotée, recontestée, et maintenant en construction. On ne va pas refaire le débat pour ou contre — on a un outil qui calcule l'ombre des bâtiments, et on a une tour de 180 mètres qui n'existe pas encore. Vous voyez où on veut en venir."
+    },
+    {
+      "type": "heading",
+      "content": "Le protocole"
+    },
+    {
+      "type": "paragraph",
+      "content": "On a pris notre moteur d'ensoleillement — le même qui calcule les profils d'horizon de 6 000+ terrasses parisiennes — et on lui a demandé : « si on pose un parallélépipède de 180 mètres de haut à l'emplacement de la Tour Triangle, qu'est-ce qui se passe pour les terrasses autour ? ». On a simulé l'ombre heure par heure, jour par jour, sur une année complète."
+    },
+    {
+      "type": "paragraph",
+      "content": "Spoiler : ce n'est pas l'apocalypse. Mais c'est pas rien non plus."
+    },
+    {
+      "type": "heading",
+      "content": "Les chiffres"
+    },
+    {
+      "type": "paragraph",
+      "content": "Dans un rayon de 722 mètres autour de la tour, on compte 130 terrasses autorisées. Sur ces 130, 48 perdent au moins une heure de soleil par an à cause de la nouvelle ombre. Ça fait 37% des terrasses du coin. Au total, ce sont 211 heures de soleil qui disparaissent chaque année — réparties sur ces 48 terrasses, soit environ 4h24 par terrasse en moyenne."
+    },
+    {
+      "type": "paragraph",
+      "content": "Avant de monter sur les barricades : 4 heures sur une année, c'est pas la fin du monde. C'est un peu comme perdre la dernière part de tarte au citron — c'est triste, mais on survit."
+    },
+    {
+      "type": "heading",
+      "content": "Le Boulevard Victor trinque"
+    },
+    {
+      "type": "paragraph",
+      "content": "Toutes les terrasses ne sont pas logées à la même enseigne. Le Boulevard Victor, qui longe le site au nord, prend le gros de l'impact. Le Café Eugène, au 49 Boulevard Victor, est le grand perdant : 11 heures de soleil en moins par an, dont 8 en hiver. L'Atelier Versailles (53 et 55 Boulevard Victor) perd entre 10 et 11 heures. Les Aviateurs, au 37, en perd 10."
+    },
+    {
+      "type": "paragraph",
+      "content": "Le top 10 des terrasses les plus impactées est presque entièrement sur le Boulevard Victor. Le seul intrus, c'est Tonton Becton sur le Boulevard Lefebvre, à 322 mètres de la tour, qui perd 7 heures — et c'est le seul du lot dont l'impact est principalement estival (5 heures en été). Allez comprendre les angles du soleil."
+    },
+    {
+      "type": "heading",
+      "content": "Une ombre d'hiver"
+    },
+    {
+      "type": "paragraph",
+      "content": "C'est peut-être le résultat le plus intéressant : l'impact de la Tour Triangle est massivement hivernal. Au solstice d'hiver, quand le soleil rase l'horizon à 17° d'élévation, l'ombre de la tour s'étire sur 565 mètres à midi. À 15h, c'est pire : 1 088 mètres d'ombre. Plus d'un kilomètre. On pourrait presque faire de l'ombre au Parc des Expositions."
+    },
+    {
+      "type": "paragraph",
+      "content": "En été ? L'ombre fait 105 mètres à midi et ne touche aucune terrasse. Le soleil est trop haut, la tour a beau faire ses 180 mètres, l'ombre reste collée à ses pieds. C'est la géométrie : quand le soleil est à 60° d'élévation, même un gratte-ciel projette une ombre modeste."
+    },
+    {
+      "type": "paragraph",
+      "content": "En résumé : si vous êtes amateur de terrasse hivernale sur le Boulevard Victor, préparez-vous à perdre quelques créneaux de soleil entre novembre et février. Si vous êtes plutôt terrasse d'été, dormez tranquille."
+    },
+    {
+      "type": "heading",
+      "content": "Le palmarès des perdantes"
+    },
+    {
+      "type": "paragraph",
+      "content": "Petit tableau d'honneur (ou de déshonneur, c'est selon) des 5 terrasses les plus impactées :"
+    },
+    {
+      "type": "paragraph",
+      "content": "1. Café Eugène, 49 Bd Victor — 11h perdues (10,4% de son ensoleillement)\n2. L'Atelier Versailles, 55 Bd Victor — 11h perdues (10,8%)\n3. L'Atelier Versailles, 53 Bd Victor — 10h perdues (10,0%)\n4. Les Aviateurs, 37 Bd Victor — 10h perdues (9,4%)\n5. Mumbai Lounge, 31 Bd Victor — 9h perdues (8,1%)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Le Café Victoria, au 53 Boulevard Victor, mérite une mention spéciale : il ne perd « que » 9 heures, mais ça représente 12,7% de son ensoleillement total. C'est la terrasse qui, proportionnellement, souffre le plus. Probablement déjà pas gâtée par les immeubles existants."
+    },
+    {
+      "type": "heading",
+      "content": "Ce qu'on ne mesure pas"
+    },
+    {
+      "type": "paragraph",
+      "content": "Notre modèle calcule l'ombre géométrique de la tour, pas ses effets sur le vent, la luminosité ambiante, ou le moral des riverains. On ne prend pas non plus en compte la forme exacte de la tour (triangulaire, d'où le nom) — on l'a modélisée comme un bloc rectangulaire, ce qui surestime probablement un peu l'ombre réelle. Et comme toujours, les arbres sont absents de nos calculs."
+    },
+    {
+      "type": "paragraph",
+      "content": "On ne prend pas position sur le projet. On fait des maths. Mais si ces maths peuvent nourrir le débat avec des données plutôt que des intuitions, on aura fait notre boulot."
+    },
+    {
+      "type": "heading",
+      "content": "Méthodologie"
+    },
+    {
+      "type": "paragraph",
+      "content": "Simulation basée sur les données BD TOPO IGN (bâtiments 3D), le registre des terrasses de la Ville de Paris, et le calcul de position solaire via pysolar. Tour modélisée comme un volume de 180m de hauteur à l'emplacement du chantier actuel (Porte de Versailles). Ombre calculée heure par heure sur 365 jours. Les données brutes (GeoJSON des ombres, CSV des terrasses impactées) sont disponibles en open data dans le repo du projet."
+    }
+  ]
+}

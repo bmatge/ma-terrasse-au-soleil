@@ -1,0 +1,112 @@
+[
+  {
+    "rang": 1,
+    "nom": "Café Eugène",
+    "adresse": "49 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 240.0,
+    "heures_perdues": 11,
+    "pct_perte": 10.4,
+    "impact_hiver": 8,
+    "impact_ete": 0
+  },
+  {
+    "rang": 2,
+    "nom": "L'Atelier Versailles",
+    "adresse": "55 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 230.0,
+    "heures_perdues": 11,
+    "pct_perte": 10.8,
+    "impact_hiver": 5,
+    "impact_ete": 2
+  },
+  {
+    "rang": 3,
+    "nom": "L'Atelier Versailles",
+    "adresse": "53 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 233.0,
+    "heures_perdues": 10,
+    "pct_perte": 10.0,
+    "impact_hiver": 7,
+    "impact_ete": 1
+  },
+  {
+    "rang": 4,
+    "nom": "LES AVIATEURS",
+    "adresse": "37 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 286.0,
+    "heures_perdues": 10,
+    "pct_perte": 9.4,
+    "impact_hiver": 8,
+    "impact_ete": 0
+  },
+  {
+    "rang": 5,
+    "nom": "Mumbai Lounge",
+    "adresse": "31 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 313.0,
+    "heures_perdues": 9,
+    "pct_perte": 8.1,
+    "impact_hiver": 8,
+    "impact_ete": 0
+  },
+  {
+    "rang": 6,
+    "nom": "Café Victoria",
+    "adresse": "53 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 237.0,
+    "heures_perdues": 9,
+    "pct_perte": 12.7,
+    "impact_hiver": 6,
+    "impact_ete": 1
+  },
+  {
+    "rang": 7,
+    "nom": "Café Eugène",
+    "adresse": "48 RUE DU HAMEAU",
+    "arrondissement": "75015",
+    "distance_tour_m": 245.0,
+    "heures_perdues": 9,
+    "pct_perte": 13.8,
+    "impact_hiver": 7,
+    "impact_ete": 0
+  },
+  {
+    "rang": 8,
+    "nom": "Trattoria Silvano",
+    "adresse": "57 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 227.0,
+    "heures_perdues": 8,
+    "pct_perte": 7.9,
+    "impact_hiver": 4,
+    "impact_ete": 1
+  },
+  {
+    "rang": 9,
+    "nom": "Tonton Becton I La table d'hôtes I Porte de Versailles",
+    "adresse": "19 BOULEVARD LEFEBVRE",
+    "arrondissement": "75015",
+    "distance_tour_m": 322.0,
+    "heures_perdues": 7,
+    "pct_perte": 7.4,
+    "impact_hiver": 0,
+    "impact_ete": 5
+  },
+  {
+    "rang": 10,
+    "nom": "Osaka",
+    "adresse": "27 BOULEVARD VICTOR",
+    "arrondissement": "75015",
+    "distance_tour_m": 336.0,
+    "heures_perdues": 7,
+    "pct_perte": 8.8,
+    "impact_hiver": 7,
+    "impact_ete": 0
+  }
+]
