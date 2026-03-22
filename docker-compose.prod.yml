@@ -47,6 +47,28 @@ services:
       - "traefik.http.routers.matge.priority=100"
       - "traefik.http.routers.matge.service=terrasses"
 
+  cron:
+    build:
+      context: ./backend
+      target: production
+    restart: always
+    entrypoint: ["sh", "/app/scripts/cron_scheduler.sh"]
+    environment:
+      DATABASE_URL_SYNC: postgresql://terrasse:${DB_PASSWORD:-devpassword}@db:5432/terrasse_soleil
+      CRON_HOUR: "3"
+    volumes:
+      - ./data:/app/data
+      - ./scripts:/app/scripts
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
   maintenance:
     image: nginx:alpine
     restart: always
