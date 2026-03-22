@@ -3,13 +3,15 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../contexts/ThemeContext";
 import Nav from "../components/Nav";
 import BottomNav from "../components/BottomNav";
+import BlogChart from "../components/BlogChart";
 import { F } from "../lib/constants";
 
 interface BlogPostBlock {
-  type: "paragraph" | "heading" | "image";
-  content: string;
+  type: "paragraph" | "heading" | "image" | "chart";
+  content?: string;
   alt?: string;
   caption?: string;
+  chartId?: string;
 }
 
 interface BlogPost {
@@ -98,8 +100,20 @@ export default function BlogPostPage() {
                 </h2>
               );
             }
+            if (block.type === "chart" && block.chartId) {
+              return (
+                <div key={i}>
+                  <BlogChart chartId={block.chartId} slug={post.slug} />
+                  {block.caption && (
+                    <p style={{ fontFamily: F, fontSize: 12, color: th.textMuted, textAlign: "center", marginTop: 6 }}>
+                      {block.caption}
+                    </p>
+                  )}
+                </div>
+              );
+            }
             if (block.type === "image") {
-              const src = resolveMedia(post.slug, block.content);
+              const src = resolveMedia(post.slug, block.content!);
               if (!src) return null;
               return (
                 <figure key={i} style={{ margin: "8px 0" }}>

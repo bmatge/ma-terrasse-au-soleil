@@ -36,6 +36,11 @@
       "content": "Avant de monter sur les barricades : 4 heures sur une année, c'est pas la fin du monde. C'est un peu comme perdre la dernière part de tarte au citron — c'est triste, mais on survit."
     },
     {
+      "type": "chart",
+      "chartId": "tour-triangle-donut",
+      "caption": "130 terrasses dans la zone d'impact, 48 perdent au moins 1h de soleil par an."
+    },
+    {
       "type": "heading",
       "content": "Le Boulevard Victor trinque"
     },
@@ -46,6 +51,11 @@
     {
       "type": "paragraph",
       "content": "Le top 10 des terrasses les plus impactées est presque entièrement sur le Boulevard Victor. Le seul intrus, c'est Tonton Becton sur le Boulevard Lefebvre, à 322 mètres de la tour, qui perd 7 heures — et c'est le seul du lot dont l'impact est principalement estival (5 heures en été). Allez comprendre les angles du soleil."
+    },
+    {
+      "type": "chart",
+      "chartId": "tour-triangle-top10",
+      "caption": "Top 10 des terrasses les plus impactées — heures perdues par an (hiver en bleu, été en ambre)."
     },
     {
       "type": "heading",
@@ -62,6 +72,11 @@
     {
       "type": "paragraph",
       "content": "En résumé : si vous êtes amateur de terrasse hivernale sur le Boulevard Victor, préparez-vous à perdre quelques créneaux de soleil entre novembre et février. Si vous êtes plutôt terrasse d'été, dormez tranquille."
+    },
+    {
+      "type": "chart",
+      "chartId": "tour-triangle-shadow-length",
+      "caption": "Longueur de l'ombre projetée selon la saison — le contraste hiver/été est saisissant."
     },
     {
       "type": "heading",
