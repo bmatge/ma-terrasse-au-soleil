@@ -1,4 +1,4 @@
-.PHONY: dev prod stop logs download migrate import validate compute db-shell clean
+.PHONY: dev prod stop logs download migrate import validate compute sun-stats db-shell clean
 
 # Development
 dev:
@@ -36,6 +36,16 @@ validate:
 
 compute:
 	docker compose exec backend python /app/data/compute_horizon_profiles.py
+
+# Sun stats for blog posts (pass DATES, e.g. make sun-stats DATES="2026-04-05 2026-04-06")
+sun-stats:
+	docker compose exec backend python /app/data/compute_sun_stats.py $(DATES)
+
+sun-stats-csv:
+	docker compose exec backend python /app/data/compute_sun_stats.py --export-csv $(DATES)
+
+sun-stats-clear:
+	docker compose exec backend python /app/data/compute_sun_stats.py --clear $(DATES)
 
 # Enrichment (OSM + SIRENE, free APIs)
 enrich:
