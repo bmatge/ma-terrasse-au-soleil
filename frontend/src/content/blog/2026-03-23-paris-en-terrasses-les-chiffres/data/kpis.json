@@ -7,7 +7,7 @@
   "surface_moyenne_m2": 9.0,
   "surface_mediane_m2": 6.1,
   "surface_min_m2": 0.0,
-  "surface_max_m2": 3600.0,
+  "surface_max_m2": 900.0,
   "date_reference": "2026-03-20",
   "sun_stats_disponibles": true
 }
