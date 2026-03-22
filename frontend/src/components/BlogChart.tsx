@@ -13,9 +13,8 @@ const dataModules = import.meta.glob<unknown>(
 );
 
 function loadData(slug: string, filename: string): unknown {
-  const suffix = `/${slug}/data/${filename}`;
   for (const [path, data] of Object.entries(dataModules)) {
-    if (path.endsWith(suffix)) return data;
+    if (path.includes(`/data/${filename}`) && path.includes(slug)) return data;
   }
   return undefined;
 }
@@ -107,7 +106,7 @@ function ShadowLength({ slug }: { slug: string }) {
   const { th } = useTheme();
 
   /* Data from the GeoJSON properties — hardcoded since it's a single static dataset */
-  const dataRaw = loadData(slug, "tour_triangle_shadow.geojson") as {
+  const dataRaw = loadData(slug, "tour_triangle_shadow.json") as {
     features: Array<{ properties: { label: string; longueur_ombre_m: number; nb_terrasses_dans_ombre: number } }>;
   } | undefined;
 
