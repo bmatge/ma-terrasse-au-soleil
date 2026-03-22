@@ -57,6 +57,10 @@ services:
       DATABASE_URL_SYNC: postgresql://terrasse:${DB_PASSWORD:-devpassword}@db:5432/terrasse_soleil
       CRON_HOUR: "3"
       TZ: Europe/Paris
+      SMTP_HOST: mailserver
+      SMTP_PORT: 25
+      SMTP_FROM: noreply@ecosysteme.matge.com
+      NOTIFY_EMAIL: contact@ausoleil.app
     volumes:
       - ./data:/app/data
       - ./scripts:/app/scripts
