@@ -29,6 +29,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 
 from app.config import settings
+from data.classify import classify_typologie
 from app.services.osm import download_osm_pois
 from data.enrich_osm_sirene import enrich_from_osm, enrich_from_sirene, import_osm_bars
 
@@ -70,12 +71,6 @@ def step_sync_terrasses(engine) -> dict:
 
     features = data["features"]
 
-    # Filter: keep only TERRASSE OUVERTE
-    features = [
-        f for f in features
-        if (f.get("properties", {}).get("typologie") or "").upper() == "TERRASSE OUVERTE"
-    ]
-
     # Deduplicate by siret + adresse
     seen = set()
     unique = []
@@ -87,7 +82,7 @@ def step_sync_terrasses(engine) -> dict:
             unique.append(f)
     features = unique
 
-    logger.info("GeoJSON: %d unique TERRASSE OUVERTE features", len(features))
+    logger.info("GeoJSON: %d unique terrasse features", len(features))
 
     # Get existing terrasses (only paris_opendata source)
     with engine.connect() as conn:
@@ -102,11 +97,11 @@ def step_sync_terrasses(engine) -> dict:
     updated = 0
 
     upsert_sql = text("""
-        INSERT INTO terrasses (nom, adresse, arrondissement, geometry, typologie, siret,
-                               longueur, largeur, source)
+        INSERT INTO terrasses (nom, adresse, arrondissement, geometry, typologie, categorie,
+                               siret, longueur, largeur, source)
         VALUES (:nom, :adresse, :arrondissement,
                 ST_SetSRID(ST_MakePoint(:lon, :lat), 4326),
-                :typologie, :siret, :longueur, :largeur, 'paris_opendata')
+                :typologie, :categorie, :siret, :longueur, :largeur, 'paris_opendata')
         ON CONFLICT DO NOTHING
     """)
 
@@ -122,12 +117,16 @@ def step_sync_terrasses(engine) -> dict:
             key = (props.get("siret", ""), props.get("adresse", ""))
             new_keys.add(key)
 
+            typologie_raw = props.get("typologie")
+            categorie = classify_typologie(typologie_raw)
+
             if key in existing_keys:
                 # Already exists — update mutable fields
                 conn.execute(text("""
                     UPDATE terrasses
                     SET nom = :nom, longueur = :longueur, largeur = :largeur,
-                        arrondissement = :arrondissement
+                        arrondissement = :arrondissement, typologie = :typologie,
+                        categorie = :categorie
                     WHERE id = :id
                 """), {
                     "id": existing_keys[key],
@@ -135,6 +134,8 @@ def step_sync_terrasses(engine) -> dict:
                     "longueur": props.get("longueur"),
                     "largeur": props.get("largeur"),
                     "arrondissement": props.get("arrondissement"),
+                    "typologie": typologie_raw,
+                    "categorie": categorie,
                 })
                 updated += 1
             else:
@@ -144,7 +145,8 @@ def step_sync_terrasses(engine) -> dict:
                     "arrondissement": props.get("arrondissement"),
                     "lon": lon,
                     "lat": lat,
-                    "typologie": props.get("typologie"),
+                    "typologie": typologie_raw,
+                    "categorie": categorie,
                     "siret": props.get("siret"),
                     "longueur": props.get("longueur"),
                     "largeur": props.get("largeur"),

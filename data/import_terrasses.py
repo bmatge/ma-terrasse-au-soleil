@@ -13,6 +13,8 @@ import time
 
 from sqlalchemy import create_engine, text
 
+from data.classify import classify_typologie
+
 DATABASE_URL = os.environ.get(
     "DATABASE_URL_SYNC",
     "postgresql://terrasse:devpassword@localhost:5432/terrasse_soleil",
@@ -32,13 +34,6 @@ def import_terrasses(geojson_path: str) -> None:
     features = data["features"]
     print(f"  Total features: {len(features)}")
 
-    # Filter: keep only TERRASSE OUVERTE
-    features = [
-        f for f in features
-        if (f.get("properties", {}).get("typologie") or "").upper() == "TERRASSE OUVERTE"
-    ]
-    print(f"  After filter (TERRASSE OUVERTE): {len(features)}")
-
     # Deduplicate by siret + adresse
     seen = set()
     unique_features = []
@@ -56,13 +51,14 @@ def import_terrasses(geojson_path: str) -> None:
     t0 = time.time()
 
     insert_sql = text("""
-        INSERT INTO terrasses (nom, adresse, arrondissement, geometry, typologie, siret, longueur, largeur, source)
+        INSERT INTO terrasses (nom, adresse, arrondissement, geometry, typologie, categorie, siret, longueur, largeur, source)
         VALUES (
             :nom,
             :adresse,
             :arrondissement,
             ST_SetSRID(ST_MakePoint(:lon, :lat), 4326),
             :typologie,
+            :categorie,
             :siret,
             :longueur,
             :largeur,
@@ -88,13 +84,15 @@ def import_terrasses(geojson_path: str) -> None:
             else:
                 continue
 
+            typologie_raw = props.get("typologie")
             batch.append({
                 "nom": props.get("nom_enseigne") or props.get("adresse") or "Inconnu",
                 "adresse": props.get("adresse"),
                 "arrondissement": props.get("arrondissement"),
                 "lon": lon,
                 "lat": lat,
-                "typologie": props.get("typologie"),
+                "typologie": typologie_raw,
+                "categorie": classify_typologie(typologie_raw),
                 "siret": props.get("siret"),
                 "longueur": props.get("longueur"),
                 "largeur": props.get("largeur"),
