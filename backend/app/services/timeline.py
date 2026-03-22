@@ -88,8 +88,11 @@ async def build_timeline(
             "meteo_resume": str,
         }
     """
-    # Get weather data
-    weather = await get_hourly_weather(lat, lon, target_date, redis=redis)
+    # Get weather data (graceful fallback for dates beyond forecast range)
+    try:
+        weather = await get_hourly_weather(lat, lon, target_date, redis=redis)
+    except Exception:
+        weather = {}
 
     # Get sunrise/sunset for time range
     day_dt = datetime(target_date.year, target_date.month, target_date.day, tzinfo=PARIS_TZ)
@@ -113,7 +116,7 @@ async def build_timeline(
         # Interpolate cloud cover and UV from hourly data
         hour_key = f"{current.hour:02d}:00"
         hour_weather = weather.get(hour_key, {})
-        cloud_cover = hour_weather.get("cloud_cover", 50)
+        cloud_cover = hour_weather.get("cloud_cover", 0)
         uv_index = hour_weather.get("uv_index", 0.0)
 
         status = _combined_status(sun_alt, urban_sunny, cloud_cover)

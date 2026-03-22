@@ -92,6 +92,9 @@ def weather_summary(hourly: dict[str, dict], lang: str = "fr") -> str:
     """Generate a short weather summary for the day."""
     from app.i18n import tr
 
+    if not hourly:
+        return tr("weather_no_forecast", lang)
+
     morning = [hourly.get(f"{h:02d}:00", {}).get("cloud_cover", 50) for h in range(8, 12)]
     afternoon = [hourly.get(f"{h:02d}:00", {}).get("cloud_cover", 50) for h in range(12, 18)]
 

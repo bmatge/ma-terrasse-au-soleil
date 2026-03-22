@@ -14,12 +14,6 @@ export function tomorrowISO(): string {
   return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
 }
 
-export function maxDateISO(): string {
-  const d = new Date();
-  d.setDate(d.getDate() + 14);
-  return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
-}
-
 export function isSunnyStatus(status: string): boolean {
   return status === "soleil" || status === "mitige";
 }

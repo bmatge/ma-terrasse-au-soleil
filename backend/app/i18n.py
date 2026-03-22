@@ -94,6 +94,14 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "ja": "曇りの午後",
         "zh": "下午阴天",
     },
+    "weather_no_forecast": {
+        "fr": "Prévisions météo indisponibles — ensoleillement estimé sans nuages",
+        "en": "Weather forecast unavailable — sunshine estimated without clouds",
+        "es": "Pronóstico no disponible — soleamiento estimado sin nubes",
+        "de": "Wettervorhersage nicht verfügbar — Sonnenschein ohne Wolken geschätzt",
+        "ja": "天気予報なし — 雲なしで日照を推定",
+        "zh": "天气预报不可用 — 按无云估算日照",
+    },
 }
 
 
