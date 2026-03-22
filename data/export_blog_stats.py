@@ -110,7 +110,7 @@ def export(engine, target_date: str) -> None:
         # ── 4. Top 10 rues (concentration) ──────────────────────
         rows = conn.execute(text("""
             SELECT
-                REGEXP_REPLACE(adresse, '^\d+[A-Za-z]?\s*', '') AS rue,
+                REGEXP_REPLACE(adresse, '^\\d+[A-Za-z]?\\s*', '') AS rue,
                 COUNT(*) AS nb_terrasses
             FROM terrasses
             WHERE adresse IS NOT NULL
@@ -281,91 +281,8 @@ def export(engine, target_date: str) -> None:
         """), {"d": target_date}).mappings().all()
         _write("top10_ombragees.json", [dict(r) for r in rows])
 
-        # ── 12. Hauteur bâtiments vs ensoleillement ─────────────
-        rows = conn.execute(text("""
-            SELECT
-                CASE
-                    WHEN avg_h < 10  THEN '< 10 m'
-                    WHEN avg_h < 20  THEN '10–20 m'
-                    WHEN avg_h < 30  THEN '20–30 m'
-                    ELSE '> 30 m'
-                END AS hauteur_voisins,
-                ROUND(AVG(pct_soleil)::NUMERIC, 1) AS pct_soleil_moyen,
-                COUNT(*) AS nb_terrasses
-            FROM (
-                SELECT
-                    t.id,
-                    AVG(b.hauteur) AS avg_h,
-                    sub.pct_soleil
-                FROM terrasses t
-                JOIN (
-                    SELECT terrasse_id,
-                           COUNT(*) FILTER (WHERE soleil = TRUE) * 100.0
-                           / NULLIF(COUNT(*), 0) AS pct_soleil
-                    FROM sun_stats
-                    WHERE date = :d
-                    GROUP BY terrasse_id
-                ) sub ON sub.terrasse_id = t.id
-                JOIN batiments b
-                    ON ST_DWithin(
-                        t.geometry::geography,
-                        ST_Centroid(b.geometry)::geography,
-                        50
-                    )
-                WHERE b.hauteur IS NOT NULL
-                GROUP BY t.id, sub.pct_soleil
-            ) agg
-            GROUP BY 1
-            ORDER BY MIN(avg_h)
-        """), {"d": target_date}).mappings().all()
-        _write("hauteur_vs_soleil.json", [dict(r) for r in rows])
-
-        # ── 13. Top 10 rues les plus ensoleillées ───────────────
-        rows = conn.execute(text("""
-            SELECT
-                REGEXP_REPLACE(t.adresse, '^\d+[A-Za-z]?\s*', '') AS rue,
-                COUNT(*) AS nb_terrasses,
-                ROUND(AVG(sub.pct_soleil)::NUMERIC, 1) AS pct_soleil_moyen
-            FROM terrasses t
-            JOIN (
-                SELECT terrasse_id,
-                       COUNT(*) FILTER (WHERE soleil = TRUE) * 100.0
-                       / NULLIF(COUNT(*), 0) AS pct_soleil
-                FROM sun_stats
-                WHERE date = :d
-                GROUP BY terrasse_id
-            ) sub ON sub.terrasse_id = t.id
-            WHERE t.adresse IS NOT NULL
-            GROUP BY 1
-            HAVING COUNT(*) >= 3
-            ORDER BY pct_soleil_moyen DESC
-            LIMIT 10
-        """), {"d": target_date}).mappings().all()
-        _write("top10_rues_soleil.json", [dict(r) for r in rows])
-
-        # ── 14. Top 10 rues les plus ombragées ──────────────────
-        rows = conn.execute(text("""
-            SELECT
-                REGEXP_REPLACE(t.adresse, '^\d+[A-Za-z]?\s*', '') AS rue,
-                COUNT(*) AS nb_terrasses,
-                ROUND(AVG(sub.pct_soleil)::NUMERIC, 1) AS pct_soleil_moyen,
-                ROUND(100 - AVG(sub.pct_soleil)::NUMERIC, 1) AS pct_ombre_moyen
-            FROM terrasses t
-            JOIN (
-                SELECT terrasse_id,
-                       COUNT(*) FILTER (WHERE soleil = TRUE) * 100.0
-                       / NULLIF(COUNT(*), 0) AS pct_soleil
-                FROM sun_stats
-                WHERE date = :d
-                GROUP BY terrasse_id
-            ) sub ON sub.terrasse_id = t.id
-            WHERE t.adresse IS NOT NULL
-            GROUP BY 1
-            HAVING COUNT(*) >= 3
-            ORDER BY pct_soleil_moyen ASC
-            LIMIT 10
-        """), {"d": target_date}).mappings().all()
-        _write("top10_rues_ombre.json", [dict(r) for r in rows])
+        # NOTE: hauteur_vs_soleil, top10_rues_soleil, top10_rues_ombre
+        # removed — ST_DWithin spatial join too heavy on prod (20k × 500k)
 
     print(f"\n✅ Export terminé → {OUT_DIR}/")
     print(f"   {len(list(OUT_DIR.glob('*.json')))} fichiers JSON générés")
