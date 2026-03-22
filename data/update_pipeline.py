@@ -71,6 +71,12 @@ def step_sync_terrasses(engine) -> dict:
 
     features = data["features"]
 
+    # Filter out features without valid Point geometry before dedup
+    features = [
+        f for f in features
+        if f.get("geometry") and f["geometry"].get("coordinates") and f["geometry"]["type"] == "Point"
+    ]
+
     # Deduplicate by siret + adresse
     seen = set()
     unique = []
@@ -109,10 +115,6 @@ def step_sync_terrasses(engine) -> dict:
         for f in features:
             props = f["properties"]
             geom = f["geometry"]
-
-            if geom is None or geom.get("coordinates") is None or geom["type"] != "Point":
-                continue
-
             lon, lat = geom["coordinates"][0], geom["coordinates"][1]
             key = (props.get("siret", ""), props.get("adresse", ""))
             new_keys.add(key)
