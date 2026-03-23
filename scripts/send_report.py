@@ -40,11 +40,6 @@ Statut : {status}
 RÉSUMÉ
 {'=' * 50}
 {chr(10).join(summary_lines) if summary_lines else '(pas de résumé disponible)'}
-
-{'=' * 50}
-LOG COMPLET
-{'=' * 50}
-{log_content}
 """
 
     msg = MIMEText(body, "plain", "utf-8")
