@@ -171,9 +171,11 @@ async def enrich_from_sirene(engine, force: bool = False, limit: int | None = No
         updates = {"id": row.id}
         set_clauses = []
 
+        # Always mark enseigne_sirene so we don't retry this SIRET next run
+        updates["enseigne_sirene"] = best_name or ""
+        set_clauses.append("enseigne_sirene = :enseigne_sirene")
+
         if best_name:
-            updates["enseigne_sirene"] = best_name
-            set_clauses.append("enseigne_sirene = :enseigne_sirene")
             # Set nom_commercial if not already set (SIRENE has priority)
             set_clauses.append("nom_commercial = COALESCE(nom_commercial, :enseigne_sirene)")
 
