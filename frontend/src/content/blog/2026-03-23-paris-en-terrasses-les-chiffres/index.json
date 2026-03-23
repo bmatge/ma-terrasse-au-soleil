@@ -1,7 +1,7 @@
 {
   "slug": "paris-en-terrasses-les-chiffres",
   "title": "Paris en terrasses : les chiffres",
-  "description": "20 151 terrasses, 526 529 bâtiments 3D, des millions de calculs d'ombre — plongée dans la base de données d'Au Soleil en 11 visualisations.",
+  "description": "20 108 terrasses, 526 529 bâtiments 3D, des millions de calculs d'ombre — plongée dans la base de données d'Au Soleil en 11 visualisations.",
   "date": "2026-03-23",
   "author": "Au Soleil",
   "tags": ["data", "open-data", "dataviz", "paris", "terrasses"],
@@ -14,7 +14,7 @@
     {
       "type": "kpi",
       "items": [
-        { "value": "20 151", "label": "terrasses indexées", "icon": "☀️" },
+        { "value": "20 108", "label": "terrasses indexées", "icon": "☀️" },
         { "value": "526 529", "label": "bâtiments 3D", "icon": "🏛️" },
         { "value": "158 509 m²", "label": "de terrasses cumulées", "icon": "📐" },
         { "value": "7,2 M", "label": "profils d'horizon", "icon": "🔭" }
@@ -23,7 +23,7 @@
 
     {
       "type": "paragraph",
-      "content": "20 151 terrasses, c'est le nombre d'autorisations de terrasses délivrées par la Mairie de Paris que nous avons importées. Pour chacune, nous avons calculé un profil d'horizon à 360° — une empreinte digitale de son environnement bâti — en interrogeant les 526 529 bâtiments de la BD TOPO de l'IGN."
+      "content": "20 108 terrasses, c'est le nombre d'autorisations de terrasses délivrées par la Mairie de Paris que nous avons importées. Pour chacune, nous avons calculé un profil d'horizon à 360° — une empreinte digitale de son environnement bâti — en interrogeant les 526 529 bâtiments de la BD TOPO de l'IGN."
     },
 
     { "type": "heading", "content": "Quels types de terrasses ?" },
@@ -34,7 +34,7 @@
         {
           "type": "chart",
           "chartId": "chiffres-categories",
-          "caption": "Répartition des 20 151 terrasses par catégorie"
+          "caption": "Répartition des 20 108 terrasses par catégorie"
         }
       ],
       "right": [
