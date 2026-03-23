@@ -13,7 +13,7 @@ import time
 
 from sqlalchemy import create_engine, text
 
-from data.classify import classify_typologie
+from data.classify import classify_typologie, EXCLUDED_CATEGORIES
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL_SYNC",
@@ -34,17 +34,26 @@ def import_terrasses(geojson_path: str) -> None:
     features = data["features"]
     print(f"  Total features: {len(features)}")
 
-    # Deduplicate by siret + adresse
+    # Deduplicate by siret + adresse + typologie
+    # (one establishment can have multiple terrasse types: OUVERTE, ÉTALAGE, etc.)
     seen = set()
     unique_features = []
     for f in features:
         props = f["properties"]
-        key = (props.get("siret", ""), props.get("adresse", ""))
+        key = (props.get("siret", ""), props.get("adresse", ""), props.get("typologie", ""))
         if key not in seen:
             seen.add(key)
             unique_features.append(f)
     features = unique_features
-    print(f"  After dedup (siret+adresse): {len(features)}")
+    print(f"  After dedup (siret+adresse+typologie): {len(features)}")
+
+    # Filter out non-terrasse types (étalages, commerces accessoires, etc.)
+    before_filter = len(features)
+    features = [
+        f for f in features
+        if classify_typologie(f["properties"].get("typologie")) not in EXCLUDED_CATEGORIES
+    ]
+    print(f"  After filtering excluded types: {len(features)} ({before_filter - len(features)} excluded)")
 
     # Build insert values
     print("Inserting into PostGIS...")

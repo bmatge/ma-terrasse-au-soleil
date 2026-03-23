@@ -2,15 +2,22 @@
 import re
 
 
+# Categories excluded from import (not actual terrasses)
+EXCLUDED_CATEGORIES = frozenset({"ÉTALAGE", "EXCLU"})
+
+
 def classify_typologie(typ: str | None) -> str:
     """Normalize raw typologie into a simple category.
 
-    Categories:
+    Categories kept:
         TERRASSE OUVERTE — open-air terrace
         TERRASSE FERMÉE  — enclosed/glazed terrace
         CONTRE-TERRASSE  — counter-terrace (estivale, permanente, etc.)
-        ÉTALAGE          — merchandise display
-        AUTRE            — anything else (perpendiculaire, parallèle, exceptionnelle…)
+        AUTRE            — plancher mobile, parallèle, perpendiculaire…
+
+    Categories excluded (see EXCLUDED_CATEGORIES):
+        ÉTALAGE — merchandise display (not a terrace)
+        EXCLU   — commerce accessoire, immobilière, auvent, jardinière, etc.
     """
     if not typ:
         return "AUTRE"
@@ -25,4 +32,14 @@ def classify_typologie(typ: str | None) -> str:
         return "CONTRE-TERRASSE"
     if "ÉTALAGE" in t or "ETALAGE" in t:
         return "ÉTALAGE"
+    # Non-terrasse types
+    if any(kw in t for kw in (
+        "COMMERCE ACCESSOIRE",
+        "IMMOBILIÈRE", "IMMOBILIERE",
+        "EXCEPTIONNELLE", "MANIFESTATION",
+        "AUVENT", "MARQUISE",
+        "JARDINIÈRE", "JARDINIERE",
+        "ECRAN",
+    )):
+        return "EXCLU"
     return "AUTRE"

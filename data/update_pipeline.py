@@ -29,7 +29,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 
 from app.config import settings
-from data.classify import classify_typologie
+from data.classify import classify_typologie, EXCLUDED_CATEGORIES
 from app.services.osm import download_osm_pois
 from data.enrich_osm_sirene import enrich_from_osm, enrich_from_sirene, import_osm_bars
 
@@ -77,26 +77,33 @@ def step_sync_terrasses(engine) -> dict:
         if f.get("geometry") and f["geometry"].get("coordinates") and f["geometry"]["type"] == "Point"
     ]
 
-    # Deduplicate by siret + adresse
+    # Deduplicate by siret + adresse + typologie
+    # (one establishment can have multiple terrasse types: OUVERTE, ÉTALAGE, etc.)
     seen = set()
     unique = []
     for f in features:
         props = f["properties"]
-        key = (props.get("siret", ""), props.get("adresse", ""))
+        key = (props.get("siret", ""), props.get("adresse", ""), props.get("typologie", ""))
         if key not in seen:
             seen.add(key)
             unique.append(f)
     features = unique
 
-    logger.info("GeoJSON: %d unique terrasse features", len(features))
+    # Filter out non-terrasse types (étalages, commerces accessoires, etc.)
+    before_filter = len(features)
+    features = [
+        f for f in features
+        if classify_typologie(f["properties"].get("typologie")) not in EXCLUDED_CATEGORIES
+    ]
+    logger.info("GeoJSON: %d unique terrasse features (%d excluded)", len(features), before_filter - len(features))
 
     # Get existing terrasses (only paris_opendata source)
     with engine.connect() as conn:
         existing = conn.execute(text("""
-            SELECT id, siret, adresse FROM terrasses WHERE source = 'paris_opendata'
+            SELECT id, siret, adresse, typologie FROM terrasses WHERE source = 'paris_opendata'
         """)).fetchall()
 
-    existing_keys = {(row.siret or "", row.adresse or ""): row.id for row in existing}
+    existing_keys = {(row.siret or "", row.adresse or "", row.typologie or ""): row.id for row in existing}
     new_keys = set()
 
     inserted = 0
@@ -116,11 +123,10 @@ def step_sync_terrasses(engine) -> dict:
             props = f["properties"]
             geom = f["geometry"]
             lon, lat = geom["coordinates"][0], geom["coordinates"][1]
-            key = (props.get("siret", ""), props.get("adresse", ""))
-            new_keys.add(key)
-
             typologie_raw = props.get("typologie")
             categorie = classify_typologie(typologie_raw)
+            key = (props.get("siret", ""), props.get("adresse", ""), typologie_raw or "")
+            new_keys.add(key)
 
             if key in existing_keys:
                 # Already exists — only update if mutable fields changed
