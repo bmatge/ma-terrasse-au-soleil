@@ -188,14 +188,16 @@ def step_sync_terrasses(engine) -> dict:
 def step_compute_horizons():
     """Run horizon profile computation for new terrasses."""
     logger.info("=== Step 7: Computing horizon profiles for new terrasses ===")
-    result = subprocess.run(
-        [sys.executable, str(DATA_DIR / "compute_horizon_profiles.py")],
-        capture_output=True, text=True,
-        cwd=str(DATA_DIR.parent),
+    proc = subprocess.Popen(
+        [sys.executable, "-u", str(DATA_DIR / "compute_horizon_profiles.py")],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, cwd=str(DATA_DIR.parent),
     )
-    logger.info(result.stdout)
-    if result.returncode != 0:
-        logger.warning("Horizon computation had issues: %s", result.stderr)
+    for line in proc.stdout:
+        logger.info(line.rstrip())
+    proc.wait()
+    if proc.returncode != 0:
+        logger.warning("Horizon computation exited with code %d", proc.returncode)
 
 
 async def run_pipeline(
