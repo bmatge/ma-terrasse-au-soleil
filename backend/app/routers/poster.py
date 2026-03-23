@@ -18,7 +18,11 @@ async def get_poster(
     year: int = Query(default=None, description="Year for the chart (default: current)"),
     db: AsyncSession = Depends(get_db),
 ):
-    """Generate a sunshine poster PNG for a terrace."""
+    """Generate a sunshine poster PNG for a terrace.
+
+    If the terrace belongs to an establishment with multiple terrasses (same SIRET),
+    the poster uses the union of all horizon profiles and aggregated surface.
+    """
     result = await db.execute(
         text("""
             SELECT
@@ -30,6 +34,7 @@ async def get_poster(
                 ST_Y(t.geometry) AS lat,
                 t.longueur,
                 t.largeur,
+                t.siret,
                 hp.profile
             FROM terrasses t
             LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
@@ -42,15 +47,37 @@ async def get_poster(
     if row is None:
         raise HTTPException(status_code=404, detail="Terrasse not found")
 
-    # Flat profile (no building shadows) if horizon profile not computed
-    profile = row.profile if row.profile is not None else [0.0] * 360
+    # Collect all profiles and surface for siblings (same SIRET)
+    profiles = []
+    total_surface = 0.0
+    terrasse_count = 1
+
+    if row.siret and row.siret.strip():
+        siblings = await db.execute(
+            text("""
+                SELECT
+                    t.longueur, t.largeur, hp.profile
+                FROM terrasses t
+                LEFT JOIN horizon_profiles hp ON hp.terrasse_id = t.id
+                WHERE t.siret = :siret AND t.siret != ''
+            """),
+            {"siret": row.siret},
+        )
+        sibling_rows = siblings.fetchall()
+        terrasse_count = len(sibling_rows)
+        for sib in sibling_rows:
+            p = sib.profile if sib.profile is not None else [0.0] * 360
+            profiles.append(p)
+            if sib.longueur and sib.largeur:
+                total_surface += sib.longueur * sib.largeur
+    else:
+        profile = row.profile if row.profile is not None else [0.0] * 360
+        profiles.append(profile)
+        if row.longueur and row.largeur:
+            total_surface = row.longueur * row.largeur
 
     poster_year = year or date.today().year
-    surface = (
-        round(row.longueur * row.largeur, 1)
-        if row.longueur and row.largeur
-        else None
-    )
+    surface = round(total_surface, 1) if total_surface > 0 else None
 
     # Build address with arrondissement
     address = row.adresse or ""
@@ -65,10 +92,11 @@ async def get_poster(
         address=address,
         lat=row.lat,
         lon=row.lon,
-        profile=profile,
+        profiles=profiles,
         year=poster_year,
         qr_url=qr_url,
         surface_m2=surface,
+        terrasse_count=terrasse_count,
     )
 
     filename = f"ausoleil-{slug}-{poster_year}.png"

@@ -58,13 +58,23 @@ def generate_poster(
     address: str,
     lat: float,
     lon: float,
-    profile: list[float],
-    year: int,
-    qr_url: str,
+    profiles: list[list[float]] | None = None,
+    year: int = 2026,
+    qr_url: str = "",
     surface_m2: float | None = None,
+    terrasse_count: int = 1,
+    profile: list[float] | None = None,  # backward compat
 ) -> bytes:
-    """Generate the sunshine poster and return PNG bytes."""
-    grid, hours, day_summaries = _compute_sunshine_grid(profile, year)
+    """Generate the sunshine poster and return PNG bytes.
+
+    Accepts multiple profiles for establishment grouping: a slot is sunny
+    if ANY profile says sunny (union semantics).
+    """
+    # Backward compatibility: single profile → list
+    if profiles is None:
+        profiles = [profile or [0.0] * 360]
+
+    grid, hours, day_summaries = _compute_sunshine_grid_union(profiles, year)
 
     fig = plt.figure(figsize=(FIG_W_IN, FIG_H_IN), dpi=DPI, facecolor=WHITE)
 
@@ -76,8 +86,11 @@ def generate_poster(
         facecolor=WHITE,
     )
 
-    orientation_az, orientation_label = _compute_orientation(profile)
-    _draw_sidebar(fig, ax_side, name, address, year, surface_m2, orientation_label)
+    # Compute orientation from best (most open) profile
+    best_profile = min(profiles, key=lambda p: sum(p[60:301]))
+    orientation_az, orientation_label = _compute_orientation(best_profile)
+    _draw_sidebar(fig, ax_side, name, address, year, surface_m2, orientation_label,
+                  terrasse_count=terrasse_count)
     _draw_chart(ax_chart, grid, hours, day_summaries)
     _draw_annotations(ax_chart, day_summaries)
     _draw_qr(fig, qr_url)
@@ -151,7 +164,16 @@ def _get_sun_positions(year: int, day_step: int = 3) -> list[list[tuple[float, f
 def _compute_sunshine_grid(
     profile: list[float], year: int,
 ) -> tuple[np.ndarray, list[float], list[dict]]:
-    """Build a 2D grid of sunshine status and per-day summaries.
+    """Build a 2D grid of sunshine status for a single profile."""
+    return _compute_sunshine_grid_union([profile], year)
+
+
+def _compute_sunshine_grid_union(
+    profiles: list[list[float]], year: int,
+) -> tuple[np.ndarray, list[float], list[dict]]:
+    """Build a 2D grid of sunshine status using union of multiple profiles.
+
+    A slot is sunny if ANY profile says the sun clears the horizon.
 
     Returns:
         grid: (n_steps, n_days) array — 0=night, 1=shadow, 2=sunny
@@ -185,7 +207,9 @@ def _compute_sunshine_grid(
                 if sunrise is None:
                     sunrise = hf
                 sunset = hf
-                if alt > profile[az_idx]:
+                # Union: sunny if ANY profile clears the horizon
+                is_sunny = any(alt > p[az_idx] for p in profiles)
+                if is_sunny:
                     grid[step_idx, day_idx] = 2.0  # sunny
                     sunny_minutes += STEP_MINUTES
                 else:
@@ -236,6 +260,7 @@ def _azimuth_label(az: int) -> str:
 def _draw_sidebar(
     fig, ax, name: str, address: str, year: int,
     surface_m2: float | None, orientation_label: str,
+    terrasse_count: int = 1,
 ):
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -295,7 +320,8 @@ def _draw_sidebar(
 
     # Terrace details
     details_y = sep_y - 0.035
-    ax.text(0.08, details_y, "Terrasse", fontsize=8, alpha=0.65, **text_kw)
+    terrasse_label = f"Terrasses ({terrasse_count})" if terrasse_count > 1 else "Terrasse"
+    ax.text(0.08, details_y, terrasse_label, fontsize=8, alpha=0.65, **text_kw)
 
     row_y = details_y - 0.05
     _detail_row(ax, 0.08, row_y, "Orientation", orientation_label, **text_kw)
