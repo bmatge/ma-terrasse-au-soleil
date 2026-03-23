@@ -13,6 +13,8 @@ export interface TerrasseSearchResult {
   phone: string | null;
   website: string | null;
   google_maps_uri: string | null;
+  surface_m2: number | null;
+  terrasse_count: number;
 }
 
 export interface TimelineSlot {
@@ -31,12 +33,23 @@ export interface BestWindow {
   duree_minutes: number;
 }
 
+export interface SiblingTerrasse {
+  id: number;
+  adresse: string | null;
+  typologie: string | null;
+  surface_m2: number | null;
+  lat: number;
+  lon: number;
+}
+
 export interface TimelineResponse {
   terrasse: TerrasseSearchResult;
   date: string;
   slots: TimelineSlot[];
   meilleur_creneau: BestWindow | null;
   meteo_resume: string;
+  siblings: SiblingTerrasse[] | null;
+  surface_totale_m2: number | null;
 }
 
 export interface MeteoInfo {
@@ -61,6 +74,8 @@ export interface NearbyTerrasse {
   place_type: string | null;
   rating: number | null;
   user_rating_count: number | null;
+  surface_m2: number | null;
+  terrasse_count: number;
 }
 
 export interface NearbyResponse {

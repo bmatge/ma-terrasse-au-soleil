@@ -22,6 +22,8 @@ class NearbyTerrasse(BaseModel):
     place_type: str | None = None
     rating: float | None = None
     user_rating_count: int | None = None
+    surface_m2: float | None = None
+    terrasse_count: int = 1
 
 
 class NearbyResponse(BaseModel):

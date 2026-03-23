@@ -54,6 +54,8 @@ export default function TerrasseCard({ terrasse, onClick }: TerrasseCardProps) {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12, fontFamily: F, color: th.textSoft }}>
             <span>{terrasse.distance_m}m</span>
+            {terrasse.terrasse_count > 1 && <span>{terrasse.terrasse_count} terrasses</span>}
+            {terrasse.surface_m2 != null && terrasse.surface_m2 > 0 && <span>{terrasse.surface_m2} m\u00B2</span>}
             {terrasse.soleil_jusqua && <span style={{ color: themes.sun.accentDark }}>{t("detail.sunUntil", { time: terrasse.soleil_jusqua })}</span>}
             {!terrasse.has_profile && <span style={{ color: th.textMuted, fontStyle: "italic" }}>{t("detail.estimated")}</span>}
           </div>

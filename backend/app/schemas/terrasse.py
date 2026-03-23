@@ -16,3 +16,5 @@ class TerrasseSearchResult(BaseModel):
     phone: str | None = None
     website: str | None = None
     google_maps_uri: str | None = None
+    surface_m2: float | None = None
+    terrasse_count: int = 1

@@ -3,7 +3,7 @@ from datetime import datetime
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
-from app.services.nearby import _estimate_sun_until
+from app.services.nearby import _estimate_sun_until_single as _estimate_sun_until
 
 PARIS_TZ = ZoneInfo("Europe/Paris")
 PARIS_LAT = 48.853

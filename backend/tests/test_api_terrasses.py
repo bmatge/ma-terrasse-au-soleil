@@ -52,6 +52,7 @@ async def test_timeline_nominal(client):
         "user_rating_count": 200, "phone": None,
         "website": None, "google_maps_uri": None,
         "profile": [0.0] * 360,
+        "siret": None, "longueur": None, "largeur": None, "typologie": None,
     })()
     mock_timeline = {
         "slots": [

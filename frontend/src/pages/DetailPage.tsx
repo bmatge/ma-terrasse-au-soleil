@@ -14,6 +14,25 @@ import type { TimelineSlot } from "../api/types";
 import { F, HOURS, PLACE_TYPE_KEYS } from "../lib/constants";
 import { currentHourKey, todayISO, tomorrowISO, isSunnyStatus } from "../lib/helpers";
 
+/** Normalize raw Paris Open Data typologie to a short, readable label. */
+function formatTypologie(raw: string | null): string {
+  if (!raw) return "Terrasse";
+  const t = raw.toUpperCase();
+  if (/CONTRE.?TERRASSE/.test(t)) {
+    if (t.includes("ESTIVAL")) return "Contre-terrasse estivale";
+    if (t.includes("PERMANENT")) return "Contre-terrasse permanente";
+    return "Contre-terrasse";
+  }
+  if (t.includes("FERMÉE") || t.includes("FERMEE") || t.includes("FERMÉES") || t.includes("FERMEES"))
+    return "Terrasse fermée";
+  if (t.includes("ESTIVAL")) return "Terrasse estivale";
+  if (t.includes("OUVERTE") || t.includes("OUVERTES")) return "Terrasse ouverte";
+  if (t.includes("PLANCHER")) return "Plancher mobile";
+  if (t.includes("PARALLÈLE") || t.includes("PARALLELE")) return "Terrasse parallèle";
+  if (t.includes("PERPENDICULAIRE")) return "Terrasse perpendiculaire";
+  return "Terrasse";
+}
+
 export default function DetailPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -188,6 +207,29 @@ export default function DetailPage() {
           </a>
         </div>
       </div>
+
+      {/* Siblings: multiple terrasses for this establishment */}
+      {timelineData.siblings && timelineData.siblings.length > 1 && (
+        <div style={{ margin: "0 20px 16px", padding: "14px 18px", borderRadius: 14, background: th.bgCard, border: `1px solid ${th.border}` }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: th.text, marginBottom: 8, fontFamily: F }}>
+            {timelineData.siblings.length} terrasses
+            {timelineData.surface_totale_m2 != null && timelineData.surface_totale_m2 > 0 && (
+              <span style={{ fontWeight: 400, color: th.textMuted }}> &middot; {timelineData.surface_totale_m2} m&sup2; au total</span>
+            )}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {timelineData.siblings.map((sib) => (
+              <div key={sib.id} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, fontFamily: F, color: th.textSoft }}>
+                <span style={{ background: th.accentLight, color: th.accentDark, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 500, whiteSpace: "nowrap" }}>
+                  {formatTypologie(sib.typologie)}
+                </span>
+                {sib.surface_m2 != null && sib.surface_m2 > 0 && <span>{sib.surface_m2} m&sup2;</span>}
+                {sib.adresse && <span style={{ color: th.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sib.adresse}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ padding: "0 24px 24px" }}>
         {/* Current status */}

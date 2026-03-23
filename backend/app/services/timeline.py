@@ -2,6 +2,9 @@
 
 Combines horizon profile (urban shadow) with weather data to produce
 15-minute time slots from sunrise to sunset.
+
+Supports multiple profiles for establishment grouping: a slot is "sunny"
+if ANY terrace in the group is sunny (union semantics).
 """
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -71,6 +74,18 @@ def _find_best_window(slots: list[dict]) -> dict | None:
     }
 
 
+def _is_any_sunny(
+    profiles: list[tuple[list[float], float, float]],
+    sun_alt: float,
+    sun_azi: float,
+) -> bool:
+    """Check if ANY terrace in the group is sunny (union semantics)."""
+    for profile, _lat, _lon in profiles:
+        if is_sunny(profile, sun_alt, sun_azi):
+            return True
+    return False
+
+
 async def build_timeline(
     profile: list[float],
     lat: float,
@@ -78,8 +93,19 @@ async def build_timeline(
     target_date: date,
     redis: Redis | None = None,
     lang: str = "fr",
+    extra_profiles: list[tuple[list[float], float, float]] | None = None,
 ) -> dict:
     """Build the full timeline for a terrace on a given date.
+
+    Args:
+        profile: Primary terrace horizon profile
+        lat, lon: Primary terrace coordinates
+        target_date: Date to compute timeline for
+        redis: Redis client for weather caching
+        lang: Language for weather summary
+        extra_profiles: Additional (profile, lat, lon) tuples for sibling
+                       terraces. When provided, a slot is "sunny" if ANY
+                       terrace is sunny.
 
     Returns:
         {
@@ -88,6 +114,11 @@ async def build_timeline(
             "meteo_resume": str,
         }
     """
+    # Build list of all profiles for union check
+    all_profiles = [(profile, lat, lon)]
+    if extra_profiles:
+        all_profiles.extend(extra_profiles)
+
     # Get weather data (graceful fallback for dates beyond forecast range)
     try:
         weather = await get_hourly_weather(lat, lon, target_date, redis=redis)
@@ -111,7 +142,12 @@ async def build_timeline(
 
     while current <= end:
         sun_alt, sun_azi = get_sun_position(lat, lon, current)
-        urban_sunny = is_sunny(profile, sun_alt, sun_azi)
+
+        # Union: sunny if ANY terrace in the group is sunny
+        if len(all_profiles) == 1:
+            urban_sunny = is_sunny(profile, sun_alt, sun_azi)
+        else:
+            urban_sunny = _is_any_sunny(all_profiles, sun_alt, sun_azi)
 
         # Interpolate cloud cover and UV from hourly data
         hour_key = f"{current.hour:02d}:00"
