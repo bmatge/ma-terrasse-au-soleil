@@ -31,6 +31,7 @@ PARIS_TZ = ZoneInfo("Europe/Paris")
 mcp = FastMCP(
     "Ma Terrasse au Soleil",
     streamable_http_path="/",
+    stateless_http=True,
     transport_security=TransportSecuritySettings(
         enable_dns_rebinding_protection=True,
         allowed_hosts=["ausoleil.app", "localhost:8000", "backend:8000"],
