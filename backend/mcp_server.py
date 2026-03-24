@@ -29,6 +29,7 @@ PARIS_TZ = ZoneInfo("Europe/Paris")
 
 mcp = FastMCP(
     "Ma Terrasse au Soleil",
+    streamable_http_path="/",
     instructions=(
         "Ce serveur fournit des données d'ensoleillement pour les terrasses de "
         "bars et restaurants à Paris. Vous pouvez rechercher des terrasses, obtenir "

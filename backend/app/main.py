@@ -8,11 +8,16 @@ from app.dependencies import close_redis, init_redis
 from app.routers import contact, geocode, og, poster, seo, streetview, terrasses
 from mcp_server import mcp as mcp_server
 
+# Pre-build MCP ASGI app so we can reference its lifespan
+_mcp_app = mcp_server.streamable_http_app()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_redis()
-    yield
+    # Start MCP session manager (required for Streamable HTTP transport)
+    async with mcp_server.session_manager.run():
+        yield
     await close_redis()
 
 
@@ -34,7 +39,7 @@ app.include_router(seo.router)
 app.include_router(poster.router)
 
 # Mount MCP server at /mcp (Streamable HTTP transport)
-app.mount("/mcp", mcp_server.streamable_http_app())
+app.mount("/mcp", _mcp_app)
 
 
 @app.get("/api/health")
