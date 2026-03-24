@@ -12,6 +12,7 @@ from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from app.config import settings
 from app.database import async_session
@@ -30,6 +31,10 @@ PARIS_TZ = ZoneInfo("Europe/Paris")
 mcp = FastMCP(
     "Ma Terrasse au Soleil",
     streamable_http_path="/",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=["ausoleil.app", "localhost:8000", "backend:8000"],
+    ),
     instructions=(
         "Ce serveur fournit des données d'ensoleillement pour les terrasses de "
         "bars et restaurants à Paris. Vous pouvez rechercher des terrasses, obtenir "
