@@ -13,6 +13,7 @@ import UpdatePrompt from "../components/UpdatePrompt";
 import { getNearby } from "../api/terrasses";
 import { F, KPI_STATIONS } from "../lib/constants";
 import { currentHourKey, todayISO, isSunnyStatus } from "../lib/helpers";
+import { getPositionWithFallback } from "../lib/geolocation";
 
 type FunFact = { fact: string };
 const FUN_FACTS_LOADERS: Record<string, () => Promise<{ default: FunFact[] }>> = {
@@ -64,10 +65,13 @@ export default function HomePage() {
     return { sunCount, shadeCount, hour, station };
   }, [homeData, kpiStation.name]);
 
+  const [geoError, setGeoError] = useState<string | null>(null);
+
   const handleGeoAndSearch = useCallback(() => {
     if (!navigator.geolocation) return;
     setGeoLocating(true);
-    navigator.geolocation.getCurrentPosition(
+    setGeoError(null);
+    getPositionWithFallback().then(
       (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
@@ -84,8 +88,10 @@ export default function HomePage() {
         sp.set("mode", mode);
         navigate(`/results?${sp}`);
       },
-      () => setGeoLocating(false),
-      { enableHighAccuracy: true, timeout: 10000 },
+      (err) => {
+        setGeoLocating(false);
+        setGeoError(err.code === 1 ? t("geo.deniedShort") : t("geo.unavailableShort"));
+      },
     );
   }, [navigate, mode, t]);
 
@@ -141,6 +147,7 @@ export default function HomePage() {
               : <MapPinIcon size={18} color="#FFF" />}
             {geoLocating ? t("home.locating") : t("home.aroundMe")}
           </button>
+          {geoError && <p style={{ color: "#e74c3c", fontSize: 13, textAlign: "center", margin: 0 }}>{geoError}</p>}
           <button onClick={() => navigate("/search")} style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
             padding: "16px 24px", borderRadius: 14, border: `2px solid ${th.accent}`,

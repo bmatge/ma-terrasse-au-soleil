@@ -12,6 +12,7 @@ import type { TerrasseSearchResult, GeocodeResult } from "../api/types";
 import { normalizePlaceType } from "../utils/placeType";
 import { F, HOURS, METRO_STATIONS } from "../lib/constants";
 import { currentHourKey, todayISO, normalize, slugify } from "../lib/helpers";
+import { getPositionWithFallback } from "../lib/geolocation";
 
 type SearchType = "address" | "terrasse" | "metro";
 
@@ -29,6 +30,7 @@ export default function SearchPage() {
   const [searchRadius] = useState(200);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
   const [playEasterEgg, setPlayEasterEgg] = useState(false);
 
   const debouncedQuery = useDebounce(searchQuery, 300);
@@ -60,14 +62,17 @@ export default function SearchPage() {
   const handleGeo = useCallback(() => {
     if (!navigator.geolocation) return;
     setGeoLocating(true);
-    navigator.geolocation.getCurrentPosition(
+    setGeoError(null);
+    getPositionWithFallback().then(
       (pos) => {
         setSearchCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
         setSearchQuery(t("common.myPosition"));
         setGeoLocating(false);
       },
-      () => setGeoLocating(false),
-      { enableHighAccuracy: true, timeout: 10000 },
+      (err) => {
+        setGeoLocating(false);
+        setGeoError(err.code === 1 ? t("geo.deniedShort") : t("geo.unavailableShort"));
+      },
     );
   }, [t]);
 
@@ -250,6 +255,7 @@ export default function SearchPage() {
                 : <CrosshairIcon size={20} />}
             </button>
           </div>
+          {geoError && <p style={{ color: "#e74c3c", fontSize: 13, margin: "4px 0 0" }}>{geoError}</p>}
         </div>
 
         {/* Date */}

@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { getPositionWithFallback } from "../lib/geolocation";
 
 interface GeolocationState {
   lat: number | null;
@@ -25,7 +26,7 @@ export function useGeolocation() {
 
     setState((s) => ({ ...s, loading: true, error: null }));
 
-    navigator.geolocation.getCurrentPosition(
+    getPositionWithFallback().then(
       (pos) => {
         setState({
           lat: pos.coords.latitude,
@@ -44,7 +45,6 @@ export function useGeolocation() {
               : t("geo.unavailableShort"),
         }));
       },
-      { enableHighAccuracy: true, timeout: 10000 },
     );
   }, [t]);
 
